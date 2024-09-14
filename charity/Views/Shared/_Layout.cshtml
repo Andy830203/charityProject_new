@@ -12,6 +12,7 @@
     @* <link rel="stylesheet" href="~/layoutMVC1.styles.css" asp-append-version="true" /> *@
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
+    @await RenderSectionAsync("Styles", required: false)
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 <body class="sb-nav-fixed">
@@ -67,7 +68,7 @@
                                 <a class="nav-link" href="">折扣</a>
                             </nav>
                         </div>
-                        <a class="nav-link" href="">
+                        <a class="nav-link" asp-area="" asp-controller="Events" asp-action="Index">
                             <div class="sb-nav-link-icon"><i class="fa-solid fa-font-awesome"></i></div>
                             活動
                         </a>
@@ -130,7 +131,7 @@
         </div>
         <div id="layoutSidenav_content">
             <main>
-                <div class="container-fluid px-4">
+                <div class="container-fluid px-4 mt-3">
                     @RenderBody()
                 </div>
             </main>
