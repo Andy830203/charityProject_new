@@ -1,4 +1,5 @@
 using charity.Data;
+using charity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,11 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<CharityContext>(options =>   //µù¥U¨ìDI
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Charity")); 
+});
 
 var app = builder.Build();
 
