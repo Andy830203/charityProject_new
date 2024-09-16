@@ -8,7 +8,7 @@
 {
     <link href="~/css/yteventsstyles.css" rel="stylesheet" />
     <style>
-
+        
     </style>
 }
 
@@ -17,9 +17,11 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<div class="table-responsive">
 <table class="table">
-    <thead>
+    <thead class="table-primary">
         <tr>
+            <th></th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -35,12 +37,16 @@
             <th>
                 @Html.DisplayNameFor(model => model.Organizer)
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
@@ -56,16 +62,101 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Organizer.Id)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+        </tr>
+        @* 為下列兩個手風琴設變數 *@
+        var accLoc = $"accordionLocation{item.Id}";
+        var accPhoto = $"accordionPhoto{item.Id}";
+        var accPeriod = $"accordionPeriod{item.Id}";
+        var headLoc = $"headingLocation{item.Id}";
+        var headPhoto = $"headingPhoto{item.Id}";
+        var headPeriod = $"headingPeriod{item.Id}";
+        var clpLoc = $"collapseLocation{item.Id}";
+        var clpPhoto = $"collapsePhoto{item.Id}";
+        var clpPeriod = $"collap{item.Id}";
+        @* 區段結束 *@
+        <!-- 活動地點 -->
+        <tr>
+            <td colspan="6">
+                <div class="accordion" id="@accLoc">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="@headLoc">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@clpLoc" aria-expanded="false" aria-controls="@clpLoc">
+                                活動地點順序
+                            </button>
+                        </h2>
+                        <div id="@clpLoc" class="accordion-collapse collapse" aria-labelledby="@headLoc" data-bs-parent="#@accLoc">
+                            <div class="accordion-body">
+                                <p>
+                                    測試內容
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <!-- 活動照片 -->
+        <tr>
+            <td colspan="6">
+                <div class="accordion" id="@accPhoto">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="@headPhoto">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@clpPhoto" aria-expanded="false" aria-controls="@clpPhoto">
+                                活動照片
+                            </button>
+                        </h2>
+                        <div id="@clpPhoto" class="accordion-collapse collapse" aria-labelledby="@headPhoto" data-bs-parent="#@accPhoto">
+                            <div class="accordion-body">
+                                <p>
+                                    測試內容
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <!-- 活動時段 -->
+        <tr>
+            <td colspan="6">
+                <div class="accordion" id="@accPeriod">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="@headPeriod">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@clpPeriod" aria-expanded="false" aria-controls="@clpPeriod">
+                                活動時段
+                            </button>
+                        </h2>
+                        <div id="@clpPeriod" class="accordion-collapse collapse" aria-labelledby="@headPhoto" data-bs-parent="#@accPeriod">
+                            <div class="accordion-body">
+                                <p>
+                                    測試內容
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </td>
         </tr>
 }
     </tbody>
 </table>
+</div>
 
 <!-- 回首頁會回到模板，先用這個連結代替 -->
 <a asp-area="" asp-controller="Home" asp-action="Index" class="yt-fixed-box"> Back </a>
+
+@section Scripts 
+{
+    <script>
+        // const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+        // // const fixedElement = document.querySelector('.your-fixed-element');
+        // const topNav = document.querySelector('.sb-nav-fixed .sb-topnav');
+        // const back = document.querySelector('.yt-fixed-box');
+
+        // if (scrollbarWidth > 0) {
+        //     topNav.style.right = `${scrollbarWidth}px`;
+        //     back.style.right = `${scrollbarWidth}px`;
+        // }
+    </script>
+}
 

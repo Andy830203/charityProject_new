@@ -6,11 +6,21 @@
     position: fixed;
     top: 80px;
     right: 50px;
+    z-index: 4;
     /* for link */
     text-decoration: none;
     color: cornsilk;
 }
 
-    .yt-fixed-box:hover {
-        color: yellow;
-    }
+.yt-fixed-box:hover {
+    color: yellow;
+    z-index: 4;
+}
+
+:root {
+    scrollbar-gutter: stable;
+}
+
+/*body {
+    scrollbar-gutter: stable;
+}*/

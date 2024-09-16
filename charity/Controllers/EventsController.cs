@@ -161,5 +161,7 @@ namespace charity.Controllers
         {
             return _context.Events.Any(e => e.Id == id);
         }
+
+        
     }
 }
