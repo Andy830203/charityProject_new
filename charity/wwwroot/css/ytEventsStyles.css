@@ -1,0 +1,16 @@
+﻿.yt-fixed-box {
+    /* for block */
+    background-color: dimgray;
+    display: block;
+    padding: 20px;
+    position: fixed;
+    top: 80px;
+    right: 50px;
+    /* for link */
+    text-decoration: none;
+    color: cornsilk;
+}
+
+    .yt-fixed-box:hover {
+        color: yellow;
+    }

@@ -14,7 +14,9 @@ namespace charity.Models
                     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                     .AddJsonFile("appsettings.json")
                     .Build();
-                optionsBuilder.UseSqlServer(config.GetConnectionString("Charity"));
+                optionsBuilder
+                    .UseLazyLoadingProxies()
+                    .UseSqlServer(config.GetConnectionString("Charity"));
             }
         }
     }
