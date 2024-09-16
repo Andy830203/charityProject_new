@@ -4,9 +4,9 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>新增</h1>
 
-<h4>Member</h4>
+<h4>會員</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -91,14 +91,18 @@
                 <span asp-validation-for="FaceRec" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <br>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 送出
+                </button>
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <hr>
+    <a asp-action="Index" class="btn btn-primary"><i class="fa-solid fa-file-lines"></i> 回到列表</a>
 </div>
 
 @section Scripts {
