@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using charity.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace charity.Controllers
 {
@@ -22,7 +23,7 @@ namespace charity.Controllers
         public async Task<IActionResult> Index()
         {
             var charityContext = _context.Products.Include(p => p.SellerNavigation);
-            return View(await charityContext.ToListAsync());
+            return View(charityContext);
         }
 
         // GET: Products/Details/5
@@ -56,7 +57,7 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Seller,Category,Price,OnShelf,OnShelfTime,Description,Instock")] Product product)
+        public async Task<IActionResult> Create([Bind("Name,Seller,Category,Price,OnShelf,OnShelfTime,Description,Instock")] Product product)
         {
             if (ModelState.IsValid)
             {

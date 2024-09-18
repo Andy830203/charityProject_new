@@ -7,17 +7,19 @@ public partial class Order
 {
     public int Id { get; set; }
 
-    public int Buyer { get; set; }
+    public int? Buyer { get; set; }
 
-    public int TotalPrice { get; set; }
+    public int? TotalPrice { get; set; }
 
-    public int Status { get; set; }
+    public int? Status { get; set; }
 
-    public DateTime OrderTime { get; set; }
+    public DateTime? OrderTime { get; set; }
 
     public int? DiscountCode { get; set; }
 
-    public virtual Member BuyerNavigation { get; set; } = null!;
+    public virtual Member? BuyerNavigation { get; set; }
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+
+    public virtual OrderStatus? StatusNavigation { get; set; }
 }

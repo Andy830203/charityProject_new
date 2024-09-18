@@ -4,10 +4,10 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>詳細資訊</h1>
 
 <div>
-    <h4>Product</h4>
+    <h4>商品</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -52,15 +52,18 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Instock)
         </dd>
-        <dt class = "col-sm-2">
+        @* <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.SellerNavigation)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.SellerNavigation.Id)
-        </dd>
+        </dd>  *@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning"><i class="fa-regular fa-pen-to-square"></i> 修改</a>
+    <div>
+        <hr>
+        <a asp-action="Index" class="btn btn-primary"><i class="fa-solid fa-file-lines"></i> 回到列表</a>
+    </div>
 </div>

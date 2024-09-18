@@ -3,13 +3,17 @@ using System.Collections.Generic;
 
 namespace charity.Models;
 
-public partial class ProductImg
+public partial class CartItem
 {
     public int Id { get; set; }
 
+    public int? Buyer { get; set; }
+
     public int? PId { get; set; }
 
-    public string? ImgName { get; set; }
+    public int? Quantity { get; set; }
+
+    public virtual Member? BuyerNavigation { get; set; }
 
     public virtual Product? PIdNavigation { get; set; }
 }

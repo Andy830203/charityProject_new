@@ -7,9 +7,9 @@ public partial class Member
 {
     public int Id { get; set; }
 
-    public string Account { get; set; } = null!;
+    public string? Account { get; set; }
 
-    public string Password { get; set; } = null!;
+    public string? Password { get; set; }
 
     public string? NickName { get; set; }
 
@@ -25,19 +25,21 @@ public partial class Member
 
     public string? Phone { get; set; }
 
-    public int Points { get; set; }
+    public int? Points { get; set; }
 
-    public int Checkin { get; set; }
+    public int? Checkin { get; set; }
 
-    public int Exp { get; set; }
+    public int? Exp { get; set; }
 
     public string? ImgName { get; set; }
 
-    public int Status { get; set; }
+    public int? Status { get; set; }
 
-    public int Access { get; set; }
+    public int? Access { get; set; }
 
     public bool? FaceRec { get; set; }
+
+    public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 

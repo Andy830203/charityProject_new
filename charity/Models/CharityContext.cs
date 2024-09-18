@@ -15,24 +15,65 @@ public partial class CharityContext : DbContext
     {
     }
 
+    public virtual DbSet<CartItem> CartItems { get; set; }
+
+    public virtual DbSet<Discount> Discounts { get; set; }
+
     public virtual DbSet<Member> Members { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
 
     public virtual DbSet<OrderItem> OrderItems { get; set; }
 
+    public virtual DbSet<OrderStatus> OrderStatuses { get; set; }
+
     public virtual DbSet<Product> Products { get; set; }
 
-    public virtual DbSet<ProductImg> ProductImgs { get; set; }
+    public virtual DbSet<ProductCategory> ProductCategories { get; set; }
 
+    public virtual DbSet<ProductImg> ProductImgs { get; set; }
     /*
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Data Source = (localdb)\\ProjectModels;Initial Catalog=charity;Integrated Security=true;Encrypt=true;TrustServerCertificate=true");
     */
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<CartItem>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("cart_item_id_pk");
+
+            entity.ToTable("cart_item");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Buyer).HasColumnName("buyer");
+            entity.Property(e => e.PId).HasColumnName("p_id");
+            entity.Property(e => e.Quantity).HasColumnName("quantity");
+
+            entity.HasOne(d => d.BuyerNavigation).WithMany(p => p.CartItems)
+                .HasForeignKey(d => d.Buyer)
+                .HasConstraintName("cart_item_buyer_fk");
+
+            entity.HasOne(d => d.PIdNavigation).WithMany(p => p.CartItems)
+                .HasForeignKey(d => d.PId)
+                .HasConstraintName("cart_item_p_id_fk");
+        });
+
+        modelBuilder.Entity<Discount>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("discount_id_pk");
+
+            entity.ToTable("discount");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
+            entity.Property(e => e.Rate)
+                .HasColumnType("decimal(18, 0)")
+                .HasColumnName("rate");
+        });
+
         modelBuilder.Entity<Member>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("member_id_pk");
@@ -89,8 +130,11 @@ public partial class CharityContext : DbContext
 
             entity.HasOne(d => d.BuyerNavigation).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.Buyer)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("o_buyer_fk");
+
+            entity.HasOne(d => d.StatusNavigation).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.Status)
+                .HasConstraintName("o_status_fk");
         });
 
         modelBuilder.Entity<OrderItem>(entity =>
@@ -107,13 +151,25 @@ public partial class CharityContext : DbContext
 
             entity.HasOne(d => d.OIdNavigation).WithMany(p => p.OrderItems)
                 .HasForeignKey(d => d.OId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("oi_o_id_fk");
 
             entity.HasOne(d => d.PIdNavigation).WithMany(p => p.OrderItems)
                 .HasForeignKey(d => d.PId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("oi_p_id_fk");
+        });
+
+        modelBuilder.Entity<OrderStatus>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("os_id_pk");
+
+            entity.ToTable("order_status");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
         });
 
         modelBuilder.Entity<Product>(entity =>
@@ -136,10 +192,25 @@ public partial class CharityContext : DbContext
             entity.Property(e => e.Price).HasColumnName("price");
             entity.Property(e => e.Seller).HasColumnName("seller");
 
+            entity.HasOne(d => d.CategoryNavigation).WithMany(p => p.Products)
+                .HasForeignKey(d => d.Category)
+                .HasConstraintName("p_category_fk");
+
             entity.HasOne(d => d.SellerNavigation).WithMany(p => p.Products)
                 .HasForeignKey(d => d.Seller)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("p_seller_fk");
+        });
+
+        modelBuilder.Entity<ProductCategory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("pc_c_id_pk");
+
+            entity.ToTable("product_category");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
         });
 
         modelBuilder.Entity<ProductImg>(entity =>
@@ -156,7 +227,6 @@ public partial class CharityContext : DbContext
 
             entity.HasOne(d => d.PIdNavigation).WithMany(p => p.ProductImgs)
                 .HasForeignKey(d => d.PId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("pi_p_id_fk");
         });
 

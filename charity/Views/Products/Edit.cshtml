@@ -54,14 +54,18 @@
                 <span asp-validation-for="Instock" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <br>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 保存
+                </button>
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <hr>
+    <a asp-action="Index" class="btn btn-primary"><i class="fa-solid fa-file-lines"></i> 回到列表</a>
 </div>
 
 @section Scripts {
