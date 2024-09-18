@@ -63,7 +63,7 @@
                 @Html.DisplayFor(modelItem => item.Organizer.Id)
             </td>
         </tr>
-        @* 為下列兩個手風琴設變數 *@
+        @* 為下列手風琴內部元素id設變數 *@
         var accLoc = $"accordionLocation{item.Id}";
         var accPhoto = $"accordionPhoto{item.Id}";
         var accPeriod = $"accordionPeriod{item.Id}";
@@ -73,6 +73,7 @@
         var clpLoc = $"collapseLocation{item.Id}";
         var clpPhoto = $"collapsePhoto{item.Id}";
         var clpPeriod = $"collap{item.Id}";
+        var locs = $"locations{item.Id}";
         @* 區段結束 *@
         <!-- 活動地點 -->
         <tr>
@@ -86,9 +87,8 @@
                         </h2>
                         <div id="@clpLoc" class="accordion-collapse collapse" aria-labelledby="@headLoc" data-bs-parent="#@accLoc">
                             <div class="accordion-body">
-                                <p>
-                                    測試內容
-                                </p>
+                                <!--<p>測試內容</p>-->
+                                <div id="@locs" class="ajax-contents" data-id="@item.Id"></div>
                             </div>
                         </div>
                     </div>
@@ -148,15 +148,9 @@
 @section Scripts 
 {
     <script>
-        // const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-        // // const fixedElement = document.querySelector('.your-fixed-element');
-        // const topNav = document.querySelector('.sb-nav-fixed .sb-topnav');
-        // const back = document.querySelector('.yt-fixed-box');
-
-        // if (scrollbarWidth > 0) {
-        //     topNav.style.right = `${scrollbarWidth}px`;
-        //     back.style.right = `${scrollbarWidth}px`;
-        // }
+        
     </script>
+
+
 }
 

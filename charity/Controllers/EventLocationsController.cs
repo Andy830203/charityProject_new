@@ -9,24 +9,23 @@ using charity.Models;
 
 namespace charity.Controllers
 {
-    public class EventsController : Controller
+    public class EventLocationsController : Controller
     {
         private readonly CharityContext _context;
 
-        public EventsController(CharityContext context)
+        public EventLocationsController(CharityContext context)
         {
             _context = context;
         }
 
-        // GET: Events
+        // GET: EventLocations
         public async Task<IActionResult> Index()
         {
-            //var charityContext = _context.Events.Include(@ => @.Organizer);
-            var charityContext = _context.Events.Include(e => e.Organizer);
+            var charityContext = _context.EventLocations.Include(e => e.EIdNavigation).Include(e => e.LIdNavigation);
             return View(await charityContext.ToListAsync());
         }
 
-        // GET: Events/Details/5
+        // GET: EventLocations/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,51 +33,45 @@ namespace charity.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Events
-                //.Include(@ => @.Organizer)
-                .Include(e => e.Organizer)
+            var eventLocation = await _context.EventLocations
+                .Include(e => e.EIdNavigation)
+                .Include(e => e.LIdNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@event == null)
+            if (eventLocation == null)
             {
                 return NotFound();
             }
 
-            return View(@event);
+            return View(eventLocation);
         }
 
-        // GET: Events/Create
+        // GET: EventLocations/Create
         public IActionResult Create()
         {
-            ViewData["OrganizerId"] = new SelectList(_context.Members, "Id", "Id");
+            ViewData["EId"] = new SelectList(_context.Events, "Id", "Id");
+            ViewData["LId"] = new SelectList(_context.Locations, "Id", "Id");
             return View();
         }
 
-        // POST: Events/Create
+        // POST: EventLocations/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,OrganizerId,Fee,Capacity,Description")] Event @event) //[Bind("Id,Name,OrganizerId,Fee,Capacity,Description")]
+        public async Task<IActionResult> Create([Bind("Id,EId,LId,OrderInEvent")] EventLocation eventLocation)
         {
-            //Console.WriteLine(@event);
-            //Console.WriteLine(@event.OrganizerId);
-            //Console.WriteLine(@event.Organizer);
-            //if (@event.OrganizerId != null)
-            //{
-            //    @event.Organizer = await _context.Members.FindAsync(@event.OrganizerId);
-            //}
-
             if (ModelState.IsValid)
             {
-                _context.Add(@event);
+                _context.Add(eventLocation);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OrganizerId"] = new SelectList(_context.Members, "Id", "Id", @event.OrganizerId);
-            return View(@event);
+            ViewData["EId"] = new SelectList(_context.Events, "Id", "Id", eventLocation.EId);
+            ViewData["LId"] = new SelectList(_context.Locations, "Id", "Id", eventLocation.LId);
+            return View(eventLocation);
         }
 
-        // GET: Events/Edit/5
+        // GET: EventLocations/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -86,23 +79,24 @@ namespace charity.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Events.FindAsync(id);
-            if (@event == null)
+            var eventLocation = await _context.EventLocations.FindAsync(id);
+            if (eventLocation == null)
             {
                 return NotFound();
             }
-            ViewData["OrganizerId"] = new SelectList(_context.Members, "Id", "Id", @event.OrganizerId);
-            return View(@event);
+            ViewData["EId"] = new SelectList(_context.Events, "Id", "Id", eventLocation.EId);
+            ViewData["LId"] = new SelectList(_context.Locations, "Id", "Id", eventLocation.LId);
+            return View(eventLocation);
         }
 
-        // POST: Events/Edit/5
+        // POST: EventLocations/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,OrganizerId,Fee,Capacity,Description")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,EId,LId,OrderInEvent")] EventLocation eventLocation)
         {
-            if (id != @event.Id)
+            if (id != eventLocation.Id)
             {
                 return NotFound();
             }
@@ -111,12 +105,12 @@ namespace charity.Controllers
             {
                 try
                 {
-                    _context.Update(@event);
+                    _context.Update(eventLocation);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EventExists(@event.Id))
+                    if (!EventLocationExists(eventLocation.Id))
                     {
                         return NotFound();
                     }
@@ -127,11 +121,12 @@ namespace charity.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OrganizerId"] = new SelectList(_context.Members, "Id", "Id", @event.OrganizerId);
-            return View(@event);
+            ViewData["EId"] = new SelectList(_context.Events, "Id", "Id", eventLocation.EId);
+            ViewData["LId"] = new SelectList(_context.Locations, "Id", "Id", eventLocation.LId);
+            return View(eventLocation);
         }
 
-        // GET: Events/Delete/5
+        // GET: EventLocations/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -139,48 +134,36 @@ namespace charity.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Events
-                .Include(e => e.Organizer)
+            var eventLocation = await _context.EventLocations
+                .Include(e => e.EIdNavigation)
+                .Include(e => e.LIdNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@event == null)
+            if (eventLocation == null)
             {
                 return NotFound();
             }
 
-            return View(@event);
+            return View(eventLocation);
         }
 
-        // POST: Events/Delete/5
+        // POST: EventLocations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @event = await _context.Events.FindAsync(id);
-            if (@event != null)
+            var eventLocation = await _context.EventLocations.FindAsync(id);
+            if (eventLocation != null)
             {
-                _context.Events.Remove(@event);
+                _context.EventLocations.Remove(eventLocation);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EventExists(int id)
+        private bool EventLocationExists(int id)
         {
-            return _context.Events.Any(e => e.Id == id);
-        }
-
-        //GET: /Events/EventLocations/5
-        public async Task<IActionResult> EventLocations(int id)
-        {
-            Event? e = await _context.Events.FindAsync(id);
-            
-            if (e == null)
-            {
-                return NotFound();
-            }
-
-            return PartialView("_EventLocationsPartial", e.EventLocations);
+            return _context.EventLocations.Any(e => e.Id == id);
         }
     }
 }
