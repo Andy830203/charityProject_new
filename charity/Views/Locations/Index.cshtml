@@ -10,6 +10,14 @@
             height: 100%;
             width: 100%;
         }
+        /* 設置動畫過渡效果 */
+        /* 設置放大效果 */
+        table tbody tr:hover {
+            transition: transform 0.3s ease; /* 設置動畫過渡效果 */
+            transform: scale(1.01); /* 當 hover 到某一行時，該行會放大 5% */
+        }
+
+
     </style>
 }
 <div class="col-12">
@@ -22,7 +30,7 @@
     <p>
         <a asp-action="Create">新建地址</a>
     </p>
-    <div style="overflow:auto;display:block;max-height:140px;">
+    <div style="overflow-x:hidden; overflow-y:auto;display:block;max-height:140px;" id="map_info_div">
         <table class="table table-hover" id="locationTable">
             <thead>
                 <tr>
@@ -91,13 +99,50 @@
 @*地圖呼叫*@
 @section Scripts
 {
+    @*當寬度小於750時，啟用橫向卷軸*@
+    <script>
+        $(window).resize(function () {
+            let Width_map_1 = $(window).width();
+             
+            if (Width_map_1 > 750) {
+                $("#map_info_div").css({
+                    "overflow-x": "hidden",
+                    "overflow-y": "auto"
+                });
+                $("table tbody tr").hover(
+                    function () {
+                        $(this).css({
+                            "transition": "transform 0.3s ease",
+                            "transform": "scale(1.05)"
+                        });
+                    },
+                );
+            } 
+            else {
+                $("#map_info_div").css({
+                    "overflow": "auto"
+                });
+                $("table tbody tr").hover(
+                    function () {
+                        $(this).removeAttr("transition").removeAttr("transform");
+                    },
+                );
+            }
+        });
+
+
+
+
+
+        </script>
+    @* 連接google map st *@
     <script>
         (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
               key: "AIzaSyAvwZ6fFGycrcyXR8jzu_m5CBx_gbQhygg",
           v: "weekly",
         });
-        //initMap();
     </script>
+    @* 連接google map end *@
     @* 初始載入st *@
     <script>
         let map;
@@ -115,13 +160,6 @@
     @* 點擊跳轉st *@
     <script>
         {
-            // const mapOptions = {
-            //     zoom: 5,
-            //     center: { lat: 35.8617, lng: 104.1954 }  // 中國的中心座標
-            // };
-
-            // const map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
             // 綁定點擊事件到表格
             const table = document.getElementById('locationTable');
             table.addEventListener('click', function (e) {
