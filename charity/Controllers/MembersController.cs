@@ -58,14 +58,14 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Account,Password,NickName,RealName,Gender,Birthday,Email,Address,Phone,Points,Checkin,Exp,ImgName,Status,Access,FaceRec")] Member member)
+        public async Task<IActionResult> Create([Bind("Account,Password,NickName,RealName,Gender,Birthday,Email,Address,Phone,Points,Checkin,Exp,ImgName,Status,Access,FaceRec")] Member member)
         {
-            //if (ModelState.IsValid)  //因為一開始沒有登入所以驗證false走不進去
-            //{
+            if (ModelState.IsValid)  //因為一開始沒有登入所以驗證false走不進去
+            {
                 _context.Add(member);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            //}
+            }
             ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id", member.Access);
             ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id", member.Status);
             return View(member);

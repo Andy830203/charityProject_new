@@ -44,7 +44,7 @@ public partial class Member
     [Display(Name = "經驗值")]
     public int Exp { get; set; }
 
-    [Display(Name = "大頭照")]
+    [Display(Name = "照片")]
     public string? ImgName { get; set; }
 
     [Display(Name = "帳號狀態")]

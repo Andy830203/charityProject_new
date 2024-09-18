@@ -15,7 +15,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<CharityContext>(options =>   //µù¥U¨ìDI
+builder.Services.AddDbContext<CharityContext>(options =>   //ï¿½ï¿½ï¿½Uï¿½ï¿½DI
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Charity")); 
 });
