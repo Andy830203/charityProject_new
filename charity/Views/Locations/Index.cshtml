@@ -1,0 +1,113 @@
+﻿@model IEnumerable<charity.Models.Location>
+
+@{
+    ViewData["Title"] = "Index";
+}
+@section css
+{
+    <style>
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+}
+<div class="col-12">
+    <!-- 地圖st -->
+    <div class="col-12" style="height:50vh">
+        <div id="map">
+        </div>
+    </div>
+    <!-- 地圖end -->
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <div style="overflow:auto;display:block;max-height:140px;">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)<!--地名-->
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Longitude)<!--經-->
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Latitude)<!--緯-->
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Description)<!--描述-->
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Address)<!--地址-->
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PlusCode)<!--經緯度簡寫-->
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Capacity)<!--人數上限-->
+                    </th>
+                    <th>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Longitude)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Latitude)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PlusCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Capacity)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@*地圖呼叫*@
+@section Scripts
+{
+
+    <script>
+        (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+              key: "AIzaSyAvwZ6fFGycrcyXR8jzu_m5CBx_gbQhygg",
+          v: "weekly",
+        });
+    </script>
+    <script>
+        let map;
+        async function initMap() {
+          const { Map } = await google.maps.importLibrary("maps");
+
+          map = new Map(document.getElementById("map"), {
+                center: { lat: 22.6273, lng: 120.3014 },
+            zoom: 14,
+          });
+        }
+        initMap();
+    </script>
+}
