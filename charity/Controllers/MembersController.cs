@@ -60,12 +60,12 @@ namespace charity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Account,Password,NickName,RealName,Gender,Birthday,Email,Address,Phone,Points,Checkin,Exp,ImgName,Status,Access,FaceRec")] Member member)
         {
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)  //因為一開始沒有登入所以驗證false走不進去
+            //{
                 _context.Add(member);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
+            //}
             ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id", member.Access);
             ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id", member.Status);
             return View(member);
@@ -97,14 +97,14 @@ namespace charity.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("Id,Account,Password,NickName,RealName,Gender,Birthday,Email,Address,Phone,Points,Checkin,Exp,ImgName,Status,Access,FaceRec")] Member member)
         {
             if (id != member.Id)
-            {
+            {   
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            //if (ModelState.IsValid) //因為一開始沒有登入所以驗證false走不進去
+            //{
+            try
             {
-                try
-                {
                     _context.Update(member);
                     await _context.SaveChangesAsync();
                 }
@@ -120,7 +120,7 @@ namespace charity.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
+            //}
             ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id", member.Access);
             ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id", member.Status);
             return View(member);
@@ -161,6 +161,41 @@ namespace charity.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        //GET: /Members/GetPicture/1
+        public async Task<FileResult>? GetPicture(int id)
+        {
+            Member? m = await _context.Members.FindAsync(id);
+            string? imagePath = m.ImgName;
+            if (System.IO.File.Exists(imagePath))
+            {
+                // Get the file extension to determine the content type
+                string fileExtension = Path.GetExtension(imagePath).ToLower(); //讀副檔名
+
+                // Set the MIME type based on the file extension
+                string contentType;
+                switch (fileExtension)
+                {
+                    case ".jpg":
+                    case ".jpeg":
+                        contentType = "image/jpeg";
+                        break;
+                    case ".png":
+                        contentType = "image/png";
+                        break;
+                    case ".gif":
+                        contentType = "image/gif";
+                        break;
+                    default:
+                        contentType = "application/octet-stream"; // generic binary data
+                        break;
+                }
+                return File(System.IO.File.ReadAllBytes(imagePath), contentType);
+            }
+            else
+            {
+                return null;
+            }
+        }
         private bool MemberExists(int id)
         {
             return _context.Members.Any(e => e.Id == id);
