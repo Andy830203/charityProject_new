@@ -34,7 +34,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Gender" class="control-label"></label>
-                <input asp-for="Gender" class="form-control" />
+@*                 <input asp-for="Gender" class="form-control" />
+ *@                @* 性別選擇修改為下拉選單 *@
+                <select asp-for="Gender" class="form-select">
+                    <option value="true">男</option>
+                    <option value="false">女</option>
+                </select>
                 <span asp-validation-for="Gender" class="text-danger"></span>
             </div>
             <div class="form-group">

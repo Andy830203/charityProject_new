@@ -39,7 +39,16 @@
             @Html.DisplayNameFor(model => model.Gender)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Gender)
+            @* @Html.DisplayFor(model => model.Gender) *@
+            @* 性別顯示修改 *@
+            @if (Model.Gender == true)
+            {
+                <span>男</span>
+            }
+            else
+            {
+                <span>女</span>
+            }
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Birthday)

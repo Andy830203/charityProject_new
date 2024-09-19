@@ -6,7 +6,7 @@
 
 <h1>修改</h1>
 
-<h4>會員</h4>
+<h4>會員資料</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -32,12 +32,18 @@
                 <label asp-for="RealName" class="control-label"></label>
                 <input asp-for="RealName" class="form-control" />
                 <span asp-validation-for="RealName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+           
+            </div><div class="form-group">
                 <label asp-for="Gender" class="control-label"></label>
-                <input asp-for="Gender" class="form-control" />
+                @* <input asp-for="Gender" class="form-control" /> *@
+                @* 性別選擇修改為下拉選單 *@
+                <select asp-for="Gender" class="form-select">
+                    <option value="true">男</option>
+                    <option value="false">女</option>
+                </select>
                 <span asp-validation-for="Gender" class="text-danger"></span>
             </div>
+            
             <div class="form-group">
                 <label asp-for="Birthday" class="control-label"></label>
                 <input asp-for="Birthday" class="form-control" />
