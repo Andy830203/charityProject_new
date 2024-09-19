@@ -34,6 +34,7 @@ namespace charity.Controllers
                 return NotFound();
             }
 
+
             var product = await _context.Products
                 .Include(p => p.SellerNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
