@@ -9,12 +9,18 @@
     var clpLoc = $"collapseLocation{Model.Id}";
     var clpPhoto = $"collapsePhoto{Model.Id}";
     var clpPeriod = $"collap{Model.Id}";
-    @* var locs = $"locations{Model.Id}"; *@
-    int colWidth = 8;
     @* 區段結束 *@
+    //摺疊全部手風琴的變數
+    var trClassName = $"more-info{Model.Id}";
+    var locs = $"loc{Model.Id}";
+    var pics = $"pic{Model.Id}";
+    var times = $"time{Model.Id}";
+    // 手風琴所佔欄數
+    int colWidth = 9;
 }
+
 <!-- 活動地點 -->
-<tr>
+<tr class="collapse @trClassName" id=@locs>
     <td colspan="@colWidth">
         <div class="accordion" id="@accLoc">
             <div class="accordion-item">
@@ -34,7 +40,7 @@
     </td>
 </tr>
 <!-- 活動照片 -->
-<tr>
+<tr class="collapse @trClassName" id=@pics>
     <td colspan="@colWidth">
         <div class="accordion" id="@accPhoto">
             <div class="accordion-item">
@@ -53,7 +59,7 @@
     </td>
 </tr>
 <!-- 活動時段 -->
-<tr>
+<tr class="collapse @trClassName" id=@times>
     <td colspan="@colWidth">
         <div class="accordion" id="@accPeriod">
             <div class="accordion-item">

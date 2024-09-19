@@ -20,6 +20,8 @@
 <table class="table">
     <thead class="table-primary">
         <tr>
+            <th></th>
+            <th></th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -41,12 +43,27 @@
             <th>
                 @Html.DisplayNameFor(model => model.Organizer)
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
+            @* block start: 摺疊全部手風琴的變數 *@
+            var trClassName = $"more-info{item.Id}";
+            var locs = $"loc{item.Id}";
+            var pics = $"pic{item.Id}";
+            var times = $"time{item.Id}";
+            @* block end *@
         <tr>
+            <td>
+                <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target=".@trClassName" aria-expanded="false" aria-controls="@locs @pics @times">
+                    +
+                </button>
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
@@ -67,11 +84,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Organizer.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
         <partial name="_accordions" for=@item></partial>
