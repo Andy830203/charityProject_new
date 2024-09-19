@@ -85,6 +85,7 @@
                             @Html.DisplayFor(modelItem => item.Capacity)
                         </td>
                         <td>
+                            <button onclick="openWindow_edit(@item.Id)">編輯</button>
                             <a asp-action="Edit" asp-route-id="@item.Id">編輯</a> |
                             <a asp-action="Details" asp-route-id="@item.Id">檢視</a> |
                             <a asp-action="Delete" asp-route-id="@item.Id">刪除</a>
@@ -99,6 +100,14 @@
 @*地圖呼叫*@
 @section Scripts
 {
+    @* 開啟新視窗st *@
+    <script>
+        function openWindow_edit(id) {
+            // 使用 window.open 開啟新的網頁
+            window.open('/Locations/Edit/'+id, '_blank', 'width=800,height=600');
+        }
+    </script>
+    @* 開啟新視窗end *@
     @*當寬度小於750時，啟用橫向卷軸*@
     <script>
         $(window).resize(function () {
