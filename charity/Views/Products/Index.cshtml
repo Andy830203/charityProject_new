@@ -53,7 +53,13 @@
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OnShelf)
+                @* @Html.DisplayFor(modelItem => item.OnShelf) *@
+                    @if (item.OnShelf == true) {
+                        <span>上架中</span>
+                    }
+                    else {
+                        <span>目前不在架上</span>
+                    }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.OnShelfTime)

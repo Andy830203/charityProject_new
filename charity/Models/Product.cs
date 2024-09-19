@@ -15,7 +15,7 @@ public partial class Product
     public int? Category { get; set; }
     [Display(Name = "售價")]
     public int? Price { get; set; }
-    [Display(Name = "上架中")]
+    [Display(Name = "上架狀態")]
     public bool? OnShelf { get; set; }
     [Display(Name = "上架時間")]
     public DateTime? OnShelfTime { get; set; }
