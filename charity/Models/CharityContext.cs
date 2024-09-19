@@ -32,10 +32,10 @@ public partial class CharityContext : DbContext
                 .HasMaxLength(500)
                 .HasColumnName("description");
             entity.Property(e => e.Latitude)
-                .HasColumnType("decimal(18, 0)")
+                .HasColumnType("decimal(9, 6)")
                 .HasColumnName("latitude");
             entity.Property(e => e.Longitude)
-                .HasColumnType("decimal(18, 0)")
+                .HasColumnType("decimal(9, 6)")
                 .HasColumnName("longitude");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
@@ -59,7 +59,6 @@ public partial class CharityContext : DbContext
 
             entity.HasOne(d => d.LIdNavigation).WithMany(p => p.LocationImgs)
                 .HasForeignKey(d => d.LId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("location_l_id_fk");
         });
 
