@@ -26,7 +26,7 @@ namespace charity.Controllers
         }
 
         // GET: EventLocations/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string? fromList)
         {
             if (id == null)
             {
@@ -42,14 +42,24 @@ namespace charity.Controllers
                 return NotFound();
             }
 
+            if (!Url.IsLocalUrl(fromList))
+            {
+                fromList = Url.Action("Index", "EventLocations");
+            }
+            ViewBag.FromList = fromList;
             return View(eventLocation);
         }
 
         // GET: EventLocations/Create
-        public IActionResult Create()
+        public IActionResult Create(string? fromList)
         {
+            if (!Url.IsLocalUrl(fromList))
+            {
+                fromList = Url.Action("Index", "EventLocations");
+            }
             ViewData["EId"] = new SelectList(_context.Events, "Id", "Id");
             ViewData["LId"] = new SelectList(_context.Locations, "Id", "Id");
+            ViewBag.FromList = fromList;
             return View();
         }
 
@@ -72,7 +82,7 @@ namespace charity.Controllers
         }
 
         // GET: EventLocations/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, string? fromList)
         {
             if (id == null)
             {
@@ -84,6 +94,12 @@ namespace charity.Controllers
             {
                 return NotFound();
             }
+
+            if (!Url.IsLocalUrl(fromList))
+            {
+                fromList = Url.Action("Index", "EventLocations");
+            }
+            ViewBag.FromList = fromList;
             ViewData["EId"] = new SelectList(_context.Events, "Id", "Id", eventLocation.EId);
             ViewData["LId"] = new SelectList(_context.Locations, "Id", "Id", eventLocation.LId);
             return View(eventLocation);
@@ -127,7 +143,7 @@ namespace charity.Controllers
         }
 
         // GET: EventLocations/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, string? fromList)
         {
             if (id == null)
             {
@@ -143,6 +159,11 @@ namespace charity.Controllers
                 return NotFound();
             }
 
+            if (!Url.IsLocalUrl(fromList))
+            {
+                fromList = Url.Action("Index", "EventLocations");
+            }
+            ViewBag.FromList = fromList;
             return View(eventLocation);
         }
 
