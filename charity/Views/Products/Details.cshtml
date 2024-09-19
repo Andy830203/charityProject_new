@@ -1,4 +1,4 @@
-﻿@model charity.Models.Product
+﻿@model charity.ViewModels.ProductImgViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -11,29 +11,29 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.product.Name)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.product.Name)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
+            @Html.DisplayNameFor(model => model.product.Category)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category)
+            @Html.DisplayFor(model => model.product.Category)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
+            @Html.DisplayNameFor(model => model.product.Price)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
+            @Html.DisplayFor(model => model.product.Price)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OnShelf)
+            @Html.DisplayNameFor(model => model.product.OnShelf)
         </dt>
         <dd class = "col-sm-10">
-            @* @Html.DisplayFor(model => model.OnShelf) *@
-            @if (Model.OnShelf == true) {
+            @* @Html.DisplayFor(model => model.product.OnShelf) *@
+            @if (Model.product.OnShelf == true) {
                 <span>上架中</span>
             }
             else {
@@ -41,22 +41,37 @@
             }
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OnShelfTime)
+            @Html.DisplayNameFor(model => model.product.OnShelfTime)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OnShelfTime)
+            @Html.DisplayFor(model => model.product.OnShelfTime)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
+            @Html.DisplayNameFor(model => model.product.Description)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
+            @Html.DisplayFor(model => model.product.Description)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Instock)
+            @Html.DisplayNameFor(model => model.product.Instock)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Instock)
+            @Html.DisplayFor(model => model.product.Instock)
+        </dd>
+        <dt class="col-sm-2">
+            圖片
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.productImgs != null && Model.productImgs.Any()) {
+                <div>
+                    @foreach (var imagePath in Model.productImgs) {
+                        <img src="@Url.Content(imagePath)" alt="" style="width: 300px; height: auto; margin-right: 10px;">
+                    }
+                </div>
+            }
+            else {
+                <p>No images available for this product.</p>
+            }
         </dd>
         @* <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.SellerNavigation)
@@ -67,7 +82,7 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning"><i class="fa-regular fa-pen-to-square"></i> 修改</a>
+    <a asp-action="Edit" asp-route-id="@Model.product?.Id" class="btn btn-warning"><i class="fa-regular fa-pen-to-square"></i> 修改</a>
     <div>
         <hr>
         <a asp-action="Index" class="btn btn-primary"><i class="fa-solid fa-file-lines"></i> 回到列表</a>

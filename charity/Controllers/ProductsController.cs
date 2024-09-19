@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using charity.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using charity.ViewModels;
 
 namespace charity.Controllers
 {
@@ -34,7 +35,6 @@ namespace charity.Controllers
                 return NotFound();
             }
 
-
             var product = await _context.Products
                 .Include(p => p.SellerNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -42,8 +42,17 @@ namespace charity.Controllers
             {
                 return NotFound();
             }
+            // 查詢產品的圖片路徑
+            var images = _context.ProductImgs.Where(pi => pi.Id == id).Select(pi => pi.ImgName).ToList();
 
-            return View(product);
+            // 創建 ViewModel 並填充資料
+            var viewModel = new ProductImgViewModel {
+                product = product,
+                productImgs = images
+            };
+
+
+            return View(viewModel);
         }
 
         // GET: Products/Create

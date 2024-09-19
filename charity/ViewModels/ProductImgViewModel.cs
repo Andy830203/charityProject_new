@@ -3,6 +3,6 @@ using charity.Models;
 namespace charity.ViewModels {
     public class ProductImgViewModel {
         public Product product {  get; set; }
-        public IEnumerable<ProductImg> productImgs { get; set; }
+        public List<string> productImgs { get; set; }
     }
 }
