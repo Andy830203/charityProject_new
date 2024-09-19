@@ -1,14 +1,13 @@
-﻿@model charity.Models.Member
+﻿@model charity.Models.Staff
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Details";
 }
 
-<h1>刪除</h1>
+<h1>資訊</h1>
 
-<h3>確定要刪除嗎?</h3>
 <div>
-    <h4>會員資料</h4>
+    <h4>員工資料</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -24,21 +23,18 @@
             @Html.DisplayFor(model => model.Password)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NickName)
+            @Html.DisplayNameFor(model => model.Name)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NickName)
+            @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt class = "col-sm-2">
+        @* <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.RealName)
-        </dt>
-        <dd class = "col-sm-10">
+        </dt> *@
+        @* <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.RealName)
-        </dd>
+        </dd> *@
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Gender)
-        </dt>
-        <dd class = "col-sm-10">
             @* @Html.DisplayFor(model => model.Gender) *@
             @* 性別顯示修改 *@
             @if (Model.Gender == true)
@@ -49,6 +45,9 @@
             {
                 <span>女</span>
             }
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Gender)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Birthday)
@@ -75,35 +74,17 @@
             @Html.DisplayFor(model => model.Phone)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Points)
+            @Html.DisplayNameFor(model => model.ArrivalDate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Points)
+            @Html.DisplayFor(model => model.ArrivalDate)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Checkin)
+            @Html.DisplayNameFor(model => model.ResignDate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Checkin)
+            @Html.DisplayFor(model => model.ResignDate)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Exp)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Exp)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImgName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImgName)
-        </dd>
-        @* <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FaceRec)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FaceRec)
-        </dd> *@
         @* <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.AccessNavigation)
         </dt>
@@ -117,15 +98,11 @@
             @Html.DisplayFor(model => model.StatusNavigation.Id)
         </dd> *@
     </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <button type="submit" class="btn btn-danger">
-            <i class="fa-solid fa-trash-can"></i> 刪除
-        </button>
-        <div>
-            <hr>
-            <a asp-action="Index" class="btn btn-primary"><i class="fa-solid fa-file-lines"></i> 回到列表</a>
-        </div>
-    </form>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning"><i class="fa-regular fa-pen-to-square"></i> 修改</a>
+    <div>
+        <hr>
+        <a asp-action="Index" class="btn btn-primary"><i class="fa-solid fa-file-lines"></i> 回到列表</a>
+    </div>
 </div>

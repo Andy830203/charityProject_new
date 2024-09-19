@@ -27,6 +27,10 @@ public partial class CharityContext : DbContext
 
     public virtual DbSet<Staff> Staff { get; set; }
 
+    public virtual DbSet<StaffAccess> StaffAccesses { get; set; }
+
+    public virtual DbSet<StaffStatus> StaffStatuses { get; set; }
+
 //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
 //        => optionsBuilder.UseSqlServer("Data Source = (localdb)\\ProjectModels;Initial Catalog=charity;Integrated Security=true;Encrypt=true;TrustServerCertificate=true");
@@ -150,15 +154,69 @@ public partial class CharityContext : DbContext
             entity.ToTable("staff");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Access).HasColumnName("access");
             entity.Property(e => e.Account)
                 .HasMaxLength(100)
                 .HasColumnName("account");
+            entity.Property(e => e.Address)
+                .HasMaxLength(100)
+                .HasColumnName("address");
+            entity.Property(e => e.ArrivalDate).HasColumnName("arrivalDate");
+            entity.Property(e => e.Birthday).HasColumnName("birthday");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .HasColumnName("email");
+            entity.Property(e => e.Gender).HasColumnName("gender");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
             entity.Property(e => e.Password)
                 .HasMaxLength(100)
                 .HasColumnName("password");
+            entity.Property(e => e.Phone)
+                .HasMaxLength(100)
+                .HasColumnName("phone");
+            entity.Property(e => e.RealName)
+                .HasMaxLength(100)
+                .HasColumnName("realName");
+            entity.Property(e => e.ResignDate).HasColumnName("resignDate");
+            entity.Property(e => e.Status).HasColumnName("status");
+
+            entity.HasOne(d => d.AccessNavigation).WithMany(p => p.Staff)
+                .HasForeignKey(d => d.Access)
+                .HasConstraintName("staff_access_fk");
+
+            entity.HasOne(d => d.StatusNavigation).WithMany(p => p.Staff)
+                .HasForeignKey(d => d.Status)
+                .HasConstraintName("staff_status_fk");
+        });
+
+        modelBuilder.Entity<StaffAccess>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("sa_id_pk");
+
+            entity.ToTable("staff_access");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<StaffStatus>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("ss_id_pk");
+
+            entity.ToTable("staff_status");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -1,4 +1,4 @@
-﻿@model charity.Models.Member
+﻿@model charity.Models.Staff
 
 @{
     ViewData["Title"] = "Create";
@@ -6,7 +6,7 @@
 
 <h1>新增</h1>
 
-<h4>會員資料</h4>
+<h4>員工資料</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -23,15 +23,15 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="NickName" class="control-label"></label>
-                <input asp-for="NickName" class="form-control" />
-                <span asp-validation-for="NickName" class="text-danger"></span>
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @* <div class="form-group">
                 <label asp-for="RealName" class="control-label"></label>
                 <input asp-for="RealName" class="form-control" />
                 <span asp-validation-for="RealName" class="text-danger"></span>
-            </div>
+            </div> *@
             <div class="form-group">
                 <label asp-for="Gender" class="control-label"></label>
 @*                 <input asp-for="Gender" class="form-control" />
@@ -63,24 +63,14 @@
                 <span asp-validation-for="Phone" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Points" class="control-label"></label>
-                <input asp-for="Points" class="form-control" />
-                <span asp-validation-for="Points" class="text-danger"></span>
+                <label asp-for="ArrivalDate" class="control-label"></label>
+                <input asp-for="ArrivalDate" class="form-control" />
+                <span asp-validation-for="ArrivalDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Checkin" class="control-label"></label>
-                <input asp-for="Checkin" class="form-control" />
-                <span asp-validation-for="Checkin" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Exp" class="control-label"></label>
-                <input asp-for="Exp" class="form-control" />
-                <span asp-validation-for="Exp" class="text-danger"></span>
-            </div>
-            <div class="form-group">  <!-- 相片 -->
-                <label asp-for="ImgName" class="control-label"></label>
-                <input asp-for="ImgName" type="file" class="form-control" />
-                <span asp-validation-for="ImgName" class="text-danger"></span>
+                <label asp-for="ResignDate" class="control-label"></label>
+                <input asp-for="ResignDate" class="form-control" />
+                <span asp-validation-for="ResignDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Status" class="control-label"></label>
@@ -90,11 +80,6 @@
                 <label asp-for="Access" class="control-label"></label>
                 <select asp-for="Access" class ="form-control" asp-items="ViewBag.Access"></select>
             </div>
-            @* <div class="form-group">
-                <label asp-for="FaceRec" class="control-label"></label>
-                <input asp-for="FaceRec" class="form-control" />
-                <span asp-validation-for="FaceRec" class="text-danger"></span>
-            </div> *@
             <div class="form-group">
                 <br>
                 <button type="submit" class="btn btn-primary">

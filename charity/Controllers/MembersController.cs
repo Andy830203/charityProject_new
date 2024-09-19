@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using charity.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace charity.Controllers
 {
+    [Authorize]
     public class MembersController : Controller
     {
         private readonly CharityContext _context;
