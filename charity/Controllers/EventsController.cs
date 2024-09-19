@@ -13,15 +13,15 @@ namespace charity.Controllers
     {
         //private readonly CharityContext _context;
 
-        public EventsController(CharityContext context) : base(context)
+        public EventsController(CharityContext context) : base(context) 
         {
+            //_context = context;
         }
 
         // GET: Events
         public async Task<IActionResult> Index()
         {
-            //var charityContext = _context.Events.Include(@ => @.Organizer);
-            var charityContext = _context.Events.Include(e => e.Organizer);
+            var charityContext = _context.Events.Include(e => e.Category).Include(e => e.Organizer);
             return View(await charityContext.ToListAsync());
         }
 
@@ -34,7 +34,7 @@ namespace charity.Controllers
             }
 
             var @event = await _context.Events
-                //.Include(@ => @.Organizer)
+                .Include(e => e.Category)
                 .Include(e => e.Organizer)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@event == null)
@@ -48,6 +48,7 @@ namespace charity.Controllers
         // GET: Events/Create
         public IActionResult Create()
         {
+            ViewData["CategoryId"] = new SelectList(_context.EventCategories, "Id", "Id");
             ViewData["OrganizerId"] = new SelectList(_context.Members, "Id", "Id");
             return View();
         }
@@ -57,22 +58,15 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,OrganizerId,Fee,Capacity,Description")] Event @event) //[Bind("Id,Name,OrganizerId,Fee,Capacity,Description")]
+        public async Task<IActionResult> Create([Bind("Id,Name,OrganizerId,Fee,Capacity,Description,Priority,CategoryId")] Event @event)
         {
-            //Console.WriteLine(@event);
-            //Console.WriteLine(@event.OrganizerId);
-            //Console.WriteLine(@event.Organizer);
-            //if (@event.OrganizerId != null)
-            //{
-            //    @event.Organizer = await _context.Members.FindAsync(@event.OrganizerId);
-            //}
-
             if (ModelState.IsValid)
             {
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CategoryId"] = new SelectList(_context.EventCategories, "Id", "Id", @event.CategoryId);
             ViewData["OrganizerId"] = new SelectList(_context.Members, "Id", "Id", @event.OrganizerId);
             return View(@event);
         }
@@ -90,6 +84,7 @@ namespace charity.Controllers
             {
                 return NotFound();
             }
+            ViewData["CategoryId"] = new SelectList(_context.EventCategories, "Id", "Id", @event.CategoryId);
             ViewData["OrganizerId"] = new SelectList(_context.Members, "Id", "Id", @event.OrganizerId);
             return View(@event);
         }
@@ -99,7 +94,7 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,OrganizerId,Fee,Capacity,Description")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,OrganizerId,Fee,Capacity,Description,Priority,CategoryId")] Event @event)
         {
             if (id != @event.Id)
             {
@@ -126,6 +121,7 @@ namespace charity.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CategoryId"] = new SelectList(_context.EventCategories, "Id", "Id", @event.CategoryId);
             ViewData["OrganizerId"] = new SelectList(_context.Members, "Id", "Id", @event.OrganizerId);
             return View(@event);
         }
@@ -139,6 +135,7 @@ namespace charity.Controllers
             }
 
             var @event = await _context.Events
+                .Include(e => e.Category)
                 .Include(e => e.Organizer)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@event == null)
@@ -168,6 +165,5 @@ namespace charity.Controllers
         {
             return _context.Events.Any(e => e.Id == id);
         }
-
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace charity.Models;
 
@@ -8,9 +7,8 @@ public partial class Event
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string? Name { get; set; }
 
-    //[Required(ErrorMessage = "The Organizer field is required.123")]
     public int? OrganizerId { get; set; }
 
     public int? Fee { get; set; }
@@ -18,6 +16,12 @@ public partial class Event
     public int? Capacity { get; set; }
 
     public string? Description { get; set; }
+
+    public int? Priority { get; set; }
+
+    public int? CategoryId { get; set; }
+
+    public virtual EventCategory? Category { get; set; }
 
     public virtual ICollection<EventImg> EventImgs { get; set; } = new List<EventImg>();
 

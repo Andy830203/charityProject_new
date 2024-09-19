@@ -7,9 +7,9 @@ public partial class EventImg
 {
     public int Id { get; set; }
 
-    public int EId { get; set; }
+    public int? EId { get; set; }
 
-    public string ImgName { get; set; } = null!;
+    public string? ImgName { get; set; }
 
-    public virtual Event EIdNavigation { get; set; } = null!;
+    public virtual Event? EIdNavigation { get; set; }
 }

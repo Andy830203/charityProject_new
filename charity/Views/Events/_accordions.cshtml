@@ -10,11 +10,12 @@
     var clpPhoto = $"collapsePhoto{Model.Id}";
     var clpPeriod = $"collap{Model.Id}";
     @* var locs = $"locations{Model.Id}"; *@
+    int colWidth = 8;
     @* 區段結束 *@
 }
 <!-- 活動地點 -->
 <tr>
-    <td colspan="6">
+    <td colspan="@colWidth">
         <div class="accordion" id="@accLoc">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="@headLoc">
@@ -34,7 +35,7 @@
 </tr>
 <!-- 活動照片 -->
 <tr>
-    <td colspan="6">
+    <td colspan="@colWidth">
         <div class="accordion" id="@accPhoto">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="@headPhoto">
@@ -53,7 +54,7 @@
 </tr>
 <!-- 活動時段 -->
 <tr>
-    <td colspan="6">
+    <td colspan="@colWidth">
         <div class="accordion" id="@accPeriod">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="@headPeriod">

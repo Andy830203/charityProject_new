@@ -13,6 +13,8 @@ public partial class CharityContext : DbContext
 
     public virtual DbSet<Event> Events { get; set; }
 
+    public virtual DbSet<EventCategory> EventCategories { get; set; }
+
     public virtual DbSet<EventImg> EventImgs { get; set; }
 
     public virtual DbSet<EventLocation> EventLocations { get; set; }
@@ -33,6 +35,7 @@ public partial class CharityContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Capacity).HasColumnName("capacity");
+            entity.Property(e => e.CategoryId).HasColumnName("category_id");
             entity.Property(e => e.Description)
                 .HasMaxLength(500)
                 .HasColumnName("description");
@@ -41,11 +44,27 @@ public partial class CharityContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("name");
             entity.Property(e => e.OrganizerId).HasColumnName("organizer_id");
+            entity.Property(e => e.Priority).HasColumnName("priority");
+
+            entity.HasOne(d => d.Category).WithMany(p => p.Events)
+                .HasForeignKey(d => d.CategoryId)
+                .HasConstraintName("events_category_id_fk");
 
             entity.HasOne(d => d.Organizer).WithMany(p => p.Events)
                 .HasForeignKey(d => d.OrganizerId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("events_organizer_id_fk");
+        });
+
+        modelBuilder.Entity<EventCategory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("ec_c_id_pk");
+
+            entity.ToTable("event_category");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
         });
 
         modelBuilder.Entity<EventImg>(entity =>
@@ -62,7 +81,6 @@ public partial class CharityContext : DbContext
 
             entity.HasOne(d => d.EIdNavigation).WithMany(p => p.EventImgs)
                 .HasForeignKey(d => d.EId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("ei_e_id_fk");
         });
 
@@ -79,12 +97,10 @@ public partial class CharityContext : DbContext
 
             entity.HasOne(d => d.EIdNavigation).WithMany(p => p.EventLocations)
                 .HasForeignKey(d => d.EId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("el_e_id_fk");
 
             entity.HasOne(d => d.LIdNavigation).WithMany(p => p.EventLocations)
                 .HasForeignKey(d => d.LId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("el_l_id_fk");
         });
 
@@ -104,7 +120,6 @@ public partial class CharityContext : DbContext
 
             entity.HasOne(d => d.EIdNavigation).WithMany(p => p.EventPeriods)
                 .HasForeignKey(d => d.EId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("ep_e_id_fk");
         });
 
@@ -123,10 +138,10 @@ public partial class CharityContext : DbContext
                 .HasMaxLength(500)
                 .HasColumnName("description");
             entity.Property(e => e.Latitude)
-                .HasColumnType("decimal(18, 0)")
+                .HasColumnType("decimal(9, 6)")
                 .HasColumnName("latitude");
             entity.Property(e => e.Longitude)
-                .HasColumnType("decimal(18, 0)")
+                .HasColumnType("decimal(9, 6)")
                 .HasColumnName("longitude");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
