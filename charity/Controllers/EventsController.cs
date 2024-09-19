@@ -182,5 +182,29 @@ namespace charity.Controllers
 
             return PartialView("_EventLocationsPartial", e.EventLocations);
         }
+
+        public async Task<IActionResult> EventImgs(int id)
+        {
+            Event? e = await _context.Events.FindAsync(id);
+
+            if (e == null)
+            {
+                return NotFound();
+            }
+
+            return PartialView("_EventImgsPartial", e.EventImgs);
+        }
+
+        public async Task<IActionResult> EventPeriods(int id)
+        {
+            Event? e = await _context.Events.FindAsync(id);
+
+            if (e == null)
+            {
+                return NotFound();
+            }
+
+            return PartialView("_EventPeriodsPartial", e.EventPeriods);
+        }
     }
 }
