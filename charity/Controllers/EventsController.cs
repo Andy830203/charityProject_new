@@ -9,13 +9,12 @@ using charity.Models;
 
 namespace charity.Controllers
 {
-    public class EventsController : Controller
+    public class EventsController : BaseEventController
     {
-        private readonly CharityContext _context;
+        //private readonly CharityContext _context;
 
-        public EventsController(CharityContext context)
+        public EventsController(CharityContext context) : base(context)
         {
-            _context = context;
         }
 
         // GET: Events
@@ -170,41 +169,5 @@ namespace charity.Controllers
             return _context.Events.Any(e => e.Id == id);
         }
 
-        //GET: /Events/EventLocations/5
-        public async Task<IActionResult> EventLocations(int id)
-        {
-            Event? e = await _context.Events.FindAsync(id);
-            
-            if (e == null)
-            {
-                return NotFound();
-            }
-
-            return PartialView("_EventLocationsPartial", e.EventLocations);
-        }
-
-        public async Task<IActionResult> EventImgs(int id)
-        {
-            Event? e = await _context.Events.FindAsync(id);
-
-            if (e == null)
-            {
-                return NotFound();
-            }
-
-            return PartialView("_EventImgsPartial", e.EventImgs);
-        }
-
-        public async Task<IActionResult> EventPeriods(int id)
-        {
-            Event? e = await _context.Events.FindAsync(id);
-
-            if (e == null)
-            {
-                return NotFound();
-            }
-
-            return PartialView("_EventPeriodsPartial", e.EventPeriods);
-        }
     }
 }
