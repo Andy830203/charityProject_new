@@ -17,10 +17,10 @@
             @Html.DisplayFor(model => model.product.Name)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.product.Category)
+            @Html.DisplayNameFor(model => model.product.CategoryNavigation)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.product.Category)
+            @Html.DisplayFor(model => model.product.CategoryNavigation.Name)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.product.Price)
@@ -73,12 +73,12 @@
                 <p>No images available for this product.</p>
             }
         </dd>
-        @* <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SellerNavigation)
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.product.SellerNavigation)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SellerNavigation.Id)
-        </dd>  *@
+            @Html.DisplayFor(model => model.product.SellerNavigation.Id)
+        </dd> 
     </dl>
 </div>
 <div>

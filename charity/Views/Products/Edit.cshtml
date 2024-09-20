@@ -4,9 +4,9 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>修改</h1>
 
-<h4>Product</h4>
+<h4>商品資訊</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -19,13 +19,15 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
+                @* 需要修改 *@
                 <label asp-for="Seller" class="control-label"></label>
                 <select asp-for="Seller" class="form-control" asp-items="ViewBag.Seller"></select>
                 <span asp-validation-for="Seller" class="text-danger"></span>
             </div>
             <div class="form-group">
+                @* 需要修改 *@
                 <label asp-for="Category" class="control-label"></label>
-                <input asp-for="Category" class="form-control" />
+                <select asp-for="Category" class="form-control" asp-items="ViewBag.Category"></select>
                 <span asp-validation-for="Category" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -33,14 +35,13 @@
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    @* <input class="form-check-input" asp-for="OnShelf" /> @Html.DisplayNameFor(model => model.OnShelf) *@
-                    <select asp-for="OnShelf" class="form-select">
-                        <option value="true">上架</option>
-                        <option value="false">不在架上</option>
-                    </select>
-                </label>
+            <div class="form-group">
+                <label asp-for="OnShelf" class="control-label"></label>
+                <select asp-for="OnShelf" class="form-select">
+                    <option value="true">上架</option>
+                    <option value="false">不在架上</option>
+                </select>
+                <span asp-validation-for="OnShelf" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="OnShelfTime" class="control-label"></label>

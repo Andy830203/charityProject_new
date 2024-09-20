@@ -1,0 +1,51 @@
+﻿@model charity.Models.Order
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>詳細資訊</h1>
+
+<div>
+    <h4>訂單</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TotalPrice)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TotalPrice)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.OrderTime)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.OrderTime)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DiscountCode)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DiscountCode)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.BuyerNavigation)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.BuyerNavigation.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.StatusNavigation)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.StatusNavigation.Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning"><i class="fa-regular fa-pen-to-square"></i> 修改</a>
+    <div>
+        <hr>
+        <a asp-action="Index" class="btn btn-primary"><i class="fa-solid fa-file-lines"></i> 回到列表</a>
+    </div>
+</div>

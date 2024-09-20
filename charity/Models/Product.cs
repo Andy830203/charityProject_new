@@ -9,9 +9,8 @@ public partial class Product
     public int Id { get; set; }
     [Display(Name = "商品名稱")]
     public string? Name { get; set; }
-    [Display(Name = "賣家ID")]
+    
     public int? Seller { get; set; }
-    [Display(Name = "類別")]
     public int? Category { get; set; }
     [Display(Name = "售價")]
     public int? Price { get; set; }
@@ -25,12 +24,12 @@ public partial class Product
     public int? Instock { get; set; }
 
     public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
-
+    [Display(Name = "商品類別")]
     public virtual ProductCategory? CategoryNavigation { get; set; }
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
     public virtual ICollection<ProductImg> ProductImgs { get; set; } = new List<ProductImg>();
-
+    [Display(Name = "賣家ID")]
     public virtual Member? SellerNavigation { get; set; }
 }

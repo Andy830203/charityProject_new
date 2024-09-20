@@ -5,7 +5,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>商品列表 總數:@context.Products.Count()</h1>
+<h1>商品列表</h1>
 
 <p>
     <a asp-action="Create" class="btn btn-info"><i class="fa-solid fa-plus"></i> 新增商品</a>
@@ -16,9 +16,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.product.Name)
             </th>
-            <th>
+            @* <th>
                 @Html.DisplayNameFor(model => model.product.Category)
-            </th>
+            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.product.Price)
             </th>
@@ -34,9 +34,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.product.Instock)
             </th>
-            @* <th>
+            <th>
                 @Html.DisplayNameFor(model => model.product.SellerNavigation)
-            </th> *@
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.product.CategoryNavigation)
+            </th>
             <th>
                 圖片
             </th>
@@ -49,9 +52,9 @@
             <td>
                     @Html.DisplayFor(modelItem => item.product.Name)
             </td>
-            <td>
+            @* <td>
                     @Html.DisplayFor(modelItem => item.product.Category)
-            </td>
+            </td> *@
             <td>
                     @Html.DisplayFor(modelItem => item.product.Price)
             </td>
@@ -73,6 +76,13 @@
             <td>
                     @Html.DisplayFor(modelItem => item.product.Instock)
             </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.product.SellerNavigation.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.product.CategoryNavigation.Name)
+            </td>
             <td>
                 @* <img src="@Url.Content(")" alt="Product Image" style="width: 100px; height: auto; margin-right: 10px;" /> *@
                     @if (item.productImgs.Count > 0) {
@@ -82,9 +92,6 @@
                         <img src="" alt="Alternate Text" style="width: 100px; height: auto; margin-right: 10px;" />
                     }
             </td>
-            @* <td>
-                @Html.DisplayFor(modelItem => item.SellerNavigation.Id)
-            </td> *@
             <td>
                     <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.product.Id"><i class="fa-regular fa-pen-to-square"></i> 修改</a> |
                     <a class="btn btn-success" asp-action="Details" asp-route-id="@item.product.Id"><i class="fa-solid fa-circle-info"></i> 資訊</a> |
