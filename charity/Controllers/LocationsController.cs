@@ -6,14 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using charity.Models;
+using Microsoft.Extensions.Hosting;
 
 namespace charity.Controllers
 {
     public class LocationsController : Controller
     {
         private readonly CharityContext _context;
-
-        public LocationsController(CharityContext context)
+        public LocationsController(CharityContext context, IWebHostEnvironment environment)
         {
             _context = context;
         }
@@ -151,6 +151,41 @@ namespace charity.Controllers
         private bool LocationExists(int id)
         {
             return _context.Locations.Any(e => e.Id == id);
+        }
+        // 圖片上傳動作
+        [HttpPost]
+        public async Task<IActionResult> UploadImage(IFormFile image)
+        {
+            if (image != null && image.Length > 0)
+            {
+                // 檢查是否是圖片
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                var extension = Path.GetExtension(image.FileName).ToLower();
+
+                if (Array.IndexOf(allowedExtensions, extension) < 0)
+                {
+                    return Json(new { success = false, message = "僅允許上傳圖片檔案 (jpg, jpeg, png, gif)" });
+                }
+
+                // 確保 images 資料夾存在
+                var uploadsFolder = Path.Combine("wwwroot/", "test");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var filePath = Path.Combine(uploadsFolder, image.FileName);
+
+                // 將圖片寫入 wwwroot/images
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await image.CopyToAsync(fileStream);
+                }
+
+                return Json(new { success = true, message = "圖片上傳成功!", imageUrl = "/images/" + image.FileName });
+            }
+
+            return Json(new { success = false, message = "請選擇一個圖片檔案。" });
         }
     }
 }
