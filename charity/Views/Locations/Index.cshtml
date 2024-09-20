@@ -106,6 +106,59 @@
 @*地圖呼叫*@
 @section Scripts
 {
+    @*地圖style*@
+    <script>
+        // 自訂地圖樣式，移除所有元素，保留道路
+        var mapStyle = [
+          {
+            "featureType": "all",
+            "elementType": "labels",
+            "stylers": [
+              { "visibility": "off" }
+            ]
+          },
+          {
+            "featureType": "administrative",
+            "elementType": "geometry",
+            "stylers": [
+              { "visibility": "off" }
+            ]
+          },
+          {
+            "featureType": "poi",
+            "stylers": [
+              { "visibility": "off" }
+            ]
+          },
+          {
+            "featureType": "road",
+            "elementType": "labels",
+            "stylers": [
+              { "visibility": "off" }
+            ]
+          },
+          {
+            "featureType": "transit",
+            "stylers": [
+              { "visibility": "off" }
+            ]
+          },
+          {
+            "featureType": "landscape",
+            "stylers": [
+              { "visibility": "simplified" },
+              { "color": "#ffffff" }
+            ]
+          },
+          {
+            "featureType": "water",
+            "stylers": [
+              { "visibility": "on" },
+              { "color": "#b0e4ff" }
+            ]
+          }
+        ];
+    </script>
     @* 開啟新視窗st *@
     <script>
         function openWindow_edit(id) {
@@ -144,7 +197,7 @@
                 );
             }
         });
-        </script>
+    </script>
     @* 連接google map st *@
     <script>
         (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
@@ -157,44 +210,33 @@
     <script>
         let map;
         async function initMap() {
-            const { Map } = await google.maps.importLibrary("maps");
-            // const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-            const map = new Map(document.getElementById("map"), {
-                center: { lat: 22.6273, lng: 120.3014 },
-                zoom: 14,
-                disableDefaultUI: true,/* 清除ui */
-            });
-            // const priceTag = document.createElement("div");
-            // priceTag.className = "price-tag";
-            // priceTag.textContent = "$2.5M";
-            // const marker = new AdvancedMarkerElement({
-            //     map,
-            //     position: { lat: 37.42, lng: -122.1 },
-            //     content: priceTag,
-            // });
+        const { Map } = await google.maps.importLibrary("maps");
+            map = new Map(document.getElementById("map"), {
+            center: { lat: 22.6273, lng: 120.3014 },
+            zoom: 14,
+            disableDefaultUI: true,/* 清除ui */
+            styles:mapStyle
+        });
         }
-        initMap();
+        initMap(); 
+        @* 點擊跳轉st *@
+        // 綁定點擊事件到表格
+        const table = document.getElementById('locationTable');
+        table.addEventListener('click', function (e) {
+            const target = e.target.closest('tr');
+            if (target && target.querySelectorAll('td').length > 0) {
+                const lat = parseFloat(target.querySelectorAll('td')[1].innerText);//精度
+                const lng = parseFloat(target.querySelectorAll('td')[2].innerText);//緯度
+                // 將地圖中心移動到點擊的座標
+                const position = { lat: lat, lng: lng };
+                map.setCenter(position);
+                map.setZoom(14);
+            }
+        });
+        @* 點擊跳轉end *@
     </script>
     @* 初始載入end *@
-    @* 點擊跳轉st *@
-    <script>
-        {
-            // 綁定點擊事件到表格
-            const table = document.getElementById('locationTable');
-            table.addEventListener('click', function (e) {
-                const target = e.target.closest('tr');
-                if (target && target.querySelectorAll('td').length > 0) {
-                    const lat = parseFloat(target.querySelectorAll('td')[1].innerText);//精度
-                    const lng = parseFloat(target.querySelectorAll('td')[2].innerText);//緯度
-                    // 將地圖中心移動到點擊的座標
-                    const position = { lat: lat, lng: lng };
-                    map.setCenter(position);
-                    map.setZoom(14);
-                }
-            });
-        }
-        </script>
-    @* 點擊跳轉end *@
+
     @*上傳圖片st*@
     <!-- AJAX 請求上傳圖片 -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
