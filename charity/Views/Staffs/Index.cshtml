@@ -69,9 +69,18 @@
             @* <td>
                 @Html.DisplayFor(modelItem => item.RealName)
             </td> *@
-            <td>
-                @Html.DisplayFor(modelItem => item.Gender)
-            </td>
+                <td>
+                    @* @Html.DisplayFor(model => model.Gender) *@
+                    @* 性別顯示修改 *@
+                    @if (item.Gender == true)
+                    {
+                        <span>男</span>
+                    }
+                    else
+                    {
+                        <span>女</span>
+                    }
+                </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Birthday)
             </td>

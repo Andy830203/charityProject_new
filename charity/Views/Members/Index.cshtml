@@ -113,20 +113,22 @@
                 @Html.DisplayFor(modelItem => item.Exp)
             </td> *@
             <td>
-                @Html.DisplayFor(modelItem => item.ImgName)
+@*                 @Html.DisplayFor(modelItem => item.ImgName)
+ *@               <img src="@Url.Content(item.ImgName)" alt="會員照片" style="width: 150px; height: 150px;" />
+
             </td>
             @* <td>
                 @Html.DisplayFor(modelItem => item.FaceRec)
             </td> *@
            @*  <td>
                 @Html.DisplayFor(modelItem => item.AccessNavigation.Id)
-            </td>
+            </td>                                                                               
             <td>
                 @Html.DisplayFor(modelItem => item.StatusNavigation.Id)
             </td> *@
             <td>
 
-                
+  <a href="#"></a>+              
                 <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-regular fa-pen-to-square"></i> 修改</a> |
                 <a class="btn btn-success" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info"></i> 資訊</a> |
                 <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-user-xmark"></i> 刪除</a>

@@ -96,7 +96,9 @@
             @Html.DisplayNameFor(model => model.ImgName)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImgName)
+@*             @Html.DisplayFor(model => model.ImgName)
+ *@            <img src="@Url.Content(Model.ImgName)" alt="員工照片" style="width: 150px; height: 150px;" />
+
         </dd>
         @* <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FaceRec)
