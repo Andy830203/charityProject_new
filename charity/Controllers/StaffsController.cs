@@ -20,12 +20,47 @@ namespace charity.Controllers
             _context = context;
         }
 
-        // GET: Staffs
-        public async Task<IActionResult> Index()
+
+        // 顯示會員列表和進階搜尋
+        public IActionResult Index(string gender, string name, DateTime? startDate, DateTime? endDate)
         {
-            var charityContext = _context.Staff.Include(s => s.AccessNavigation).Include(s => s.StatusNavigation);
-            return View(await charityContext.ToListAsync());
+            // 準備基本的會員查詢
+            var query = _context.Staff.AsQueryable();
+
+            // 根據姓名篩選
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(m => m.RealName.Contains(name));
+            }
+
+            // 根據性別篩選
+            if (!string.IsNullOrEmpty(gender))
+            {
+                query = query.Where(m => m.Gender == (gender == "male"));
+            }
+
+            // 根據到職日篩選
+            if (startDate.HasValue)
+            {
+                query = query.Where(m => m.ArrivalDate >= startDate.Value);
+            }
+
+            if (endDate.HasValue)
+            {
+                query = query.Where(m => m.ArrivalDate <= endDate.Value);
+            }
+
+            // 返回篩選結果
+            var members = query.ToList();
+            return View(members);
         }
+
+        //// GET: Staffs
+        //public async Task<IActionResult> Index()
+        //{
+        //    var charityContext = _context.Staff.Include(s => s.AccessNavigation).Include(s => s.StatusNavigation);
+        //    return View(await charityContext.ToListAsync());
+        //}
 
         // GET: Staffs/Details/5
         public async Task<IActionResult> Details(int? id)
