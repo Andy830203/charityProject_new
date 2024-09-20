@@ -1,0 +1,84 @@
+﻿@model IEnumerable<charity.Models.Product>
+@inject CharityContext context
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>商品列表 總數:@context.Products.Count()</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-info"><i class="fa-solid fa-plus"></i> 新增商品</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OnShelf)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OnShelfTime)
+            </th>
+            @* <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th> *@
+            <th>
+                @Html.DisplayNameFor(model => model.Instock)
+            </th>
+            @* <th>
+                @Html.DisplayNameFor(model => model.SellerNavigation)
+            </th> *@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @* @Html.DisplayFor(modelItem => item.OnShelf) *@
+                    @if (item.OnShelf == true) {
+                        <span>上架中</span>
+                    }
+                    else {
+                        <span>目前不在架上</span>
+                    }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OnShelfTime)
+            </td>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td> *@
+            <td>
+                @Html.DisplayFor(modelItem => item.Instock)
+            </td>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.SellerNavigation.Id)
+            </td> *@
+            <td>
+                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-regular fa-pen-to-square"></i> 修改</a> |
+                    <a class="btn btn-success" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info"></i> 資訊</a> |
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-trash-can"></i> 刪除</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

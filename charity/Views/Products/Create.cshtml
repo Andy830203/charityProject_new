@@ -1,0 +1,75 @@
+﻿@model charity.Models.Product
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>新增</h1>
+
+<h4>商品</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Seller" class="control-label"></label>
+                <select asp-for="Seller" class ="form-control" asp-items="ViewBag.Seller"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Category" class="control-label"></label>
+                <input asp-for="Category" class="form-control" />
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    @* <input class="form-check-input" asp-for="OnShelf" /> @Html.DisplayNameFor(model => model.OnShelf) *@
+                    <select asp-for="OnShelf" class="form-select">
+                        <option value="true">上架</option>
+                        <option value="false">不在架上</option>
+                    </select>
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="OnShelfTime" class="control-label"></label>
+                <input asp-for="OnShelfTime" class="form-control" />
+                <span asp-validation-for="OnShelfTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Instock" class="control-label"></label>
+                <input asp-for="Instock" class="form-control" />
+                <span asp-validation-for="Instock" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <br>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 送出
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <hr>
+    <a asp-action="Index" class="btn btn-primary"><i class="fa-solid fa-file-lines"></i> 回到列表</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
