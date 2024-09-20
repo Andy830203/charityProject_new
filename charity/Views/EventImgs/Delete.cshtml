@@ -27,6 +27,7 @@
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
+        <input type="hidden" name="fromList" value="@ViewBag.FromList"/>
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a href="@ViewBag.FromList">Back to List</a>
     </form>

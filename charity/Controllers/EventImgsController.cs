@@ -26,7 +26,7 @@ namespace charity.Controllers
         }
 
         // GET: EventImgs/Details/5
-        public async Task<IActionResult> Details(int? id, string fromList)
+        public async Task<IActionResult> Details(int? id, string? fromList)
         {
             if (id == null)
             {
@@ -66,20 +66,29 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,EId,ImgName")] EventImg eventImg)
+        public async Task<IActionResult> Create(string? fromList, [Bind("Id,EId,ImgName")] EventImg eventImg)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(eventImg);
                 await _context.SaveChangesAsync();
+                if (!string.IsNullOrEmpty(fromList))
+                {
+                    return RedirectToAction("Index", fromList);
+                }
                 return RedirectToAction(nameof(Index));
             }
             ViewData["EId"] = new SelectList(_context.Events, "Id", "Id", eventImg.EId);
+
+            if (!string.IsNullOrEmpty(fromList))
+            {
+                return View(fromList);
+            }
             return View(eventImg);
         }
 
         // GET: EventImgs/Edit/5
-        public async Task<IActionResult> Edit(int? id, string fromList)
+        public async Task<IActionResult> Edit(int? id, string? fromList)
         {
             if (id == null)
             {
@@ -106,7 +115,7 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,EId,ImgName")] EventImg eventImg)
+        public async Task<IActionResult> Edit(int id, string? fromList, [Bind("Id,EId,ImgName")] EventImg eventImg)
         {
             if (id != eventImg.Id)
             {
@@ -131,9 +140,17 @@ namespace charity.Controllers
                         throw;
                     }
                 }
+                if (!string.IsNullOrEmpty(fromList))
+                {
+                    return RedirectToAction("Index", fromList);
+                }
                 return RedirectToAction(nameof(Index));
             }
             ViewData["EId"] = new SelectList(_context.Events, "Id", "Id", eventImg.EId);
+            if (!string.IsNullOrEmpty(fromList))
+            {
+                return RedirectToAction("Index", fromList);
+            }
             return View(eventImg);
         }
 
@@ -164,7 +181,7 @@ namespace charity.Controllers
         // POST: EventImgs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, string? fromList)
         {
             var eventImg = await _context.EventImgs.FindAsync(id);
             if (eventImg != null)
@@ -173,6 +190,11 @@ namespace charity.Controllers
             }
 
             await _context.SaveChangesAsync();
+
+            if (!string.IsNullOrEmpty(fromList))
+            {
+                return RedirectToAction("Index", fromList);
+            }
             return RedirectToAction(nameof(Index));
         }
 
