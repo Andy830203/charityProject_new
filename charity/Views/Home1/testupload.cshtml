@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "檔案上傳";
+}
+
+<h2>上傳檔案或照片</h2>
+@* 
+    multipart/form-data:文件上傳所必需的類型
+    UploadFile;action
+    post:method
+*@
+<form enctype="multipart/form-data" asp-action="UploadFile" method="post">
+    <div class="form-group">
+        <label for="file">選擇檔案</label>
+        <input type="file" name="file" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">上傳</button>
+</form>

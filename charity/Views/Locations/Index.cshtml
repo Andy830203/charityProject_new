@@ -16,8 +16,6 @@
             transition: transform 0.3s ease; /* 設置動畫過渡效果 */
             transform: scale(1.01); /* 當 hover 到某一行時，該行會放大 5% */
         }
-
-
     </style>
 }
 <div class="col-12">
@@ -27,6 +25,8 @@
         </div>
     </div>
     <!-- 地圖end -->
+    <button id="iconUpload">上傳圖片
+    </button>
     <p>
         <a asp-action="Create">新建地址</a>
     </p>
@@ -138,11 +138,6 @@
                 );
             }
         });
-
-
-
-
-
         </script>
     @* 連接google map st *@
     <script>
@@ -156,12 +151,21 @@
     <script>
         let map;
         async function initMap() {
-          const { Map } = await google.maps.importLibrary("maps");
-
-          map = new Map(document.getElementById("map"), {
+            const { Map } = await google.maps.importLibrary("maps");
+            // const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+            const map = new Map(document.getElementById("map"), {
                 center: { lat: 22.6273, lng: 120.3014 },
-            zoom: 14,
-          });
+                zoom: 14,
+                disableDefaultUI: true,/* 清除ui */
+            });
+            // const priceTag = document.createElement("div");
+            // priceTag.className = "price-tag";
+            // priceTag.textContent = "$2.5M";
+            // const marker = new AdvancedMarkerElement({
+            //     map,
+            //     position: { lat: 37.42, lng: -122.1 },
+            //     content: priceTag,
+            // });
         }
         initMap();
     </script>
@@ -184,5 +188,21 @@
             });
         }
         </script>
-    @* 點擊跳轉st *@
+    @* 點擊跳轉end *@
+    @*上傳圖片st*@
+@*         <script>
+            
+            $('#iconUpload').click(function (event) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#iconPreview').attr('src', e.target.result).show();
+                };
+                reader.readAsDataURL(event.target.files[0]);
+            });
+
+        uploader.addEventListener('change', (event) => {
+            console.log(event.target.files);
+        }); *@
+    </script>
+    @*上傳圖片end*@
 }
