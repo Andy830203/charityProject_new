@@ -11,10 +11,21 @@ public partial class CharityContext : DbContext
     {
     }
 
+    public virtual DbSet<Event> Events { get; set; }
+
+    public virtual DbSet<EventCategory> EventCategories { get; set; }
+
+    public virtual DbSet<EventImg> EventImgs { get; set; }
+
+    public virtual DbSet<EventLocation> EventLocations { get; set; }
+
+    public virtual DbSet<EventPeriod> EventPeriods { get; set; }
+
     public virtual DbSet<Location> Locations { get; set; }
 
-    public virtual DbSet<LocationImg> LocationImgs { get; set; }
     public virtual DbSet<Member> Members { get; set; }
+
+    public virtual DbSet<LocationImg> LocationImgs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
