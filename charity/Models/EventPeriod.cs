@@ -16,4 +16,6 @@ public partial class EventPeriod
     public string? Description { get; set; }
 
     public virtual Event? EIdNavigation { get; set; }
+
+    public virtual ICollection<SignUp> SignUps { get; set; } = new List<SignUp>();
 }

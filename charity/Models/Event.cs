@@ -23,6 +23,8 @@ public partial class Event
 
     public virtual EventCategory? Category { get; set; }
 
+    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
     public virtual ICollection<EventImg> EventImgs { get; set; } = new List<EventImg>();
 
     public virtual ICollection<EventLocation> EventLocations { get; set; } = new List<EventLocation>();

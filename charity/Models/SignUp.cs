@@ -12,4 +12,6 @@ public partial class SignUp
     public int? Applicant { get; set; }
 
     public virtual Member? ApplicantNavigation { get; set; }
+
+    public virtual EventPeriod? Ep { get; set; }
 }
