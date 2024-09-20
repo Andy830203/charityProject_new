@@ -85,8 +85,8 @@ namespace charity.Controllers
         // GET: Members/Create
         public IActionResult Create()
         {
-            ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id");
-            ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id");
+            //ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id");
+            //ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id");
             return View();
         }
 
@@ -99,12 +99,30 @@ namespace charity.Controllers
         {
             if (ModelState.IsValid)  //因為一開始沒有登入所以驗證false走不進去
             {
+                if (Request.Form.Files["ImgName"] != null )//&& MemberPhoto.Length > 0
+                {
+                    var file = Request.Form.Files["ImgName"];
+                    // 獲取文件的名稱
+                    var fileName = Path.GetFileName(file.FileName);
+
+                    // 定義儲存照片的路徑 (例如 wwwroot/images/members)
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/members", fileName);
+
+                    // 保存文件到指定路徑
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    // 將文件名保存到資料庫
+                    member.ImgName = "/images/members/" + filePath;
+                }
                 _context.Add(member);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id", member.Access);
-            ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id", member.Status);
+            //ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id", member.Access);
+            //ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id", member.Status);
             return View(member);
         }
 
@@ -131,17 +149,34 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Account,Password,NickName,RealName,Gender,Birthday,Email,Address,Phone,Points,Checkin,Exp,ImgName,Status,Access,FaceRec")] Member member)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Account,Password,NickName,RealName,Gender,Birthday,Email,Address,Phone,Points,Checkin,Exp,ImgName,Status,Access,FaceRec")] Member member, IFormFile MemberPhoto)
         {
             if (id != member.Id)
             {   
                 return NotFound();
             }
 
-            //if (ModelState.IsValid) //因為一開始沒有登入所以驗證false走不進去
-            //{
-            try
+            if (ModelState.IsValid) //因為一開始沒有登入所以驗證false走不進去
             {
+                try
+                {
+                    if (MemberPhoto != null && MemberPhoto.Length > 0)
+                    {
+                        // 獲取文件的名稱
+                        var fileName = Path.GetFileName(MemberPhoto.FileName);
+
+                        // 定義儲存照片的路徑
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/members", fileName);
+
+                        // 保存文件到指定路徑
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await MemberPhoto.CopyToAsync(stream);
+                        }
+
+                        // 更新會員的照片名稱
+                        member.ImgName = "/images/members/" + fileName;
+                    }
                     _context.Update(member);
                     await _context.SaveChangesAsync();
                 }
@@ -157,7 +192,7 @@ namespace charity.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            //}
+            }
             ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id", member.Access);
             ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id", member.Status);
             return View(member);
