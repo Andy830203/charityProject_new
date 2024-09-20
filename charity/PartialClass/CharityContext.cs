@@ -8,11 +8,13 @@ namespace charity.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                IConfiguration Config = new ConfigurationBuilder()
+                IConfiguration config = new ConfigurationBuilder()
                     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                     .AddJsonFile("appsettings.json")
                     .Build();
-                optionsBuilder.UseSqlServer(Config.GetConnectionString("Charity"));
+                optionsBuilder
+                    .UseLazyLoadingProxies()
+                    .UseSqlServer(config.GetConnectionString("Charity"));
             }
         }
     }
