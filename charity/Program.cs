@@ -11,9 +11,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-var charityconnectionString =
-    builder.Configuration.GetConnectionString("charity");
-    builder.Services.AddDbContext<CharityContext>(options => options.UseSqlServer(charityconnectionString));
+builder.Services.AddDbContext<CharityContext>(
+    options => options
+    .UseLazyLoadingProxies()
+    .UseSqlServer(builder.Configuration.GetConnectionString("Charity"))
+    );
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();

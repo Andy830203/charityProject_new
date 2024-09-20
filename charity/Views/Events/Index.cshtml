@@ -1,0 +1,103 @@
+﻿@model IEnumerable<charity.Models.Event>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@section Styles
+{
+    <link href="~/css/yteventsstyles.css" rel="stylesheet" />
+    <style>
+
+    </style>
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead class="table-primary">
+        <tr>
+            <th></th>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fee)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Capacity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Priority)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Organizer)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+            @* block start: 摺疊全部手風琴的變數 *@
+            var trClassName = $"more-info{item.Id}";
+            var locs = $"loc{item.Id}";
+            var pics = $"pic{item.Id}";
+            var times = $"time{item.Id}";
+            @* block end *@
+        <tr>
+            <td>
+                <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target=".@trClassName" aria-expanded="false" aria-controls="@locs @pics @times">
+                    ...
+                </button>
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fee)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Capacity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Priority)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Organizer.Id)
+            </td>
+        </tr>
+        <partial name="_accordions" for=@item></partial>
+}
+    </tbody>
+</table>
+
+<!-- 回首頁會回到模板，先用這個連結代替 -->
+<a asp-area="" asp-controller="Home" asp-action="Index" class="yt-fixed-box"> Back </a>
+
+@section Scripts
+{
+    <script src="~/js/ajaxevents.js"></script>
+    <script>
+
+    </script>
+}

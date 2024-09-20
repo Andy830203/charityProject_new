@@ -1,0 +1,47 @@
+﻿@model IEnumerable<charity.Models.EventPeriod>
+
+<p>
+    <a asp-controller="EventPeriods" asp-action="Create" asp-route-fromList="@Url.Action("Index", "Events")">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EIdNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EIdNavigation.Id)
+            </td>
+            <td>
+                <a asp-controller="EventPeriods" asp-action="Edit" asp-route-id="@item.Id" asp-route-fromList="@Url.Action("Index", "Events")">Edit</a> |
+                <a asp-controller="EventPeriods" asp-action="Details" asp-route-id="@item.Id" asp-route-fromList="@Url.Action("Index", "Events")">Details</a> |
+                <a asp-controller="EventPeriods" asp-action="Delete" asp-route-id="@item.Id" asp-route-fromList="@Url.Action("Index", "Events")">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

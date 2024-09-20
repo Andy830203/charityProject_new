@@ -23,4 +23,5 @@ public partial class Location
     public int? Capacity { get; set; }
 
     public virtual ICollection<LocationImg> LocationImgs { get; set; } = new List<LocationImg>();
+    public virtual ICollection<EventLocation> EventLocations { get; set; } = new List<EventLocation>();
 }
