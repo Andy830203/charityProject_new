@@ -156,27 +156,31 @@ namespace charity.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadImage(IFormFile image)
         {
+            //檢查是否image有值(使否有上傳)
             if (image != null && image.Length > 0)
             {
                 // 檢查是否是圖片
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                //GetExtension取得副檔名路徑、ToLower轉小寫
                 var extension = Path.GetExtension(image.FileName).ToLower();
-
+                //假設副檔名不符合
                 if (Array.IndexOf(allowedExtensions, extension) < 0)
                 {
+                    //回傳Jsonsuccess:
+                    //success = false告知結果失敗
                     return Json(new { success = false, message = "僅允許上傳圖片檔案 (jpg, jpeg, png, gif)" });
                 }
-
-                // 確保 images 資料夾存在
-                var uploadsFolder = Path.Combine("wwwroot/", "test");
+                //Directory.GetCurrentDirectory()當前專案根目錄
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot/", "test");
+                // 確保 images 資料夾存在，否則創建
                 if (!Directory.Exists(uploadsFolder))
                 {
                     Directory.CreateDirectory(uploadsFolder);
                 }
-
+                
                 var filePath = Path.Combine(uploadsFolder, image.FileName);
 
-                // 將圖片寫入 wwwroot/images
+                // 將圖片寫入 wwwroot/test
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
                     await image.CopyToAsync(fileStream);

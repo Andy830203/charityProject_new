@@ -32,6 +32,7 @@
         </div>
         <button type="submit" class="btn btn-primary">上傳圖片</button>
     </form>
+    <div id="uploadMessage"></div>
     <p>
         <a asp-action="Create">新建地址</a>
     </p>
@@ -198,20 +199,29 @@
     <!-- AJAX 請求上傳圖片 -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript">
+        //ready文檔物件模型 (DOM) 變得可以安全操作後立即運行 JavaScript 程式碼的方法
         $(document).ready(function () {
+            //監聽submit
             $('#uploadImageForm').on('submit', function (e) {
+                //preventDefault阻止表單默認提交
                 e.preventDefault();
-
+                //實例化FormData
                 var formData = new FormData();
+                //取得上傳檔案欄位的第一個檔案
                 var imageFile = $('#image')[0].files[0];
+                //將其加入FormData
                 formData.append('image', imageFile);
-
+                //使用ajax方法
                 $.ajax({
-                    url: '/Locations/UploadImage', // 確保控制器中的動作與這裡一致
+                    //以下為將請求發送到控制器，可理解為呼叫
+                    url: '../Locations/UploadImage',
                     type: 'POST',
                     data: formData,
+                    //不要設置標頭，瀏覽器會自動設置合適的 multipart/form-data 標頭。
                     contentType: false,
+                    //不要將 formData 物件轉換為查詢字串。當上傳檔案時，我們希望它保持為 FormData 格式，而不是被轉換為 URL 編碼的格式。
                     processData: false,
+                    //請求成功時執行，response通常返回json
                     success: function (response) {
                         if (response.success) {
                             $('#uploadMessage').html('<div class="alert alert-success">' + response.message + '</div>');
@@ -221,6 +231,8 @@
                     },
                     error: function () {
                         $('#uploadMessage').html('<div class="alert alert-danger">圖片上傳失敗，請再試一次。</div>');
+                        console.log(imageFile);  // 檢查是否選取到檔案
+                        console.log(formData.get('image'));  // 檢查 FormData 是否包含檔案
                     }
                 });
             });
