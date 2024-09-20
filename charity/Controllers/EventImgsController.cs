@@ -12,6 +12,7 @@ namespace charity.Controllers
     public class EventImgsController : Controller
     {
         private readonly CharityContext _context;
+        private bool inLocalController = true;
 
         public EventImgsController(CharityContext context)
         {
@@ -26,7 +27,7 @@ namespace charity.Controllers
         }
 
         // GET: EventImgs/Details/5
-        public async Task<IActionResult> Details(int? id, string fromList)
+        public async Task<IActionResult> Details(int? id, string? fromList)
         {
             if (id == null)
             {
@@ -44,7 +45,13 @@ namespace charity.Controllers
             if (!Url.IsLocalUrl(fromList))
             {
                 fromList = Url.Action("Index", "EventImgs");
+                inLocalController = true;
             }
+            else
+            {
+                inLocalController = false;
+            }
+
             ViewBag.FromList = fromList;
             return View(eventImg);
         }
@@ -55,7 +62,13 @@ namespace charity.Controllers
             if (!Url.IsLocalUrl(fromList))
             {
                 fromList = Url.Action("Index", "EventImgs");
+                inLocalController = true;
             }
+            else
+            {
+                inLocalController = false;
+            }
+
             ViewBag.FromList = fromList;
             ViewData["EId"] = new SelectList(_context.Events, "Id", "Id");
             return View();
@@ -79,7 +92,7 @@ namespace charity.Controllers
         }
 
         // GET: EventImgs/Edit/5
-        public async Task<IActionResult> Edit(int? id, string fromList)
+        public async Task<IActionResult> Edit(int? id, string? fromList)
         {
             if (id == null)
             {
@@ -95,7 +108,13 @@ namespace charity.Controllers
             if (!Url.IsLocalUrl(fromList))
             {
                 fromList = Url.Action("Index", "EventImgs");
+                inLocalController = true;
             }
+            else
+            {
+                inLocalController = false;
+            }
+
             ViewBag.FromList = fromList;
             ViewData["EId"] = new SelectList(_context.Events, "Id", "Id", eventImg.EId);
             return View(eventImg);
@@ -131,14 +150,23 @@ namespace charity.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                if (inLocalController)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+
+                    return RedirectToAction(nameof(EventsController.Index));
+                }
             }
             ViewData["EId"] = new SelectList(_context.Events, "Id", "Id", eventImg.EId);
             return View(eventImg);
         }
 
         // GET: EventImgs/Delete/5
-        public async Task<IActionResult> Delete(int? id, string fromList)
+        public async Task<IActionResult> Delete(int? id, string? fromList)
         {
             if (id == null)
             {
@@ -156,7 +184,13 @@ namespace charity.Controllers
             if (!Url.IsLocalUrl(fromList))
             {
                 fromList = Url.Action("Index", "EventImgs");
+                inLocalController = true;
             }
+            else
+            {
+                inLocalController = false;
+            }
+
             ViewBag.FromList = fromList;
             return View(eventImg);
         }
@@ -173,7 +207,15 @@ namespace charity.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            if (inLocalController)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return RedirectToAction(nameof(EventsController.Index));
+            }
         }
 
         private bool EventImgExists(int id)
