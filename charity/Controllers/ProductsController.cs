@@ -23,8 +23,18 @@ namespace charity.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var charityContext = _context.Products.Include(p => p.SellerNavigation);
-            return View(charityContext);
+            //var charityContext = _context.Products.Include(p => p.SellerNavigation);
+
+            //return View(charityContext);
+            var products = await _context.Products.Include(p => p.ProductImgs) // 確保載入與產品相關的照片
+        .Select(p => new ProductImgViewModel {
+            product = p,
+            // 顯示第一張照片
+            productImgs = p.ProductImgs.Select(img => img.ImgName).ToList()
+        })
+        .ToListAsync();
+
+        return View(products);
         }
 
         // GET: Products/Details/5
