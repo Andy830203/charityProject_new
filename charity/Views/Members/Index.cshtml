@@ -1,0 +1,139 @@
+﻿@model IEnumerable<charity.Models.Member>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>會員列表</h1>
+
+<p>
+    
+    <a asp-action="Create" class="btn btn-info"><i class="fa-solid fa-user-plus"></i>新增會員</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Account)
+            </th>
+            @* <th>
+                @Html.DisplayNameFor(model => model.Password)
+            </th> *@
+            <th>
+                @Html.DisplayNameFor(model => model.NickName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RealName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Gender)
+            </th>
+            @* <th>
+                @Html.DisplayNameFor(model => model.Birthday)
+            </th> *@
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            @* <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th> *@
+            <th>
+                @Html.DisplayNameFor(model => model.Phone)
+            </th>
+            @* <th>
+                @Html.DisplayNameFor(model => model.Points)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Checkin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Exp)
+            </th> *@
+            <th>
+                @Html.DisplayNameFor(model => model.ImgName)
+            </th>
+            @* <th>
+                @Html.DisplayNameFor(model => model.FaceRec)
+            </th> *@
+            @* <th>
+                @Html.DisplayNameFor(model => model.AccessNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StatusNavigation)
+            </th> *@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Account)
+            </td>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.Password)
+            </td> *@
+            <td>
+                @Html.DisplayFor(modelItem => item.NickName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RealName)
+            </td>
+            <td>
+                 @* @Html.DisplayFor(model => model.Gender) *@
+            @* 性別顯示修改 *@
+            @if (item.Gender == true)
+            {
+                <span>男</span>
+            }
+            else
+            {
+                <span>女</span>
+            }
+            </td>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.Birthday)
+            </td> *@
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td> *@
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.Points)
+            </td> *@
+            @* <td>
+                @Html.DisplayFor(modelItem => item.Checkin)
+            </td> *@
+           @*  <td>
+                @Html.DisplayFor(modelItem => item.Exp)
+            </td> *@
+            <td>
+@*                 @Html.DisplayFor(modelItem => item.ImgName)
+ *@               <img src="@Url.Content(item.ImgName)" alt="會員照片" style="width: 150px; height: 150px;" />
+
+            </td>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.FaceRec)
+            </td> *@
+           @*  <td>
+                @Html.DisplayFor(modelItem => item.AccessNavigation.Id)
+            </td>                                                                               
+            <td>
+                @Html.DisplayFor(modelItem => item.StatusNavigation.Id)
+            </td> *@
+            <td>
+
+  <a href="#"></a>+              
+                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-regular fa-pen-to-square"></i> 修改</a> |
+                <a class="btn btn-success" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info"></i> 資訊</a> |
+                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-user-xmark"></i> 刪除</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

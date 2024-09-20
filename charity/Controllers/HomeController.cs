@@ -2,8 +2,10 @@ using charity.Models;
 using Microsoft.AspNetCore.Mvc;
 using charity.ViewModels;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace charity.Controllers {
+    [Authorize]
     public class HomeController : Controller {
         private readonly ILogger<HomeController> _logger;
 

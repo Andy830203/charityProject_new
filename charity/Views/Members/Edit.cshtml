@@ -1,0 +1,120 @@
+﻿@model charity.Models.Member
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>修改</h1>
+
+<h4>會員資料</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Account" class="control-label"></label>
+                <input asp-for="Account" class="form-control" />
+                <span asp-validation-for="Account" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NickName" class="control-label"></label>
+                <input asp-for="NickName" class="form-control" />
+                <span asp-validation-for="NickName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RealName" class="control-label"></label>
+                <input asp-for="RealName" class="form-control" />
+                <span asp-validation-for="RealName" class="text-danger"></span>
+           
+            </div><div class="form-group">
+                <label asp-for="Gender" class="control-label"></label>
+                @* <input asp-for="Gender" class="form-control" /> *@
+                @* 性別選擇修改為下拉選單 *@
+                <select asp-for="Gender" class="form-select">
+                    <option value="true">男</option>
+                    <option value="false">女</option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="Birthday" class="control-label"></label>
+                <input asp-for="Birthday" class="form-control" />
+                <span asp-validation-for="Birthday" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Phone" class="control-label"></label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Points" class="control-label"></label>
+                <input asp-for="Points" class="form-control" />
+                <span asp-validation-for="Points" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Checkin" class="control-label"></label>
+                <input asp-for="Checkin" class="form-control" />
+                <span asp-validation-for="Checkin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Exp" class="control-label"></label>
+                <input asp-for="Exp" class="form-control" />
+                <span asp-validation-for="Exp" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImgName" class="control-label"></label>
+                <input asp-for="ImgName" type="file" class="form-control" />
+                <span asp-validation-for="ImgName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Status" class="control-label"></label>
+                <select asp-for="Status" class="form-control" asp-items="ViewBag.Status"></select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Access" class="control-label"></label>
+                <select asp-for="Access" class="form-control" asp-items="ViewBag.Access"></select>
+                <span asp-validation-for="Access" class="text-danger"></span>
+            </div>
+            @* <div class="form-group">
+                <label asp-for="FaceRec" class="control-label"></label>
+                <input asp-for="FaceRec" class="form-control" />
+                <span asp-validation-for="FaceRec" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                @* <input type="submit" value="保存" class="btn btn-primary" /> *@
+                <br>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 保存
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <hr>
+    <a asp-action="Index" class="btn btn-primary"><i class="fa-solid fa-file-lines"></i> 回到列表</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,127 @@
+﻿@model charity.Models.Member
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>資訊</h1>
+
+<div>
+    <h4>會員資料</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Account)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Account)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Password)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Password)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NickName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NickName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.RealName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RealName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Gender)
+        </dt>
+        <dd class = "col-sm-10">
+            @* @Html.DisplayFor(model => model.Gender) *@
+            @* 性別顯示修改 *@
+            @if (Model.Gender == true)
+            {
+                <span>男</span>
+            }
+            else
+            {
+                <span>女</span>
+            }
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Birthday)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Birthday)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Phone)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Points)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Points)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Checkin)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Checkin)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Exp)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Exp)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ImgName)
+        </dt>
+        <dd class = "col-sm-10">
+            @* @Html.DisplayFor(model => model.ImgName) *@
+            <img src="@Url.Content(Model.ImgName)" alt="員工照片" style="width: 150px; height: 150px;" />
+        </dd>
+        @* <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FaceRec)
+        </dt> *@
+        @* <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FaceRec)
+        </dd> *@
+       @*  <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.AccessNavigation)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.AccessNavigation.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.StatusNavigation)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.StatusNavigation.Id)
+        </dd> *@
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning"><i class="fa-regular fa-pen-to-square"></i> 修改</a>
+    <div>
+        <hr>
+        <a asp-action="Index" class="btn btn-primary"><i class="fa-solid fa-file-lines"></i> 回到列表</a>
+    </div>
+</div>

@@ -14,6 +14,7 @@
     <link href="~/css/styles.css" rel="stylesheet" />
     @await RenderSectionAsync("Styles", required: false)
     @await RenderSectionAsync("css", required: false)
+    <link href="~/css/styles.css" rel="stylesheet" />
 </head>
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -29,15 +30,17 @@
             </div>
         </form>
         <!-- Navbar-->
-        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+        <partial name="_LoginPartial" /> 
+        @* <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#!">員工登入</a></li>
-                    @* <li><hr class="dropdown-divider" /></li> *@
-                </ul>
-            </li>
-        </ul>
+                    <li><hr class="dropdown-divider" /></li> 
+                </ul> 
+            </li> 
+        </ul> *@
+       
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
@@ -52,8 +55,8 @@
                         </a>
                         <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="">員工</a>
-                                <a class="nav-link" href="">會員</a>
+                                <a class="nav-link" asp-controller="Staffs" asp-action="Index">員工</a>
+                                <a class="nav-link" asp-controller="Members" asp-action="Index">會員</a>
                             </nav>
                         </div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
@@ -144,7 +147,7 @@
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; 時益光年 2024</div>
+                        <div class="text-muted">Copyright &copy; 食益光年 2024</div>
                         <div>
                             <a href="#">Privacy Policy</a>
                             &middot;
