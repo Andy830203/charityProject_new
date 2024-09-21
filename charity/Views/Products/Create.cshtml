@@ -56,6 +56,11 @@
                 <input asp-for="Instock" class="form-control" />
                 <span asp-validation-for="Instock" class="text-danger"></span>
             </div>
+            <!-- 圖片上傳 -->
+            <div class="form-group">
+                <label>Upload Images</label>
+                <input type="file" name="UploadedImages" class="form-control" multiple />
+            </div>
             <div class="form-group">
                 <br>
                 <button type="submit" class="btn btn-primary">
