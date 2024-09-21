@@ -82,7 +82,7 @@ namespace charity.Controllers
 
             if (!string.IsNullOrEmpty(fromList))
             {
-                return View(fromList);
+                return View(fromList, eventImg);
             }
             return View(eventImg);
         }

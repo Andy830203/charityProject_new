@@ -66,15 +66,25 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,EId,StartTime,EndTime,Description")] EventPeriod eventPeriod)
+        public async Task<IActionResult> Create(string fromList, [Bind("Id,EId,StartTime,EndTime,Description")] EventPeriod eventPeriod)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(eventPeriod);
                 await _context.SaveChangesAsync();
+
+                if (!string.IsNullOrEmpty(fromList))
+                {
+                    return RedirectToAction("Index", fromList);
+                }
                 return RedirectToAction(nameof(Index));
             }
             ViewData["EId"] = new SelectList(_context.Events, "Id", "Id", eventPeriod.EId);
+
+            if (!string.IsNullOrEmpty(fromList))
+            {
+                return View(fromList, eventPeriod);
+            }
             return View(eventPeriod);
         }
 
@@ -106,7 +116,7 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,EId,StartTime,EndTime,Description")] EventPeriod eventPeriod)
+        public async Task<IActionResult> Edit(int id, string fromList, [Bind("Id,EId,StartTime,EndTime,Description")] EventPeriod eventPeriod)
         {
             if (id != eventPeriod.Id)
             {
@@ -131,9 +141,19 @@ namespace charity.Controllers
                         throw;
                     }
                 }
+
+                if (!string.IsNullOrEmpty(fromList))
+                {
+                    return RedirectToAction("Index", fromList);
+                }
                 return RedirectToAction(nameof(Index));
             }
             ViewData["EId"] = new SelectList(_context.Events, "Id", "Id", eventPeriod.EId);
+
+            if (!string.IsNullOrEmpty(fromList))
+            {
+                return View(fromList, "Index");
+            }
             return View(eventPeriod);
         }
 
@@ -164,7 +184,7 @@ namespace charity.Controllers
         // POST: EventPeriods/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, string fromList)
         {
             var eventPeriod = await _context.EventPeriods.FindAsync(id);
             if (eventPeriod != null)
@@ -173,6 +193,11 @@ namespace charity.Controllers
             }
 
             await _context.SaveChangesAsync();
+
+            if (!string.IsNullOrEmpty(fromList))
+            {
+                return RedirectToAction("Index", fromList);
+            }
             return RedirectToAction(nameof(Index));
         }
 

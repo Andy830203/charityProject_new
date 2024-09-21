@@ -68,16 +68,24 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,EId,LId,OrderInEvent")] EventLocation eventLocation)
+        public async Task<IActionResult> Create(string? fromList,[Bind("Id,EId,LId,OrderInEvent")] EventLocation eventLocation)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(eventLocation);
                 await _context.SaveChangesAsync();
+                if (!string.IsNullOrEmpty(fromList))
+                {
+                    return RedirectToAction("Index", fromList);
+                }
                 return RedirectToAction(nameof(Index));
             }
             ViewData["EId"] = new SelectList(_context.Events, "Id", "Id", eventLocation.EId);
             ViewData["LId"] = new SelectList(_context.Locations, "Id", "Id", eventLocation.LId);
+            if (!string.IsNullOrEmpty(fromList))
+            {
+                return View(fromList, eventLocation);
+            }
             return View(eventLocation);
         }
 
@@ -110,7 +118,7 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,EId,LId,OrderInEvent")] EventLocation eventLocation)
+        public async Task<IActionResult> Edit(int id, string fromList, [Bind("Id,EId,LId,OrderInEvent")] EventLocation eventLocation)
         {
             if (id != eventLocation.Id)
             {
@@ -135,10 +143,18 @@ namespace charity.Controllers
                         throw;
                     }
                 }
+                if (!string.IsNullOrEmpty(fromList))
+                {
+                    return RedirectToAction("Index", fromList);
+                }
                 return RedirectToAction(nameof(Index));
             }
             ViewData["EId"] = new SelectList(_context.Events, "Id", "Id", eventLocation.EId);
             ViewData["LId"] = new SelectList(_context.Locations, "Id", "Id", eventLocation.LId);
+            if (!string.IsNullOrEmpty(fromList))
+            {
+                return View(fromList, eventLocation);
+            }
             return View(eventLocation);
         }
 
@@ -170,7 +186,7 @@ namespace charity.Controllers
         // POST: EventLocations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, string fromList)
         {
             var eventLocation = await _context.EventLocations.FindAsync(id);
             if (eventLocation != null)
@@ -179,6 +195,10 @@ namespace charity.Controllers
             }
 
             await _context.SaveChangesAsync();
+            if (!string.IsNullOrEmpty(fromList))
+            {
+                return RedirectToAction("Index", fromList);
+            }
             return RedirectToAction(nameof(Index));
         }
 
