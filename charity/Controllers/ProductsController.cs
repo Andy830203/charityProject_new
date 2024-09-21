@@ -53,7 +53,7 @@ namespace charity.Controllers
                 return NotFound();
             }
             // 查詢產品的圖片路徑
-            var images = _context.ProductImgs.Where(pi => pi.Id == id).Select(pi => pi.ImgName).ToList();
+            var images = _context.ProductImgs.Where(pi => pi.PId == id).Select(pi => pi.ImgName).ToList();
 
             // 創建 ViewModel 並填充資料
             var viewModel = new ProductImgViewModel {
@@ -188,7 +188,7 @@ namespace charity.Controllers
                 return NotFound();
             }
             // 查詢產品的圖片路徑
-            var images = _context.ProductImgs.Where(pi => pi.Id == id).Select(pi => pi.ImgName).ToList();
+            var images = _context.ProductImgs.Where(pi => pi.PId == id).Select(pi => pi.ImgName).ToList();
 
             // 創建 ViewModel 並填充資料
             var viewModel = new ProductImgViewModel {
