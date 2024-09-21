@@ -105,6 +105,7 @@ namespace charity.Controllers
                 return NotFound();
             }
             ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", product.Seller);
+            ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name");
             return View(product);
         }
 

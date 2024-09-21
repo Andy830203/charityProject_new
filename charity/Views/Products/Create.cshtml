@@ -19,7 +19,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="Seller" class="control-label"></label>
-                <select asp-for="Seller" class ="form-control" asp-items="ViewBag.Seller"></select>
+                @Html.DropDownList("seller", (SelectList)ViewData["Seller"], "請選擇", new { @class = "form-control" })
+                <span asp-validation-for="Seller" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Category" class="control-label"></label>

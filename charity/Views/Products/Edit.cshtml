@@ -19,15 +19,14 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                @* 需要修改 *@
                 <label asp-for="Seller" class="control-label"></label>
-                <select asp-for="Seller" class="form-control" asp-items="ViewBag.Seller"></select>
+                @Html.DropDownList("seller", (SelectList)ViewData["Seller"], "請選擇", new { @class = "form-control" })
                 <span asp-validation-for="Seller" class="text-danger"></span>
             </div>
             <div class="form-group">
-                @* 需要修改 *@
                 <label asp-for="Category" class="control-label"></label>
-                <select asp-for="Category" class="form-control" asp-items="ViewBag.Category"></select>
+                @* <input asp-for="Category" class="form-control" /> *@
+                @Html.DropDownList("category", (SelectList)ViewData["CategoryList"], "請選擇", new { @class = "form-control" })
                 <span asp-validation-for="Category" class="text-danger"></span>
             </div>
             <div class="form-group">
