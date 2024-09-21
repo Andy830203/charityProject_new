@@ -160,8 +160,17 @@ namespace charity.Controllers
             {
                 return NotFound();
             }
+            // 查詢產品的圖片路徑
+            var images = _context.ProductImgs.Where(pi => pi.Id == id).Select(pi => pi.ImgName).ToList();
 
-            return View(product);
+            // 創建 ViewModel 並填充資料
+            var viewModel = new ProductImgViewModel {
+                product = product,
+                productImgs = images
+            };
+
+
+            return View(viewModel);
         }
 
         // POST: Products/Delete/5
