@@ -69,6 +69,7 @@ namespace charity.Controllers
         public IActionResult Create()
         {
             ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id");
+            ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name");
             return View();
         }
 
@@ -86,6 +87,7 @@ namespace charity.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", product.Seller);
+            ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name");
             return View(product);
         }
 
