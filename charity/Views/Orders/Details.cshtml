@@ -38,7 +38,30 @@
             @Html.DisplayNameFor(model => model.StatusNavigation)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StatusNavigation.Id)
+            @Html.DisplayFor(model => model.StatusNavigation.Name)
+        </dd>
+        <dt class="col-sm-2">
+            訂單細項
+        </dt>
+        <dd class="col-sm-10">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>商品名稱</th>
+                        <th>數量</th>
+                        <th>單價</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderItems) {
+                        <tr>
+                            <td>@item.PIdNavigation.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.PIdNavigation.Price</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </dd>
     </dl>
 </div>

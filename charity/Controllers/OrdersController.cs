@@ -36,6 +36,7 @@ namespace charity.Controllers
             var order = await _context.Orders
                 .Include(o => o.BuyerNavigation)
                 .Include(o => o.StatusNavigation)
+                .Include(o => o.OrderItems)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {
