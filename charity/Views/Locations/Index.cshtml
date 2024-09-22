@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<charity.Models.Location>
-
 @{
     ViewData["Title"] = "Index";
 }
@@ -25,14 +24,16 @@
         </div>
     </div>
     <!-- 地圖end -->
-    <form id="uploadImageForm" enctype="multipart/form-data">
+    @* 地圖圖片上傳st *@
+@*     <form id="uploadImageForm" enctype="multipart/form-data">
         <div class="form-group">
             <label for="image">選擇圖片</label>
             <input type="file" name="image" id="image" class="form-control" accept="image/*" />
         </div>
         <button type="submit" class="btn btn-primary">上傳圖片</button>
     </form>
-    <div id="uploadMessage"></div>
+    <div id="uploadMessage"></div> *@
+    @* 地圖圖片上傳end *@
     <p>
         <a asp-action="Create">新建地址</a>
     </p>
@@ -106,6 +107,12 @@
 @*地圖呼叫*@
 @section Scripts
 {
+    @*變數st*@
+    <script>
+        let map;
+        var markers = [];
+    </script>
+    @*變數end*@
     @*地圖style*@
     <script>
         // 自訂地圖樣式，移除所有元素，保留道路
@@ -159,14 +166,7 @@
           }
         ];
     </script>
-    @* 開啟新視窗st *@
-    <script>
-        function openWindow_edit(id) {
-            // 使用 window.open 開啟新的網頁
-            window.open('/Locations/Edit/'+id, '_blank', 'width=800,height=600');
-        }
-    </script>
-    @* 開啟新視窗end *@
+
     @*當寬度小於750時，啟用橫向卷軸*@
     <script>
         $(window).resize(function () {
@@ -208,35 +208,58 @@
     @* 連接google map end *@
     @* 初始載入st *@
     <script>
-        let map;
         async function initMap() {
         const { Map } = await google.maps.importLibrary("maps");
-            map = new Map(document.getElementById("map"), {
-            center: { lat: 22.6273, lng: 120.3014 },
-            zoom: 14,
-            disableDefaultUI: true,/* 清除ui */
-            styles:mapStyle
+        map = new Map(document.getElementById("map"), {
+        center: { lat: 22.6273, lng: 120.3014 },
+        zoom: 14,
+        disableDefaultUI: true,/* 清除ui */
+        styles:mapStyle
         });
         }
-        initMap(); 
-        @* 點擊跳轉st *@
+        // 等待頁面載入後初始化地圖
+        window.onload = initMap;
+        //點擊跳轉st
         // 綁定點擊事件到表格
         const table = document.getElementById('locationTable');
         table.addEventListener('click', function (e) {
             const target = e.target.closest('tr');
             if (target && target.querySelectorAll('td').length > 0) {
+                const loc_name = parseFloat(target.querySelectorAll('td')[0].innerText);//地名
                 const lat = parseFloat(target.querySelectorAll('td')[1].innerText);//精度
                 const lng = parseFloat(target.querySelectorAll('td')[2].innerText);//緯度
                 // 將地圖中心移動到點擊的座標
+                clearMarkers();
                 const position = { lat: lat, lng: lng };
                 map.setCenter(position);
-                map.setZoom(14);
+                map.setZoom(16);
+                var marker = new google.maps.Marker({
+                    position: { lat: lat, lng: lng },
+                    map: map,
+                    title: loc_name || 'Unknown Location'
+                });
+                addMarker(marker);
+                
             }
         });
-        @* 點擊跳轉end *@
+        //點擊跳轉end
     </script>
     @* 初始載入end *@
-
+    @*Google map工具箱 st*@
+    <script>
+        // 將標記推送到陣列。
+        function addMarker(marker) {
+          markers.push(marker);
+        }
+        // 透過刪除標記的參考來刪除數組中的所有標記。
+        function clearMarkers() {
+          for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+          }
+          markers = [];
+        }
+    </script>
+    @*Google map工具箱 end*@
     @*上傳圖片st*@
     <!-- AJAX 請求上傳圖片 -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

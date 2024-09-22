@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using charity.Models;
 using Microsoft.Extensions.Hosting;
+using charity.ViewModels;
 
 namespace charity.Controllers
 {

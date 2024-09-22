@@ -10,8 +10,10 @@ public partial class Location
     public int Id { get; set; }
     [Display(Name = "地點名稱")]
     public string? Name { get; set; }
+    [DisplayFormat(DataFormatString = "{0}", ApplyFormatInEditMode = true)]
     [Display(Name = "地點經度")]
     public decimal? Longitude { get; set; }
+    [DisplayFormat(DataFormatString = "{0}", ApplyFormatInEditMode = true)]
     [Display(Name = "地點緯度")]
     public decimal? Latitude { get; set; }
     [Display(Name = "地點描述")]
@@ -22,7 +24,6 @@ public partial class Location
     public string? PlusCode { get; set; }
     [Display(Name = "地點人數上限")]
     public int? Capacity { get; set; }
-
     public virtual ICollection<EventLocation> EventLocations { get; set; } = new List<EventLocation>();
 
     public virtual ICollection<LocationImg> LocationImgs { get; set; } = new List<LocationImg>();
