@@ -24,6 +24,7 @@ public partial class Member
     public bool? Gender { get; set; }
 
     [Display(Name = "生日")]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)] //更改顯示方式，年月日
     public DateTime? Birthday { get; set; }
 
     [Display(Name = "信箱")]

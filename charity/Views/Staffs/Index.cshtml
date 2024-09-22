@@ -28,7 +28,6 @@
                 {
                     <option value="male">男</option>
                 }
-
                 @if (Context.Request.Query["gender"] == "false")
                 {
                     <option value="female" selected>女</option>
@@ -61,12 +60,12 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
+            @* <th>
                 @Html.DisplayNameFor(model => model.Account)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Password)
-            </th>
+            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -91,27 +90,27 @@
             <th>
                 @Html.DisplayNameFor(model => model.ArrivalDate)
             </th>
-            <th>
+            @* <th>
                 @Html.DisplayNameFor(model => model.ResignDate)
-            </th>
+            </th> *@
             @* <th>
                 @Html.DisplayNameFor(model => model.AccessNavigation)
-            </th>
+            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.StatusNavigation)
-            </th> *@
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
+            @* <td>
                 @Html.DisplayFor(modelItem => item.Account)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Password)
-            </td>
+            </td> *@
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
@@ -145,15 +144,24 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ArrivalDate)
             </td>
-            <td>
+            @* <td>
                 @Html.DisplayFor(modelItem => item.ResignDate)
-            </td>
+            </td> *@
             @* <td>
                 @Html.DisplayFor(modelItem => item.AccessNavigation.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StatusNavigation.Id)
             </td> *@
+            <td>
+@*                 @Html.DisplayFor(modelItem => item.StatusNavigation.Id)
+ *@                @if (item.Status == 1)
+                    {
+                        <span>在職中</span>
+                    }
+                    else
+                    {
+                        
+                        <span>已離職</span>
+                    }
+                </td>
                 <td>
                     <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-regular fa-pen-to-square"></i> 修改</a> |
                     <a class="btn btn-success" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info"></i> 資訊</a> |

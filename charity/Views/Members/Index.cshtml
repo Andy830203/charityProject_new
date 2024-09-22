@@ -4,7 +4,9 @@
     ViewData["Title"] = "Index";
 }
 
+
 <h1>會員列表</h1>
+
 
 <!-- 進階搜尋表單 -->
 <div class="container">
@@ -20,23 +22,22 @@
             <option value="">全部</option>
             @* <option value="male" @(Context.Request.Query["gender"] == "true" ? "selected=\"selected\"" : "")>男</option>
             <option value="male" @(Context.Request.Query["gender"] == "false" ? "selected=\"selected\"" : "")>女</option> *@
-            @if (Context.Request.Query["gender"] == "true")
-            {
-                <option value="male" selected>男</option>
-            }
-            else
-            {
-                <option value="male">男</option>
-            }
-
-            @if (Context.Request.Query["gender"] == "false")
-            {
-                <option value="female" selected>女</option>
-            }
-            else
-            {
-                <option value="female">女</option>
-            }
+                @if (Context.Request.Query["gender"] == "true")
+                {
+                    <option value="male" selected>男</option>
+                }
+                else
+                {
+                    <option value="male">男</option>
+                }
+                @if (Context.Request.Query["gender"] == "false")
+                {
+                    <option value="female" selected>女</option>
+                }
+                else
+                {
+                    <option value="female">女</option>
+                }
         </select>
     </div>
 
@@ -62,9 +63,9 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
+            @* <th>
                 @Html.DisplayNameFor(model => model.Account)
-            </th>
+            </th> *@
             @* <th>
                 @Html.DisplayNameFor(model => model.Password)
             </th> *@
@@ -116,9 +117,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
+            @* <td>
                 @Html.DisplayFor(modelItem => item.Account)
-            </td>
+            </td> *@
             @* <td>
                 @Html.DisplayFor(modelItem => item.Password)
             </td> *@

@@ -35,12 +35,17 @@
             </div> *@
             <div class="form-group">
                 <label asp-for="Gender" class="control-label"></label>
-                <input asp-for="Gender" class="form-control" />
+                @* <input asp-for="Gender" class="form-control" /> *@
+                @* 性別選擇修改為下拉選單 *@
+                <select asp-for="Gender" class="form-select">
+                    <option value="true">男</option>
+                    <option value="false">女</option>
+                </select>
                 <span asp-validation-for="Gender" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Birthday" class="control-label"></label>
-                <input asp-for="Birthday" class="form-control" />
+                <input asp-for="Birthday" class="form-control" type="date" /> <!-- type="date" -->
                 <span asp-validation-for="Birthday" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -60,18 +65,23 @@
             </div>
             <div class="form-group">
                 <label asp-for="ArrivalDate" class="control-label"></label>
-                <input asp-for="ArrivalDate" class="form-control" />
+                <input asp-for="ArrivalDate" class="form-control" type="date" />
                 <span asp-validation-for="ArrivalDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ResignDate" class="control-label"></label>
-                <input asp-for="ResignDate" class="form-control" />
+                <input asp-for="ResignDate" class="form-control" type="date" />
                 <span asp-validation-for="ResignDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control" asp-items="ViewBag.Status"></select>
-                <span asp-validation-for="Status" class="text-danger"></span>
+                <select asp-for="Status" class="form-select">
+                    <option value="1">在職中</option>
+                    <option value="2">已離職</option>
+                </select>
+                <span asp-validation-for="Status" class="text-bg-danger"></span>
+                @* <select asp-for="Status" class ="form-control" asp-items="ViewBag.Status"></select>
+                *@
             </div>
             <div class="form-group">
                 <label asp-for="Access" class="control-label"></label>
@@ -86,7 +96,8 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <hr>
+    <a asp-action="Index" class="btn btn-primary"><i class="fa-solid fa-file-lines"></i> 回到列表</a>
 </div>
 
 @section Scripts {

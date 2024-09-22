@@ -99,14 +99,14 @@ namespace charity.Controllers
         {
             if (ModelState.IsValid)  //因為一開始沒有登入所以驗證false走不進去
             {
-                if (Request.Form.Files["ImgName"] != null )//&& MemberPhoto.Length > 0
+                if (Request.Form.Files["ImgName"] != null)//&& MemberPhoto.Length > 0
                 {
                     var file = Request.Form.Files["ImgName"];
                     // 獲取文件的名稱
                     var fileName = Path.GetFileName(file.FileName);
 
                     // 定義儲存照片的路徑 (例如 wwwroot/images/members)
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/members", fileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\members", fileName);
 
                     // 保存文件到指定路徑
                     using (var stream = new FileStream(filePath, FileMode.Create))
@@ -115,7 +115,7 @@ namespace charity.Controllers
                     }
 
                     // 將文件名保存到資料庫
-                    member.ImgName = "/images/members/" + filePath;
+                    member.ImgName = @"/images/members/" + fileName;
                 }
                 _context.Add(member);
                 await _context.SaveChangesAsync();
@@ -149,10 +149,10 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Account,Password,NickName,RealName,Gender,Birthday,Email,Address,Phone,Points,Checkin,Exp,ImgName,Status,Access,FaceRec")] Member member, IFormFile MemberPhoto)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Account,Password,NickName,RealName,Gender,Birthday,Email,Address,Phone,Points,Checkin,Exp,ImgName,Status,Access,FaceRec")] Member member)
         {
             if (id != member.Id)
-            {   
+            {
                 return NotFound();
             }
 
@@ -160,22 +160,23 @@ namespace charity.Controllers
             {
                 try
                 {
-                    if (MemberPhoto != null && MemberPhoto.Length > 0)
+                    if (Request.Form.Files["ImgName"] != null) //&& MemberPhoto.Length > 0
                     {
+                        var file = Request.Form.Files["ImgName"];
                         // 獲取文件的名稱
-                        var fileName = Path.GetFileName(MemberPhoto.FileName);
+                        var fileName = Path.GetFileName(file.FileName);
 
-                        // 定義儲存照片的路徑
-                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/members", fileName);
+                        // 定義儲存照片的路徑 (例如 wwwroot/images/members)
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\members", fileName);
 
                         // 保存文件到指定路徑
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
-                            await MemberPhoto.CopyToAsync(stream);
+                            await file.CopyToAsync(stream);
                         }
 
-                        // 更新會員的照片名稱
-                        member.ImgName = "/images/members/" + fileName;
+                        // 將文件名保存到資料庫
+                        member.ImgName = @"/images/members/" + fileName;
                     }
                     _context.Update(member);
                     await _context.SaveChangesAsync();
@@ -197,6 +198,7 @@ namespace charity.Controllers
             ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id", member.Status);
             return View(member);
         }
+
 
         // GET: Members/Delete/5
         public async Task<IActionResult> Delete(int? id)

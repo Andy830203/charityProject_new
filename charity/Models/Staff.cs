@@ -23,6 +23,7 @@ public partial class Staff
     public bool? Gender { get; set; }
 
     [Display(Name = "生日")]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)] //更改顯示方式，年月日
     public DateTime? Birthday { get; set; }
 
     [Display(Name = "信箱")]
@@ -35,9 +36,11 @@ public partial class Staff
     public string? Phone { get; set; }
 
     [Display(Name = "到職日")]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)] //更改顯示方式，年月日
     public DateTime? ArrivalDate { get; set; }
 
     [Display(Name = "離職日")]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)] //更改顯示方式，年月日
     public DateTime? ResignDate { get; set; }
 
     [Display(Name = "帳號狀態")]
@@ -48,5 +51,6 @@ public partial class Staff
 
     public virtual StaffAccess? AccessNavigation { get; set; }
 
+    [Display(Name = "帳號狀態")]
     public virtual StaffStatus? StatusNavigation { get; set; }
 }
