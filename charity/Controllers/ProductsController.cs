@@ -126,14 +126,22 @@ namespace charity.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
+            var currProduct = await _context.Products.Include(p => p.ProductImgs).FirstOrDefaultAsync(p => p.Id == id);
+            if (currProduct == null)
             {
                 return NotFound();
             }
-            ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", product.Seller);
-            ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name", product.Category);
-            return View(product);
+            var vm = new ProductImgViewModel {
+                product = currProduct,
+                ExistingImages = currProduct.ProductImgs.Select(img => new UploadedImage {
+                    ImgName = img.ImgName,
+                    ImgId = img.Id
+                }).ToList(),
+                UploadedImages = new List<IFormFile>()
+            };
+            ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", currProduct.Seller);
+            ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name", currProduct.Category);
+            return View(vm);
         }
 
         // POST: Products/Edit/5
