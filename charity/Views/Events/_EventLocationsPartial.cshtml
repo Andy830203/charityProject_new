@@ -36,6 +36,14 @@
                 <a asp-controller="EventLocations" asp-action="Delete" asp-route-id="@item.Id" asp-route-fromList="@Url.Action("Index", "Events")">Delete</a>
             </td>
         </tr>
+        <tr class="drag-content" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <td colspan="4" draggable="true" ondragstart="drag(event)" id="drag-@item.OrderInEvent">
+                <p>+ 順序: @Html.DisplayFor(modelItem => item.OrderInEvent)</p>
+            </td>
+        </tr>
+        <tr class="drag-content" ondrop="drop(event)" ondragover="allowDrop(event)">
+            
+        </tr>
 }
     </tbody>
 </table>
