@@ -24,16 +24,6 @@
         </div>
     </div>
     <!-- 地圖end -->
-    @* 地圖圖片上傳st *@
-@*     <form id="uploadImageForm" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="image">選擇圖片</label>
-            <input type="file" name="image" id="image" class="form-control" accept="image/*" />
-        </div>
-        <button type="submit" class="btn btn-primary">上傳圖片</button>
-    </form>
-    <div id="uploadMessage"></div> *@
-    @* 地圖圖片上傳end *@
     <p>
         <a asp-action="Create">新建地址</a>
     </p>
@@ -92,7 +82,6 @@
                             @Html.DisplayFor(modelItem => item.Capacity)
                         </td>
                         <td>
-                            <button onclick="openWindow_edit(@item.Id)">編輯</button>
                             <a asp-action="Edit" asp-route-id="@item.Id">編輯</a> |
                             <a asp-action="Details" asp-route-id="@item.Id">檢視</a> |
                             <a asp-action="Delete" asp-route-id="@item.Id">刪除</a>
