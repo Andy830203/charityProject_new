@@ -22,7 +22,7 @@ namespace charity.Controllers
 
 
         // 顯示會員列表和進階搜尋
-        public IActionResult Index(string gender, string name, DateTime? startDate, DateTime? endDate)
+        public IActionResult Index(string gender, string name, int? status,  DateTime? startDate, DateTime? endDate)
         {
             // 準備基本的會員查詢
             var query = _context.Staff.AsQueryable();
@@ -37,6 +37,12 @@ namespace charity.Controllers
             if (!string.IsNullOrEmpty(gender))
             {
                 query = query.Where(m => m.Gender == (gender == "male"));
+            }
+
+            // 根據帳號狀態篩選 (1 為在職中, 2 為離職)
+            if (status.HasValue)
+            {
+                query = query.Where(m => m.Status == status.Value);
             }
 
             // 根據到職日篩選
