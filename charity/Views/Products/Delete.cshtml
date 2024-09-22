@@ -71,7 +71,7 @@
             @if (Model.productImgs != null && Model.productImgs.Any()) {
                 <div>
                     @foreach (var imagePath in Model.productImgs) {
-                        <img src="@Url.Content(imagePath)" alt="" style="width: 300px; height: auto; margin-right: 10px;">
+                        <img src="@Url.Content(imagePath)" alt="" style="width: 300px; height: auto; margin-right: 10px;margin-bottom: 10px;">
                     }
                 </div>
             }

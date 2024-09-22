@@ -149,9 +149,10 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Seller,Category,Price,OnShelf,OnShelfTime,Description,Instock")] Product product)
+        public async Task<IActionResult> Edit(int id, int[] DeleteImages, ProductImgViewModel vm)
         {
-            if (id != product.Id)
+            // [Bind("product.Id,product.Name,product.Seller,product.Category,product.price,product.OnShelf,product.OnShelfTime,product.Description,product.Instock,UploadedImages, ExistingImages")] 移除，因為Post功能會異常
+            if (id != vm.product.Id)
             {
                 return NotFound();
             }
@@ -160,12 +161,36 @@ namespace charity.Controllers
             {
                 try
                 {
-                    _context.Update(product);
+                    _context.Update(vm.product);
                     await _context.SaveChangesAsync();
+
+                    // 刪除選中的圖片
+                    if (DeleteImages.Length > 0) {
+                        var imagesToDelete = _context.ProductImgs.Where(pi => DeleteImages.Contains(pi.Id)).ToList();
+                        _context.ProductImgs.RemoveRange(imagesToDelete);
+                        await _context.SaveChangesAsync();
+                    }
+                    if (vm.UploadedImages != null && vm.UploadedImages.Count > 0) {
+                        foreach (var image in vm.UploadedImages) {
+                            var fileName = Path.GetFileName(image.FileName);
+                            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products", fileName);
+
+                            using (var stream = new FileStream(filePath, FileMode.Create)) {
+                                await image.CopyToAsync(stream);
+                            }
+
+                            var productImg = new ProductImg {
+                                ImgName = "/images/products/" + fileName,
+                                PId = vm.product.Id
+                            };
+                            _context.ProductImgs.Add(productImg);
+                        }
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.Id))
+                    if (!ProductExists(vm.product.Id))
                     {
                         return NotFound();
                     }
@@ -176,8 +201,9 @@ namespace charity.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", product.Seller);
-            return View(product);
+            ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", vm.product.Seller);
+            ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name");
+            return View(vm);
         }
 
         // GET: Products/Delete/5

@@ -9,8 +9,9 @@ public partial class Product
     public int Id { get; set; }
     [Display(Name = "商品名稱")]
     public string? Name { get; set; }
-    
+    [Display(Name = "賣家")]
     public int? Seller { get; set; }
+    [Display(Name = "類別")]
     public int? Category { get; set; }
     [Display(Name = "售價")]
     public int? Price { get; set; }
