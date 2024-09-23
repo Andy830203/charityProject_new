@@ -218,8 +218,8 @@
             const target = e.target.closest('tr');
             if (target && target.querySelectorAll('td').length > 0) {
                 const loc_name = target.querySelectorAll('td')[0].innerText;//地名
-                const lat = parseFloat(target.querySelectorAll('td')[1].innerText);//精度
-                const lng = parseFloat(target.querySelectorAll('td')[2].innerText);//緯度
+                const lat = parseFloat(target.querySelectorAll('td')[2].innerText);//精度
+                const lng = parseFloat(target.querySelectorAll('td')[1].innerText);//緯度
                 // 將地圖中心移動到點擊的座標
                 //clearMarkers();
                 const position = { lat: lat, lng: lng };
