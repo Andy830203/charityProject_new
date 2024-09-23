@@ -243,8 +243,8 @@
             for(i1=0;i1<doc_loc.rows.length;i1++)
             {
                 const loc_name_t=doc_loc.rows[i1].cells[0].textContent || 'Unknown Location';//地點名稱
-                const lat_t=parseFloat(doc_loc.rows[i1].cells[1].textContent);//經度
-                const lng_t=parseFloat(doc_loc.rows[i1].cells[2].textContent);//緯度
+                const lat_t=parseFloat(doc_loc.rows[i1].cells[2].textContent);//緯度
+                const lng_t=parseFloat(doc_loc.rows[i1].cells[1].textContent);//經度
                 marker_t = new google.maps.Marker({
                 position: { lat: lat_t, lng: lng_t },
                 map: map,
