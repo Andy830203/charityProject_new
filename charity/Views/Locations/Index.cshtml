@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<charity.Models.Location>
-
 @{
     ViewData["Title"] = "Index";
 }
@@ -10,7 +9,7 @@
             height: 100%;
             width: 100%;
         }
-        /* 設置動畫過渡效果 */
+        /* 設置動畫過渡效果 */‵
         /* 設置放大效果 */
         table tbody tr:hover {
             transition: transform 0.3s ease; /* 設置動畫過渡效果 */
@@ -25,8 +24,6 @@
         </div>
     </div>
     <!-- 地圖end -->
-    <button id="iconUpload">上傳圖片
-    </button>
     <p>
         <a asp-action="Create">新建地址</a>
     </p>
@@ -85,7 +82,6 @@
                             @Html.DisplayFor(modelItem => item.Capacity)
                         </td>
                         <td>
-                            <button onclick="openWindow_edit(@item.Id)">編輯</button>
                             <a asp-action="Edit" asp-route-id="@item.Id">編輯</a> |
                             <a asp-action="Details" asp-route-id="@item.Id">檢視</a> |
                             <a asp-action="Delete" asp-route-id="@item.Id">刪除</a>
@@ -100,14 +96,66 @@
 @*地圖呼叫*@
 @section Scripts
 {
-    @* 開啟新視窗st *@
+    @*變數st*@
     <script>
-        function openWindow_edit(id) {
-            // 使用 window.open 開啟新的網頁
-            window.open('/Locations/Edit/'+id, '_blank', 'width=800,height=600');
-        }
+        let map;
+        var markers = [];
     </script>
-    @* 開啟新視窗end *@
+    @*變數end*@
+    @*地圖style*@
+    <script>
+        // 自訂地圖樣式，移除所有元素，保留道路
+        var mapStyle = [
+          {
+            "featureType": "all",
+            "elementType": "labels",
+            "stylers": [
+              { "visibility": "off" }
+            ]
+          },
+          {
+            "featureType": "administrative",
+            "elementType": "geometry",
+            "stylers": [
+              { "visibility": "off" }
+            ]
+          },
+          {
+            "featureType": "poi",
+            "stylers": [
+              { "visibility": "off" }
+            ]
+          },
+          {
+            "featureType": "road",
+            "elementType": "labels",
+            "stylers": [
+              { "visibility": "off" }
+            ]
+          },
+          {
+            "featureType": "transit",
+            "stylers": [
+              { "visibility": "off" }
+            ]
+          },
+          {
+            "featureType": "landscape",
+            "stylers": [
+              { "visibility": "simplified" },
+              { "color": "#ffffff" }
+            ]
+          },
+          {
+            "featureType": "water",
+            "stylers": [
+              { "visibility": "on" },
+              { "color": "#b0e4ff" }
+            ]
+          }
+        ];
+    </script>
+
     @*當寬度小於750時，啟用橫向卷軸*@
     <script>
         $(window).resize(function () {
@@ -138,7 +186,7 @@
                 );
             }
         });
-        </script>
+    </script>
     @* 連接google map st *@
     <script>
         (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
@@ -149,60 +197,123 @@
     @* 連接google map end *@
     @* 初始載入st *@
     <script>
-        let map;
         async function initMap() {
-            const { Map } = await google.maps.importLibrary("maps");
-            // const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-            const map = new Map(document.getElementById("map"), {
-                center: { lat: 22.6273, lng: 120.3014 },
-                zoom: 14,
-                disableDefaultUI: true,/* 清除ui */
-            });
-            // const priceTag = document.createElement("div");
-            // priceTag.className = "price-tag";
-            // priceTag.textContent = "$2.5M";
-            // const marker = new AdvancedMarkerElement({
-            //     map,
-            //     position: { lat: 37.42, lng: -122.1 },
-            //     content: priceTag,
-            // });
+        const { Map } = await google.maps.importLibrary("maps");
+        map = new Map(document.getElementById("map"), {
+        center: { lat: 22.6273, lng: 120.3014 },
+        zoom: 14,
+        disableDefaultUI: true,/* 清除ui */
+        styles:mapStyle
+        });
+        first_loc_mark();
+
         }
-        initMap();
+        // 等待頁面載入後初始化地圖
+        window.onload = initMap;
+        //點擊跳轉st
+        // 綁定點擊事件到表格
+        const table = document.getElementById('locationTable');
+        table.addEventListener('click', function (e) {
+            const target = e.target.closest('tr');
+            if (target && target.querySelectorAll('td').length > 0) {
+                const loc_name = parseFloat(target.querySelectorAll('td')[0].innerText);//地名
+                const lat = parseFloat(target.querySelectorAll('td')[1].innerText);//精度
+                const lng = parseFloat(target.querySelectorAll('td')[2].innerText);//緯度
+                // 將地圖中心移動到點擊的座標
+                clearMarkers();
+                const position = { lat: lat, lng: lng };
+                map.setCenter(position);
+                map.setZoom(16);
+                var marker = new google.maps.Marker({
+                    position: { lat: lat, lng: lng },
+                    map: map,
+                    title: loc_name || 'Unknown Location'
+                });
+                addMarker(marker);
+                
+            }
+        });
+        //點擊跳轉end
     </script>
     @* 初始載入end *@
-    @* 點擊跳轉st *@
-    <script>
+    @*測試讀取表格st*@
+@*     <script>
+        function first_loc_mark(){
+        var doc_loc = document.getElementById("locationTable");
+        let lat_t;
+        let lng_t;
+        let marker_t;
+        for(i1=0;i1<doc_loc.rows.length;i1++)
         {
-            // 綁定點擊事件到表格
-            const table = document.getElementById('locationTable');
-            table.addEventListener('click', function (e) {
-                const target = e.target.closest('tr');
-                if (target && target.querySelectorAll('td').length > 0) {
-                    const lat = parseFloat(target.querySelectorAll('td')[1].innerText);//精度
-                    const lng = parseFloat(target.querySelectorAll('td')[2].innerText);//緯度
-                    // 將地圖中心移動到點擊的座標
-                    const position = { lat: lat, lng: lng };
-                    map.setCenter(position);
-                    map.setZoom(14);
-                }
-            });
+        lat_t=doc_loc.rows[i1].cells[1];//經度
+        lng_t=doc_loc.rows[i1].cells[2];//緯度
+        marker_t = new google.maps.Marker({
+        position: { lat: lat_t, lng: lng_t },
+        map: map,
+        title: loc_name || 'Unknown Location'
+        });
+            addMarker(marker_t);
         }
-        </script>
-    @* 點擊跳轉end *@
+        }
+    </script> *@
+    @*測試讀取表格end*@
+    @*Google map工具箱 st*@
+    <script>
+        // 將標記推送到陣列。
+        function addMarker(marker) {
+          markers.push(marker);
+        }
+        // 透過刪除標記的參考來刪除數組中的所有標記。
+        function clearMarkers() {
+          for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+          }
+          markers = [];
+        }
+    </script>
+    @*Google map工具箱 end*@
     @*上傳圖片st*@
-@*         <script>
-            
-            $('#iconUpload').click(function (event) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    $('#iconPreview').attr('src', e.target.result).show();
-                };
-                reader.readAsDataURL(event.target.files[0]);
+    <!-- AJAX 請求上傳圖片 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        //ready文檔物件模型 (DOM) 變得可以安全操作後立即運行 JavaScript 程式碼的方法
+        $(document).ready(function () {
+            //監聽submit
+            $('#uploadImageForm').on('submit', function (e) {
+                //preventDefault阻止表單默認提交
+                e.preventDefault();
+                //實例化FormData
+                var formData = new FormData();
+                //取得上傳檔案欄位的第一個檔案
+                var imageFile = $('#image')[0].files[0];
+                //將其加入FormData
+                formData.append('image', imageFile);
+                //使用ajax方法
+                $.ajax({
+                    //以下為將請求發送到控制器，可理解為呼叫
+                    url: '../Locations/UploadImage',
+                    type: 'POST',
+                    data: formData,
+                    //不要設置標頭，瀏覽器會自動設置合適的 multipart/form-data 標頭。
+                    contentType: false,
+                    //不要將 formData 物件轉換為查詢字串。當上傳檔案時，我們希望它保持為 FormData 格式，而不是被轉換為 URL 編碼的格式。
+                    processData: false,
+                    //請求成功時執行，response通常返回json
+                    success: function (response) {
+                        if (response.success) {
+                            $('#uploadMessage').html('<div class="alert alert-success">' + response.message + '</div>');
+                        } else {
+                            $('#uploadMessage').html('<div class="alert alert-danger">' + response.message + '</div>');
+                        }
+                    },
+                    error: function () {
+                        $('#uploadMessage').html('<div class="alert alert-danger">圖片上傳失敗，請再試一次。</div>');
+                        console.log(imageFile);  // 檢查是否選取到檔案
+                        console.log(formData.get('image'));  // 檢查 FormData 是否包含檔案
+                    }
+                });
             });
-
-        uploader.addEventListener('change', (event) => {
-            console.log(event.target.files);
-        }); *@
+        });
     </script>
     @*上傳圖片end*@
 }
