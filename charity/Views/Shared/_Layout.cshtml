@@ -76,15 +76,17 @@
                             活動
                         </a>
                         @*連接頁面*@
-                        <a class="nav-link" asp-controller="Locations" asp-action="index">
-                            <div class="sb-nav-link-icon"><i class="fa-solid fa-location-dot"></i></div>
-                            地點
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLocations" aria-expanded="false" aria-controls="collapsePages">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-store"></i></div>
+                            地點管理
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <a class="nav-link" asp-controller="Home1" asp-action="testupload">
-                            <div class="sb-nav-link-icon"><i class="fa-solid fa-location-dot"></i></div>
-                            上傳
-                        </a>
-
+                        <div class="collapse" id="collapseLocations" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" asp-controller="Locations" asp-action="Index">地點</a>
+                                <a class="nav-link" asp-controller="LocationImgs" asp-action="Index">地點圖片</a>
+                            </nav>
+                        </div>
                         @*  <div class="sb-sidenav-menu-heading">Core</div>
                         <a class="nav-link" href="index.html">
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>

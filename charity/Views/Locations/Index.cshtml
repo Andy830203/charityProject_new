@@ -9,7 +9,7 @@
             height: 100%;
             width: 100%;
         }
-        /* 設置動畫過渡效果 */
+        /* 設置動畫過渡效果 */‵
         /* 設置放大效果 */
         table tbody tr:hover {
             transition: transform 0.3s ease; /* 設置動畫過渡效果 */
@@ -205,6 +205,8 @@
         disableDefaultUI: true,/* 清除ui */
         styles:mapStyle
         });
+        first_loc_mark();
+
         }
         // 等待頁面載入後初始化地圖
         window.onload = initMap;
@@ -234,6 +236,27 @@
         //點擊跳轉end
     </script>
     @* 初始載入end *@
+    @*測試讀取表格st*@
+@*     <script>
+        function first_loc_mark(){
+        var doc_loc = document.getElementById("locationTable");
+        let lat_t;
+        let lng_t;
+        let marker_t;
+        for(i1=0;i1<doc_loc.rows.length;i1++)
+        {
+        lat_t=doc_loc.rows[i1].cells[1];//經度
+        lng_t=doc_loc.rows[i1].cells[2];//緯度
+        marker_t = new google.maps.Marker({
+        position: { lat: lat_t, lng: lng_t },
+        map: map,
+        title: loc_name || 'Unknown Location'
+        });
+            addMarker(marker_t);
+        }
+        }
+    </script> *@
+    @*測試讀取表格end*@
     @*Google map工具箱 st*@
     <script>
         // 將標記推送到陣列。
