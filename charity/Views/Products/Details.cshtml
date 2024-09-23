@@ -17,10 +17,16 @@
             @Html.DisplayFor(model => model.product.Name)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.product.Category)
+            @Html.DisplayNameFor(model => model.product.CategoryNavigation)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.product.Category)
+            @Html.DisplayFor(model => model.product.CategoryNavigation.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.product.SellerNavigation)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.product.SellerNavigation.Id)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.product.Price)
@@ -65,20 +71,15 @@
             @if (Model.productImgs != null && Model.productImgs.Any()) {
                 <div>
                     @foreach (var imagePath in Model.productImgs) {
-                        <img src="@Url.Content(imagePath)" alt="" style="width: 300px; height: auto; margin-right: 10px;">
+                        <img src="@Url.Content(imagePath)" alt="" style="width: 300px; height: auto; margin-right: 10px; margin-bottom: 10px;">
                     }
                 </div>
             }
             else {
-                <p>No images available for this product.</p>
+                <img src="@Url.Content("/images/non-found.jpg")" alt="Alternate Text" style="width: 300px; height: auto; margin-right: 10px;"/>
             }
         </dd>
-        @* <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SellerNavigation)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SellerNavigation.Id)
-        </dd>  *@
+        
     </dl>
 </div>
 <div>

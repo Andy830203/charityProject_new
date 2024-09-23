@@ -1,0 +1,59 @@
+﻿@model IEnumerable<charity.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>訂單列表</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-info"><i class="fa-solid fa-plus"></i> 新增訂單</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DiscountCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BuyerNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StatusNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DiscountCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BuyerNavigation.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StatusNavigation.Name)
+            </td>
+            <td>
+                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-regular fa-pen-to-square"></i> 修改</a> |
+                    <a class="btn btn-success" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info"></i> 資訊</a> |
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-trash-can"></i> 刪除</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -23,8 +23,18 @@ namespace charity.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var charityContext = _context.Products.Include(p => p.SellerNavigation);
-            return View(charityContext);
+            //var charityContext = _context.Products.Include(p => p.SellerNavigation);
+
+            //return View(charityContext);
+            var products = await _context.Products.Include(p => p.ProductImgs) // 確保載入與產品相關的照片
+        .Select(p => new ProductImgViewModel {
+            product = p,
+            // 顯示第一張照片
+            productImgs = p.ProductImgs.Select(img => img.ImgName).ToList()
+        })
+        .ToListAsync();
+
+        return View(products);
         }
 
         // GET: Products/Details/5
@@ -43,7 +53,7 @@ namespace charity.Controllers
                 return NotFound();
             }
             // 查詢產品的圖片路徑
-            var images = _context.ProductImgs.Where(pi => pi.Id == id).Select(pi => pi.ImgName).ToList();
+            var images = _context.ProductImgs.Where(pi => pi.PId == id).Select(pi => pi.ImgName).ToList();
 
             // 創建 ViewModel 並填充資料
             var viewModel = new ProductImgViewModel {
@@ -59,6 +69,7 @@ namespace charity.Controllers
         public IActionResult Create()
         {
             ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id");
+            ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name");
             return View();
         }
 
@@ -67,16 +78,44 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Seller,Category,Price,OnShelf,OnShelfTime,Description,Instock")] Product product)
+        public async Task<IActionResult> Create([Bind("product.Name,product.Seller,product.Category,product.price,product.OnShelf,product.OnShelfTime,product.Description,product.Instock,UploadedImages")] ProductImgViewModel vm)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
+                _context.Add(vm.product);
                 await _context.SaveChangesAsync();
+                // 處理圖片上傳
+                if (vm.UploadedImages != null && vm.UploadedImages.Count > 0) {
+                    foreach (var image in vm.UploadedImages) {
+                        var fileName = Path.GetFileName(image.FileName);
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products", fileName);
+
+                        // 儲存圖片檔案
+                        using (var stream = new FileStream(filePath, FileMode.Create)) {
+                            await image.CopyToAsync(stream);
+                        }
+
+                        // 將圖片路徑存到資料庫
+                        var productImg = new ProductImg {
+                            ImgName = "/images/products/" + fileName,
+                            PId = vm.product.Id
+                        };
+                        vm.productImgs.Add("/images/products/" + fileName);
+                        _context.ProductImgs.Add(productImg);
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", product.Seller);
-            return View(product);
+            else {
+                foreach (var error in ModelState) {
+                    Console.WriteLine($"Key: {error.Key}, Errors: {string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))}");
+                }
+            }
+            ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", vm.product.Seller);
+            ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name");
+            return View(vm);
         }
 
         // GET: Products/Edit/5
@@ -87,13 +126,22 @@ namespace charity.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
+            var currProduct = await _context.Products.Include(p => p.ProductImgs).FirstOrDefaultAsync(p => p.Id == id);
+            if (currProduct == null)
             {
                 return NotFound();
             }
-            ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", product.Seller);
-            return View(product);
+            var vm = new ProductImgViewModel {
+                product = currProduct,
+                ExistingImages = currProduct.ProductImgs.Select(img => new UploadedImage {
+                    ImgName = img.ImgName,
+                    ImgId = img.Id
+                }).ToList(),
+                UploadedImages = new List<IFormFile>()
+            };
+            ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", currProduct.Seller);
+            ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name", currProduct.Category);
+            return View(vm);
         }
 
         // POST: Products/Edit/5
@@ -101,9 +149,10 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Seller,Category,Price,OnShelf,OnShelfTime,Description,Instock")] Product product)
+        public async Task<IActionResult> Edit(int id, int[] DeleteImages, ProductImgViewModel vm)
         {
-            if (id != product.Id)
+            // [Bind("product.Id,product.Name,product.Seller,product.Category,product.price,product.OnShelf,product.OnShelfTime,product.Description,product.Instock,UploadedImages, ExistingImages")] 移除，因為Post功能會異常
+            if (id != vm.product.Id)
             {
                 return NotFound();
             }
@@ -112,12 +161,36 @@ namespace charity.Controllers
             {
                 try
                 {
-                    _context.Update(product);
+                    _context.Update(vm.product);
                     await _context.SaveChangesAsync();
+
+                    // 刪除選中的圖片
+                    if (DeleteImages.Length > 0) {
+                        var imagesToDelete = _context.ProductImgs.Where(pi => DeleteImages.Contains(pi.Id)).ToList();
+                        _context.ProductImgs.RemoveRange(imagesToDelete);
+                        await _context.SaveChangesAsync();
+                    }
+                    if (vm.UploadedImages != null && vm.UploadedImages.Count > 0) {
+                        foreach (var image in vm.UploadedImages) {
+                            var fileName = Path.GetFileName(image.FileName);
+                            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products", fileName);
+
+                            using (var stream = new FileStream(filePath, FileMode.Create)) {
+                                await image.CopyToAsync(stream);
+                            }
+
+                            var productImg = new ProductImg {
+                                ImgName = "/images/products/" + fileName,
+                                PId = vm.product.Id
+                            };
+                            _context.ProductImgs.Add(productImg);
+                        }
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.Id))
+                    if (!ProductExists(vm.product.Id))
                     {
                         return NotFound();
                     }
@@ -128,8 +201,9 @@ namespace charity.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", product.Seller);
-            return View(product);
+            ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", vm.product.Seller);
+            ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name");
+            return View(vm);
         }
 
         // GET: Products/Delete/5
@@ -147,8 +221,17 @@ namespace charity.Controllers
             {
                 return NotFound();
             }
+            // 查詢產品的圖片路徑
+            var images = _context.ProductImgs.Where(pi => pi.PId == id).Select(pi => pi.ImgName).ToList();
 
-            return View(product);
+            // 創建 ViewModel 並填充資料
+            var viewModel = new ProductImgViewModel {
+                product = product,
+                productImgs = images
+            };
+
+
+            return View(viewModel);
         }
 
         // POST: Products/Delete/5
