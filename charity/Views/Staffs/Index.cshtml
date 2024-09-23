@@ -3,21 +3,78 @@
 @{
     ViewData["Title"] = "Index";
 }
-
+<div style="color:darkgreen">
 <h1>員工列表</h1>
+</div>
 
+<!-- 進階搜尋表單 -->
+<div class="container">
+    <form id="searchForm" method="get" asp-action="Index">
+        <div class="form-group">
+            <label for="name">姓名:</label>
+            <input type="text" id="name" name="name" value="@Context.Request.Query["name"]" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label for="gender">性別:</label>
+            <select id="gender" name="gender" class="form-control" onchange="this.form.submit()">
+                <option value="">全部</option>
+                @* <option value="male" @(Context.Request.Query["gender"] == "true" ? "selected=\"selected\"" : "")>男</option>
+                <option value="male" @(Context.Request.Query["gender"] == "false" ? "selected=\"selected\"" : "")>女</option> *@
+                @if (Context.Request.Query["gender"] == "true")
+                {
+                    <option value="male" selected>男</option>
+                }
+                else
+                {
+                    <option value="male">男</option>
+                }
+                @if (Context.Request.Query["gender"] == "false")
+                {
+                    <option value="female" selected>女</option>
+                }
+                else
+                {
+                    <option value="female">女</option>
+                }
+            </select>          
+
+        <div class="form-group">
+            <label for="startDate">到職日(起):</label>
+            <input type="date" id="startDate" name="startDate" value="@Context.Request.Query["startDate"]" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label for="endDate">到職日(止):</label>
+            <input type="date" id="endDate" name="endDate" value="@Context.Request.Query["endDate"]" class="form-control" />
+        </div>
+
+            <div class="form-group">
+                <label for="status">帳號狀態:</label>
+                <select id="status" name="status">
+                    <option value="">全部</option>
+                    <option value="1">在職中</option>
+                    <option value="2">已離職</option>
+                </select>
+            </div>
+
+        <br />
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass" style="color:red"></i>搜尋</button>
+    </form>
+</div>
+<br />
 <p>
     <a asp-action="Create" class="btn btn-info"><i class="fa-solid fa-user-plus"></i>新增員工</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th>
+            @* <th>
                 @Html.DisplayNameFor(model => model.Account)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Password)
-            </th>
+            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -42,27 +99,27 @@
             <th>
                 @Html.DisplayNameFor(model => model.ArrivalDate)
             </th>
-            <th>
+            @* <th>
                 @Html.DisplayNameFor(model => model.ResignDate)
-            </th>
+            </th> *@
             @* <th>
                 @Html.DisplayNameFor(model => model.AccessNavigation)
-            </th>
+            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.StatusNavigation)
-            </th> *@
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
+            @* <td>
                 @Html.DisplayFor(modelItem => item.Account)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Password)
-            </td>
+            </td> *@
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
@@ -96,15 +153,24 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ArrivalDate)
             </td>
-            <td>
+            @* <td>
                 @Html.DisplayFor(modelItem => item.ResignDate)
-            </td>
+            </td> *@
             @* <td>
                 @Html.DisplayFor(modelItem => item.AccessNavigation.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StatusNavigation.Id)
             </td> *@
+            <td>
+@*                 @Html.DisplayFor(modelItem => item.StatusNavigation.Id)
+ *@                @if (item.Status == 1)
+                    {
+                        <span>在職中</span>
+                    }
+                    else
+                    {
+                        
+                        <span>已離職</span>
+                    }
+                </td>
                 <td>
                     <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-regular fa-pen-to-square"></i> 修改</a> |
                     <a class="btn btn-success" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info"></i> 資訊</a> |

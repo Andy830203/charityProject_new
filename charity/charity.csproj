@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\eventImgs\" />
+    <Folder Include="wwwroot\images\staff\" />
 	<Folder Include="wwwroot\test\" />
   </ItemGroup>
 

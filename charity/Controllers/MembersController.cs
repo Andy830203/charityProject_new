@@ -20,12 +20,53 @@ namespace charity.Controllers
             _context = context;
         }
 
-        // GET: Members
-        public async Task<IActionResult> Index()
+
+        // 顯示會員列表和進階搜尋
+        public IActionResult Index(string gender, string name, int? status,  DateTime? startDate, DateTime? endDate)
         {
-            var charityContext = _context.Members.Include(m => m.AccessNavigation).Include(m => m.StatusNavigation);
-            return View(await charityContext.ToListAsync());
+            // 準備基本的會員查詢
+            var query = _context.Members.AsQueryable();
+
+            // 根據姓名篩選
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(m => m.RealName.Contains(name));
+            }
+
+            // 根據性別篩選
+            if (!string.IsNullOrEmpty(gender))
+            {
+                query = query.Where(m => m.Gender == (gender == "male"));
+            }
+
+            // 根據帳號狀態篩選 (1 正常, 2 停權)
+            if (status.HasValue)
+            {
+                query = query.Where(m => m.Status == status.Value);
+            }
+
+            // 根據生日篩選
+            if (startDate.HasValue)
+            {
+                query = query.Where(m => m.Birthday >= startDate.Value);
+            }
+
+            if (endDate.HasValue)
+            {
+                query = query.Where(m => m.Birthday <= endDate.Value);
+            }
+
+            // 返回篩選結果
+            var members = query.ToList();
+            return View(members);
         }
+
+        // GET: Members
+        //public async Task<IActionResult> Index()
+        //{
+        //    var charityContext = _context.Members.Include(m => m.AccessNavigation).Include(m => m.StatusNavigation);
+        //    return View(await charityContext.ToListAsync());
+        //}
 
         // GET: Members/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -50,8 +91,8 @@ namespace charity.Controllers
         // GET: Members/Create
         public IActionResult Create()
         {
-            ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id");
-            ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id");
+            //ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id");
+            //ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id");
             return View();
         }
 
@@ -64,12 +105,30 @@ namespace charity.Controllers
         {
             if (ModelState.IsValid)  //因為一開始沒有登入所以驗證false走不進去
             {
+                if (Request.Form.Files["ImgName"] != null)//&& MemberPhoto.Length > 0
+                {
+                    var file = Request.Form.Files["ImgName"];
+                    // 獲取文件的名稱
+                    var fileName = Path.GetFileName(file.FileName);
+
+                    // 定義儲存照片的路徑 (例如 wwwroot/images/members)
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\members", fileName);
+
+                    // 保存文件到指定路徑
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    // 將文件名保存到資料庫
+                    member.ImgName = @"/images/members/" + fileName;
+                }
                 _context.Add(member);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id", member.Access);
-            ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id", member.Status);
+            //ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id", member.Access);
+            //ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id", member.Status);
             return View(member);
         }
 
@@ -99,14 +158,32 @@ namespace charity.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("Id,Account,Password,NickName,RealName,Gender,Birthday,Email,Address,Phone,Points,Checkin,Exp,ImgName,Status,Access,FaceRec")] Member member)
         {
             if (id != member.Id)
-            {   
+            {
                 return NotFound();
             }
 
-            //if (ModelState.IsValid) //因為一開始沒有登入所以驗證false走不進去
-            //{
-            try
+            if (ModelState.IsValid) //因為一開始沒有登入所以驗證false走不進去
             {
+                try
+                {
+                    if (Request.Form.Files["ImgName"] != null) //&& MemberPhoto.Length > 0
+                    {
+                        var file = Request.Form.Files["ImgName"];
+                        // 獲取文件的名稱
+                        var fileName = Path.GetFileName(file.FileName);
+
+                        // 定義儲存照片的路徑 (例如 wwwroot/images/members)
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\members", fileName);
+
+                        // 保存文件到指定路徑
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        // 將文件名保存到資料庫
+                        member.ImgName = @"/images/members/" + fileName;
+                    }
                     _context.Update(member);
                     await _context.SaveChangesAsync();
                 }
@@ -122,11 +199,12 @@ namespace charity.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            //}
+            }
             ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id", member.Access);
             ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id", member.Status);
             return View(member);
         }
+
 
         // GET: Members/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -203,4 +281,5 @@ namespace charity.Controllers
             return _context.Members.Any(e => e.Id == id);
         }
     }
+
 }
