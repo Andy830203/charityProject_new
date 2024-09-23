@@ -69,6 +69,6 @@ public partial class Member
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 
     public virtual ICollection<SignUp> SignUps { get; set; } = new List<SignUp>();
-
+    [Display(Name = "帳號狀態")]
     public virtual MemberStatus? StatusNavigation { get; set; }
 }

@@ -161,7 +161,11 @@ namespace charity.Controllers
             {
                 return NotFound();
             }
-
+            // 從資料庫中讀取現有的會員資料
+            var existingMember = await _context.Members.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
+            if (existingMember == null) {
+                return NotFound();
+            }
             if (ModelState.IsValid) //因為一開始沒有登入所以驗證false走不進去
             {
                 try
@@ -183,6 +187,10 @@ namespace charity.Controllers
 
                         // 將文件名保存到資料庫
                         member.ImgName = @"/images/members/" + fileName;
+                    }
+                    else {
+                        // 如果沒有上傳新圖片，保留原來的圖片名稱
+                        member.ImgName = existingMember.ImgName;
                     }
                     _context.Update(member);
                     await _context.SaveChangesAsync();
