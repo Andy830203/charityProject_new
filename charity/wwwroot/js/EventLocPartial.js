@@ -36,8 +36,14 @@ function drop(event) {
 }
 
 // 綁定事件到所有表格行
-document.querySelectorAll('tr[draggable="true"]').forEach(function (row) {
-    /*row.addEventListener('dragstart', drag);*/
-    row.addEventListener('dragover', allowDrop);
-    row.addEventListener('drop', drop);
-});
+//document.querySelectorAll('tr[draggable="true"]').forEach(function (row) {
+//    /*row.addEventListener('dragstart', drag);*/
+//    row.addEventListener('dragover', allowDrop);
+//    row.addEventListener('drop', drop);
+//});
+
+function bindDragEvents() {
+    $('#table-body').on('dragstart', 'tr[draggable="true"]', drag);
+    $('#table-body').on('dragover', 'tr[draggable="true"]', allowDrop);
+    $('#table-body').on('drop', 'tr[draggable="true"]', drop);
+}
