@@ -78,7 +78,7 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("product.Name,product.Seller,product.Category,product.price,product.OnShelf,product.OnShelfTime,product.Description,product.Instock,UploadedImages")] ProductImgViewModel vm)
+        public async Task<IActionResult> Create(ProductImgViewModel vm)
         {
             if (ModelState.IsValid)
             {
