@@ -37,7 +37,7 @@ function drop(event) {
 
 // 綁定事件到所有表格行
 document.querySelectorAll('tr[draggable="true"]').forEach(function (row) {
-    //row.addEventListener('dragstart', drag);
+    /*row.addEventListener('dragstart', drag);*/
     row.addEventListener('dragover', allowDrop);
     row.addEventListener('drop', drop);
 });
