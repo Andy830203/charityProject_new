@@ -21,9 +21,6 @@
                 <label asp-for="product.Seller" class="control-label"></label>
                 <select asp-for="product.Seller" class="form-control" asp-items="ViewBag.Seller">
                     <option value="">請選擇</option>
-                    @* @foreach (var seller in (SelectList)ViewData["Seller"]) {
-                        <option value="@seller.Value">@seller.Text</option>
-                    } *@
                 </select>
                 <span asp-validation-for="product.Seller" class="text-danger"></span>
             </div>
@@ -32,9 +29,6 @@
                 @* <input asp-for="Category" class="form-control" /> *@
                 <select asp-for="product.Category" class="form-control" asp-items="ViewBag.CategoryList">
                     <option value="">請選擇</option>
-                    @* @foreach (var category in (SelectList)ViewData["CategoryList"]) {
-                        <option value="@category.Value">@category.Text</option>
-                    } *@
                 </select>
                 <span asp-validation-for="product.Category" class="text-danger"></span>
             </div>
