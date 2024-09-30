@@ -1,4 +1,11 @@
-﻿@model IEnumerable<charity.Models.Event>
+﻿@* @model IEnumerable<charity.Models.Event> *@
+@model IEnumerable<EventsViewModel>
+
+@{
+    // var ModelWithIndice = Model.Select(
+    //     (value, index) => new {Index = index, Content = value}
+    // );
+}
 
 @{
     ViewData["Title"] = "Index";
@@ -15,7 +22,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-secondary">Create New</a>
 </p>
 <table class="table">
     <thead class="table-primary">
@@ -23,25 +30,34 @@
             <th></th>
             <th></th>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Fee)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Capacity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Priority)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Category)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Organizer)
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Count)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Location)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Capacity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PeriodDesc)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Period)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fee)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImageName)
             </th>
         </tr>
     </thead>
@@ -49,13 +65,11 @@
 @foreach (var item in Model) {
             @* block start: 摺疊全部手風琴的變數 *@
             var trClassName = $"more-info{item.Id}";
-            var locs = $"loc{item.Id}";
-            var pics = $"pic{item.Id}";
-            var times = $"time{item.Id}";
+            var itemTrId = $"accItemId{item.Id}";
             @* block end *@
         <tr>
             <td>
-                <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target=".@trClassName" aria-expanded="false" aria-controls="@locs @pics @times">
+                <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target=".@trClassName" aria-expanded="false" aria-controls="@itemTrId">
                     ...
                 </button>
             </td>
@@ -65,25 +79,34 @@
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Priority)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Fee)
+                @Html.DisplayFor(modelItem => item.Count)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location.Id)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Capacity)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
+                @Html.DisplayFor(modelItem => item.PeriodDesc)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Priority)
+                @Html.DisplayFor(modelItem => item.Period)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Category.Id)
+                @Html.DisplayFor(modelItem => item.Fee)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Organizer.Id)
+                @Html.DisplayFor(modelItem => item.ImageName)
             </td>
         </tr>
         <partial name="_accordions" for=@item></partial>
