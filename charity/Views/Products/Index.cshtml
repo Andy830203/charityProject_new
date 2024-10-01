@@ -1,103 +1,57 @@
 ﻿@model IEnumerable<ProductImgViewModel>
-@inject CharityContext context
-
-@{
-    ViewData["Title"] = "Index";
+@section Styles {
+        <link href="~/lib/datatables/css/jquery.datatables.min.css" rel="stylesheet">
 }
-
-<h1>商品列表</h1>
-
-<p>
-    <a asp-action="Create" class="btn btn-info"><i class="fa-solid fa-plus"></i> 新增商品</a>
-</p>
-<table class="table">
-    <thead>
+<table class="table table-striped table-hover" style="width:100%">
+    <thead class="table-primary">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.product.Name)
-            </th>
-            @* <th>
-                @Html.DisplayNameFor(model => model.product.Category)
-            </th> *@
-            <th>
-                @Html.DisplayNameFor(model => model.product.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.product.OnShelf)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.product.OnShelfTime)
-            </th>
-            @* <th>
-                @Html.DisplayNameFor(model => model.product.Description)
-            </th> *@
-            <th>
-                @Html.DisplayNameFor(model => model.product.Instock)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.product.SellerNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.product.CategoryNavigation)
-            </th>
-            <th>
-                圖片
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.product.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.product.Category)</th>
+            <th>@Html.DisplayNameFor(model => model.product.Seller)</th>
+            <th>@Html.DisplayNameFor(model => model.product.Price)</th>
+            <th>@Html.DisplayNameFor(model => model.product.OnShelf)</th>
+            <th>@Html.DisplayNameFor(model => model.product.OnShelfTime)</th>
+            <th>@Html.DisplayNameFor(model => model.product.Instock)</th>
+            <th>圖片</th> <!-- 確保圖片欄位的表頭顯示 -->
         </tr>
     </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                    @Html.DisplayFor(modelItem => item.product.Name)
-            </td>
-            @* <td>
-                    @Html.DisplayFor(modelItem => item.product.Category)
-            </td> *@
-            <td>
-                    @Html.DisplayFor(modelItem => item.product.Price)
-            </td>
-            <td>
-                    @* @Html.DisplayFor(modelItem => item.product.OnShelf) *@
-                    @if (item.product.OnShelf == true) {
-                        <span>上架中</span>
-                    }
-                    else {
-                        <span>目前不在架上</span>
-                    }
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.product.OnShelfTime)
-            </td>
-            @* <td>
-            @Html.DisplayFor(modelItem => item.product.Description)
-            </td> *@
-            <td>
-                    @Html.DisplayFor(modelItem => item.product.Instock)
-            </td>
-
-            <td>
-                @Html.DisplayFor(modelItem => item.product.SellerNavigation.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.product.CategoryNavigation.Name)
-            </td>
-            <td>
-                @* <img src="@Url.Content(")" alt="Product Image" style="width: 100px; height: auto; margin-right: 10px;" /> *@
-                    @if (item.productImgs.Count > 0) {
-                        <img src="@Url.Content(item.productImgs[0])" alt="Alternate Text" style="width: 100px; height: auto; margin-right: 10px;" />
-                    }
-                    else {
-                        <img src="@Url.Content("/images/non-found.jpg")" alt="Alternate Text" style="width: 100px; height: auto; margin-right: 10px;" />
-                    }
-            </td>
-            <td>
-                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.product.Id"><i class="fa-regular fa-pen-to-square"></i> 修改</a> |
-                    <a class="btn btn-success" asp-action="Details" asp-route-id="@item.product.Id"><i class="fa-solid fa-circle-info"></i> 資訊</a> |
-                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.product.Id"><i class="fa-solid fa-trash-can"></i> 刪除</a>
-            </td>
-        </tr>
-}
-    </tbody>
 </table>
+
+@section Scripts {
+        <script src="~/lib/datatables/js/jquery.datatables.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('table').dataTable({
+                    ajax: {
+                        type: 'GET',
+                        url: '/Products/IndexJson',
+                        datatype: 'json',
+                        dataSrc: 'data' // 確保從 JSON 中正確提取數據
+                    },
+                    columns: [ // 應該是 "columns" 而不是 "column"
+                        { "data": "name", "width": "12.5%" },
+                        { "data": "category", "width": "12.5%" },
+                        { "data": "seller", "width": "12.5%" },
+                        { "data": "price", "width": "12.5%" },
+                        { "data": "onShelf", "width": "12.5%" },
+                        { "data": "onShelfTime", "width": "12.5%" },
+                        { "data": "instock", "width": "12.5%" },
+                        { 
+                            "data": "productImages", 
+                            "width": "12.5%",
+                            "render": function(data, type, row) {
+                                // 檢查圖片列表是否存在且有至少一張圖片
+                                if (data && data.length > 0) {
+                                    // 返回 HTML 的 <img> 標籤顯示第一張圖片
+                                    return '<img src="' + data[0] + '" alt="Product Image" style="width: 100px; height: auto; margin-right: 10px;" />';
+                                }
+                                return '<img src="/images/non-found.jpg" alt="No Image" style="width: 100px; height: auto; margin-right: 10px;" />';
+                            }
+                        }
+                    ],
+                    fixedHeader: { header: true },
+                    language: { url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/zh-HANT.json' }
+                });
+            });
+        </script>
+}

@@ -20,23 +20,49 @@ namespace charity.Controllers
             _context = context;
         }
 
-        // GET: Products
-        public async Task<IActionResult> Index()
-        {
-            //var charityContext = _context.Products.Include(p => p.SellerNavigation);
+        //GET: Products
+        //public async Task<IActionResult> Index() {
+        //    //var charityContext = _context.Products.Include(p => p.SellerNavigation);
 
-            //return View(charityContext);
-            var products = await _context.Products.Include(p => p.ProductImgs) // 確保載入與產品相關的照片
+        //    //return View(charityContext);
+        //    var products = await _context.Products.Include(p => p.ProductImgs) // 確保載入與產品相關的照片
+        //.Select(p => new ProductImgViewModel {
+        //    product = p,
+        //    // 顯示第一張照片
+        //    productImgs = p.ProductImgs.Select(img => img.ImgName).ToList()
+        //})
+        //.ToListAsync();
+
+        //    return View(products);
+        //}
+
+        public IActionResult Index() {
+            return View();
+        }
+
+        public async Task<JsonResult> IndexJson() {
+             var products = await _context.Products
+        .Include(p => p.ProductImgs)
         .Select(p => new ProductImgViewModel {
-            product = p,
-            // 顯示第一張照片
+            product = p,  // 直接將 product 作為 ViewModel 的屬性
+            // 顯示產品圖片 (第一張或全部)
             productImgs = p.ProductImgs.Select(img => img.ImgName).ToList()
         })
         .ToListAsync();
+            var result = products.Select(vm => new {
+                vm.product.Id,
+                vm.product.Name,
+                vm.product.Seller,
+                vm.product.Category,
+                vm.product.Price,
+                vm.product.OnShelf,
+                vm.product.OnShelfTime,
+                vm.product.Instock,
+                ProductImages = vm.productImgs
+            }).ToList();
 
-        return View(products);
+            return Json(new { data = result });
         }
-
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
