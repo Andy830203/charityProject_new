@@ -2,9 +2,7 @@
 @model IEnumerable<EventsViewModel>
 
 @{
-    // var ModelWithIndice = Model.Select(
-    //     (value, index) => new {Index = index, Content = value}
-    // );
+    var ModelWithIndice = Model.Select((value, index) => (index, value));
 }
 
 @{
@@ -22,7 +20,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-secondary">Create New</a>
+    <a asp-action="Create" class="btn btn-success">Create New</a>
 </p>
 <table class="table">
     <thead class="table-primary">
@@ -62,14 +60,15 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-            @* block start: 摺疊全部手風琴的變數 *@
-            var trClassName = $"more-info{item.Id}";
-            var itemTrId = $"accItemId{item.Id}";
-            @* block end *@
+    @foreach (var (index, item) in ModelWithIndice)
+    {
+        @* block start: 摺疊全部手風琴的變數 *@
+        var indexTarget = $"more-info{index}";
+        var orderIdName = $"listOrder{index}";
+        @* block end *@
         <tr>
             <td>
-                <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target=".@trClassName" aria-expanded="false" aria-controls="@itemTrId">
+                <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target=".@indexTarget" aria-expanded="false" aria-controls="@orderIdName">
                     ...
                 </button>
             </td>
@@ -108,8 +107,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ImageName)
             </td>
-        </tr>
-        <partial name="_accordions" for=@item></partial>
+            </tr>
+        var pair = new { Item = item, Index = index };
+        <partial name="_accordions" for=@pair></partial>
 }
     </tbody>
 </table>
