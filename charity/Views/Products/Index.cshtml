@@ -18,48 +18,71 @@
 </table>
 
 @section Scripts {
-        <script src="~/lib/datatables/js/jquery.datatables.min.js"></script>
-        <script>
-            $(document).ready(function () {
-                $('table').dataTable({
-                    ajax: {
-                        type: 'GET',
-                        url: '/Products/IndexJson',
-                        datatype: 'json',
-                        dataSrc: 'data' // 確保從 JSON 中正確提取數據
-                    },
-                    columns: [ // 應該是 "columns" 而不是 "column"
-                        { "data": "name", "width": "12.5%" },
-                        { "data": "categoryName", "width": "12.5%" }, // 顯示類別名稱
-                        { "data": "sellerName", "width": "12.5%" }, // 顯示賣家名稱
-                        { "data": "price", "width": "12.5%" },
-                        { "data": "onShelf", "width": "12.5%",
-                            "render": function (data, type, row) {
+    <script src="~/lib/datatables/js/jquery.datatables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('table').dataTable({
+                ajax: {
+                    type: 'GET',
+                    url: '/Products/IndexJson',
+                    datatype: 'json',
+                    dataSrc: 'data' // 確保從 JSON 中正確提取數據
+                },
+                columns: [ // 應該是 "columns" 而不是 "column"
+                    { "data": "name", "width": "12.5%" },
+                    { "data": "categoryName", "width": "12.5%" }, // 顯示類別名稱
+                    { "data": "sellerName", "width": "12.5%" }, // 顯示賣家名稱
+                    { "data": "price", "width": "12.5%" },
+                    {
+                        "data": "onShelf", "width": "12.5%",
+                        "render": function (data, type, row) {
                             // 如果 onShelf 是 true，則顯示打勾的 checkbox，否則顯示未打勾的 checkbox
-                                if (data) {
-                                    return '正在架上';
-                                } 
-                                else {
-                                    return '目前不在架上';
-                                }
+                            if (data) {
+                                return '正在架上';
                             }
-                        },
-                        { "data": "onShelfTime", "width": "12.5%" },
-                        { "data": "instock", "width": "12.5%" },
-                        { "data": "productImages", "width": "12.5%",
-                            "render": function(data, type, row) {
-                                // 檢查圖片列表是否存在且有至少一張圖片
-                                if (data && data.length > 0) {
-                                    // 返回 HTML 的 <img> 標籤顯示第一張圖片
-                                    return '<img src="' + data[0] + '" alt="Product Image" style="width: 100px; height: auto; margin-right: 10px;" />';
-                                }
-                                return '<img src="/images/non-found.jpg" alt="No Image" style="width: 100px; height: auto; margin-right: 10px;" />';
+                            else {
+                                return '目前不在架上';
                             }
                         }
-                    ],
-                    fixedHeader: { header: true },
-                    language: { url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/zh-HANT.json' }
-                });
+                    },
+                    {
+                        "data": "onShelfTime", "width": "12.5%",
+                        "render": function (data, type, row) {
+                            if (data) {
+                                var date = new Date(data);
+                                // 使用 toLocaleString 格式化日期
+                                var formattedDate = date.toLocaleString('zh-TW', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false // 24小時制
+                                });
+                                // 格式化結果為 XXXX年MM月DD日HH:MM 分
+                                return formattedDate;
+                            }
+                            else {
+                                return "無上架時間"; // 處理無日期的情況
+                            }
+                        }
+                    },
+                    { "data": "instock", "width": "12.5%" },
+                    {
+                        "data": "productImages", "width": "12.5%",
+                        "render": function (data, type, row) {
+                            // 檢查圖片列表是否存在且有至少一張圖片
+                            if (data && data.length > 0) {
+                                // 返回 HTML 的 <img> 標籤顯示第一張圖片
+                                return '<img src="' + data[0] + '" alt="Product Image" style="width: 100px; height: auto; margin-right: 10px;" />';
+                            }
+                            return '<img src="/images/non-found.jpg" alt="No Image" style="width: 100px; height: auto; margin-right: 10px;" />';
+                        }
+                    }
+                ],
+                fixedHeader: { header: true },
+                language: { url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/zh-HANT.json' }
             });
-        </script>
+        });
+    </script>
 }
