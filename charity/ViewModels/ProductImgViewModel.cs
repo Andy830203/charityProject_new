@@ -12,6 +12,5 @@ namespace charity.ViewModels {
             productImgs = new List<string>();
             ExistingImages = new List<UploadedImage>();
         }
-        
     }
 }

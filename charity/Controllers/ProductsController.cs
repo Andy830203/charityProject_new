@@ -43,6 +43,8 @@ namespace charity.Controllers
         public async Task<JsonResult> IndexJson() {
              var products = await _context.Products
         .Include(p => p.ProductImgs)
+        .Include(p => p.SellerNavigation) // 包含賣家資料
+        .Include(p => p.CategoryNavigation) // 包含類別資料
         .Select(p => new ProductImgViewModel {
             product = p,  // 直接將 product 作為 ViewModel 的屬性
             // 顯示產品圖片 (第一張或全部)
@@ -52,8 +54,8 @@ namespace charity.Controllers
             var result = products.Select(vm => new {
                 vm.product.Id,
                 vm.product.Name,
-                vm.product.Seller,
-                vm.product.Category,
+                SellerName = vm.product.SellerNavigation != null ? vm.product.SellerNavigation.RealName : "無賣家",
+                CategoryName = vm.product.CategoryNavigation != null ? vm.product.CategoryNavigation.Name : "無類別",
                 vm.product.Price,
                 vm.product.OnShelf,
                 vm.product.OnShelfTime,
