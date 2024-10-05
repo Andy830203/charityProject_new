@@ -93,25 +93,73 @@ namespace charity.Controllers
             return View(viewModel);
         }
 
-        // GET: Products/Create
-        public IActionResult Create()
-        {
-            ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id");
-            ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name");
-            return View();
-        }
+        //// GET: Products/Create
+        //public IActionResult Create()
+        //{
+        //    ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id");
+        //    ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name");
+        //    return View();
+        //}
 
         // POST: Products/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create(ProductImgViewModel vm) {
+        //    if (ModelState.IsValid) {
+        //        _context.Add(vm.product);
+        //        await _context.SaveChangesAsync();
+        //        // 處理圖片上傳
+        //        if (vm.UploadedImages != null && vm.UploadedImages.Count > 0) {
+        //            foreach (var image in vm.UploadedImages) {
+        //                var fileName = Path.GetFileName(image.FileName);
+        //                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products", fileName);
+
+        //                // 儲存圖片檔案
+        //                using (var stream = new FileStream(filePath, FileMode.Create)) {
+        //                    await image.CopyToAsync(stream);
+        //                }
+
+        //                // 將圖片路徑存到資料庫
+        //                var productImg = new ProductImg {
+        //                    ImgName = "/images/products/" + fileName,
+        //                    PId = vm.product.Id
+        //                };
+        //                vm.productImgs.Add("/images/products/" + fileName);
+        //                _context.ProductImgs.Add(productImg);
+        //            }
+        //            await _context.SaveChangesAsync();
+        //        }
+
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    else {
+        //        foreach (var error in ModelState) {
+        //            Console.WriteLine($"Key: {error.Key}, Errors: {string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))}");
+        //        }
+        //    }
+        //    ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", vm.product.Seller);
+        //    ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name");
+        //    return View(vm);
+        //}
+
+        // GET: Products/Create
+        public IActionResult Create() {
+            ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id");
+            ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name");
+            return PartialView("_Create");
+        }
+
+        // POST: Products/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProductImgViewModel vm)
-        {
-            if (ModelState.IsValid)
-            {
+        public async Task<IActionResult> Create(ProductImgViewModel vm) {
+            if (ModelState.IsValid) {
+                // 新增商品到資料庫
                 _context.Add(vm.product);
                 await _context.SaveChangesAsync();
+
                 // 處理圖片上傳
                 if (vm.UploadedImages != null && vm.UploadedImages.Count > 0) {
                     foreach (var image in vm.UploadedImages) {
@@ -128,22 +176,19 @@ namespace charity.Controllers
                             ImgName = "/images/products/" + fileName,
                             PId = vm.product.Id
                         };
-                        vm.productImgs.Add("/images/products/" + fileName);
                         _context.ProductImgs.Add(productImg);
                     }
                     await _context.SaveChangesAsync();
                 }
 
-                return RedirectToAction(nameof(Index));
+                // 成功回應
+                return Json(new { success = true });
             }
-            else {
-                foreach (var error in ModelState) {
-                    Console.WriteLine($"Key: {error.Key}, Errors: {string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))}");
-                }
-            }
-            ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", vm.product.Seller);
-            ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name");
-            return View(vm);
+
+            // 如果有驗證錯誤，回傳錯誤訊息
+            var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                           .Select(e => e.ErrorMessage).ToList();
+            return Json(new { success = false, errors });
         }
 
         // GET: Products/Edit/5

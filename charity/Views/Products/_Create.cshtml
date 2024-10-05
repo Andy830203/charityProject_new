@@ -1,0 +1,75 @@
+﻿@model ProductImgViewModel
+
+<div class="col-md-4">
+    <form id="createForm" asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="product.Name" class="control-label"></label>
+            <input asp-for="product.Name" class="form-control" />
+            <span asp-validation-for="product.Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="product.Seller" class="control-label"></label>
+            <select asp-for="product.Seller" class="form-control" asp-items="ViewBag.Seller">
+                <option value="">請選擇</option>
+            </select>
+            <span asp-validation-for="product.Seller" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="product.Category" class="control-label"></label>
+            <select asp-for="product.Category" class="form-control" asp-items="ViewBag.CategoryList">
+                <option value="">請選擇</option>
+            </select>
+            <span asp-validation-for="product.Category" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="product.Price" class="control-label"></label>
+            <input asp-for="product.Price" class="form-control" />
+            <span asp-validation-for="product.Price" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="product.OnShelf" class="control-label"></label>
+            <select asp-for="product.OnShelf" class="form-select">
+                <option value="true">上架</option>
+                <option value="false">不在架上</option>
+            </select>
+            <span asp-validation-for="product.OnShelf" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="product.OnShelfTime" class="control-label"></label>
+            <input asp-for="product.OnShelfTime" class="form-control" />
+            <span asp-validation-for="product.OnShelfTime" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="product.Description" class="control-label"></label>
+            <input asp-for="product.Description" class="form-control" />
+            <span asp-validation-for="product.Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="product.Instock" class="control-label"></label>
+            <input asp-for="product.Instock" class="form-control" />
+            <span asp-validation-for="product.Instock" class="text-danger"></span>
+        </div>
+
+        <!-- 圖片上傳 -->
+        <div class="form-group">
+            <label>Upload Images</label>
+            <input type="file" asp-for="UploadedImages" class="form-control" multiple />
+        </div>
+
+        @* <div class="form-group">
+            <br>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> 新增商品
+            </button>
+        </div> *@
+    </form>
+</div>
