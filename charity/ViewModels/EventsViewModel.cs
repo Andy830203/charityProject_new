@@ -1,4 +1,5 @@
 ﻿using charity.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace charity.ViewModels
 {
@@ -11,25 +12,35 @@ namespace charity.ViewModels
         // 事件ID
         public int Id { get; set; }
         // 優先級
+        [Display(Name = "優先級")]
         public int? Priority { get; set; }
         // 類別
+        [Display(Name = "類別")]
         public string? Category { get; set; }
         // 活動名稱
+        [Display(Name = "活動名稱")]
         public string? Name { get; set; }
         // 報名人數
+        [Display(Name = "報名人數")]
         public int? Count { get; set; }
         // 活動地點
+        [Display(Name = "活動地點")]
         public EventLocation? Location { get; set; }
         // 活動時間
         // 名稱
+        [Display(Name = "時段名稱")]
         public string? PeriodDesc { get; set; }
         // 時段
+        [Display(Name = "活動時段")]
         public string? Period { get; set; }
         // 報名費
+        [Display(Name = "報名費")]
         public int? Fee { get; set; }
-        // 活動人數
+        // 報名名額
+        [Display(Name = "報名名額")]
         public int? Capacity { get; set; }
         // 照片
+        [Display(Name = "照片名稱")]
         public string? ImageName { get; set; }
     }
 }

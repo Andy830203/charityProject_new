@@ -9,7 +9,7 @@ function drag(event) {
 
 function allowDrop(event) {
     event.preventDefault(); // 必須阻止默認行為以允許drop
-    event.dataTransfer.dropEffect = 'move'; // 指示這是移動操作
+    //event.dataTransfer.dropEffect = 'move'; // 指示這是移動操作
 }
 
 function drop(event) {
@@ -20,7 +20,9 @@ function drop(event) {
         return; // 避免拖放無效情況
     }
 
-    let tbody = document.getElementById('table-body');
+    //let tbody = document.getElementById('table-body');
+    let tbody = $(this);
+    //let tbody = $(this).parent();
 
     // 檢查 `draggedRow` 是在 `targetRow` 上方還是下方
     let draggedRowIndex = Array.from(tbody.children).indexOf(draggedRow);
@@ -33,6 +35,39 @@ function drop(event) {
         // 往上拖動時，插入到目標行的上方
         tbody.insertBefore(draggedRow, targetRow);
     }
+    //let tbodies = Array.from($('.table-body'));
+
+    //tbodies.forEach(tbody => {
+    //    // 檢查 `draggedRow` 是在 `targetRow` 上方還是下方
+    //    let draggedRowIndex = Array.from(tbody.children).indexOf(draggedRow);
+    //    let targetRowIndex = Array.from(tbody.children).indexOf(targetRow);
+
+    //    if (draggedRowIndex < targetRowIndex) {
+    //        // 如果是往下拖動，插入到目標行的下方
+    //        tbody.insertBefore(draggedRow, targetRow.nextSibling);
+    //    } else {
+    //        // 往上拖動時，插入到目標行的上方
+    //        tbody.insertBefore(draggedRow, targetRow);
+    //    }
+    //});
+
+    //$('.table-body').on('load', function() {
+    //    let tbody = $(this);
+    //    console.log(tbody.html());
+    //    // 檢查 `draggedRow` 是在 `targetRow` 上方還是下方
+    //    let draggedRowIndex = Array.from(tbody.children).indexOf(draggedRow);
+    //    let targetRowIndex = Array.from(tbody.children).indexOf(targetRow);
+
+    //    if (draggedRowIndex < targetRowIndex) {
+    //        // 如果是往下拖動，插入到目標行的下方
+    //        tbody.insertBefore(draggedRow, targetRow.nextSibling);
+    //    } else {
+    //        // 往上拖動時，插入到目標行的上方
+    //        tbody.insertBefore(draggedRow, targetRow);
+    //    }
+    //});
+
+    
 }
 
 // 綁定事件到所有表格行
@@ -43,7 +78,7 @@ function drop(event) {
 //});
 
 function bindDragEvents() {
-    $('#table-body').on('dragstart', 'tr[draggable="true"]', drag);
-    $('#table-body').on('dragover', 'tr[draggable="true"]', allowDrop);
-    $('#table-body').on('drop', 'tr[draggable="true"]', drop);
+    $('.table-body').on('dragstart', 'tr[draggable="true"]', drag);
+    $('.table-body').on('dragover', 'tr[draggable="true"]', allowDrop);
+    $('.table-body').on('drop', 'tr[draggable="true"]', drop);
 }

@@ -18,9 +18,9 @@
             <th></th>
         </tr>
     </thead>
-    <tbody id="table-body">
+    <tbody class="table-body">
 @foreach (var item in Model) {
-        <tr draggable="true" ondragstart="drag(event)">
+        <tr draggable="true">
             <td>
                 @Html.DisplayFor(modelItem => item.OrderInEvent)
             </td>
