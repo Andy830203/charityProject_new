@@ -1,84 +1,51 @@
-﻿//from: https://www.w3schools.com/html/html5_draganddrop.asp
-
-let draggedRow;
-
-function drag(event) {
-    draggedRow = event.target.closest('tr'); // 記住被拖動的行
-    event.dataTransfer.effectAllowed = 'move';
-}
-
-function allowDrop(event) {
-    event.preventDefault(); // 必須阻止默認行為以允許drop
-    //event.dataTransfer.dropEffect = 'move'; // 指示這是移動操作
-}
-
-function drop(event) {
-    event.preventDefault(); // 阻止默認行為
-
-    let targetRow = event.target.closest('tr'); // 找到被放置的目標行
-    if (!draggedRow || !targetRow || draggedRow === targetRow) {
-        return; // 避免拖放無效情況
+﻿function enableDragAndDrop(tableBody) {
+    // 檢查是否已經綁定過拖放功能，避免重複綁定
+    if (tableBody.getAttribute('data-drag-bound')) {
+        return; // 已經綁定過則跳過
     }
 
-    //let tbody = document.getElementById('table-body');
-    let tbody = $(this);
-    //let tbody = $(this).parent();
+    let draggedRow = null;
 
-    // 檢查 `draggedRow` 是在 `targetRow` 上方還是下方
-    let draggedRowIndex = Array.from(tbody.children).indexOf(draggedRow);
-    let targetRowIndex = Array.from(tbody.children).indexOf(targetRow);
+    tableBody.addEventListener('dragstart', function (event) {
+        draggedRow = event.target; // 紀錄被拖曳的元素
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData('text/html', draggedRow.outerHTML);
+        draggedRow.style.opacity = '0.5'; // 拖曳時改變透明度
+    });
 
-    if (draggedRowIndex < targetRowIndex) {
-        // 如果是往下拖動，插入到目標行的下方
-        tbody.insertBefore(draggedRow, targetRow.nextSibling);
-    } else {
-        // 往上拖動時，插入到目標行的上方
-        tbody.insertBefore(draggedRow, targetRow);
-    }
-    //let tbodies = Array.from($('.table-body'));
+    tableBody.addEventListener('dragover', function (event) {
+        event.preventDefault(); // 允許放下
+        event.dataTransfer.dropEffect = "move";
+    });
 
-    //tbodies.forEach(tbody => {
-    //    // 檢查 `draggedRow` 是在 `targetRow` 上方還是下方
-    //    let draggedRowIndex = Array.from(tbody.children).indexOf(draggedRow);
-    //    let targetRowIndex = Array.from(tbody.children).indexOf(targetRow);
+    tableBody.addEventListener('drop', function (event) {
+        event.preventDefault();
+        if (event.target.closest('tr') && draggedRow !== event.target.closest('tr')) {
+            const targetRow = event.target.closest('tr'); // 確定 drop 的目標行
+            const rows = Array.from(tableBody.querySelectorAll('tr')); // 獲取當前所有行
+            const draggedIndex = rows.indexOf(draggedRow);
+            const targetIndex = rows.indexOf(targetRow);
 
-    //    if (draggedRowIndex < targetRowIndex) {
-    //        // 如果是往下拖動，插入到目標行的下方
-    //        tbody.insertBefore(draggedRow, targetRow.nextSibling);
-    //    } else {
-    //        // 往上拖動時，插入到目標行的上方
-    //        tbody.insertBefore(draggedRow, targetRow);
-    //    }
-    //});
+            if (draggedIndex > targetIndex) {
+                tableBody.insertBefore(draggedRow, targetRow); // 將拖曳行放在目標行之前
+            } else {
+                tableBody.insertBefore(draggedRow, targetRow.nextSibling); // 放在目標行之後
+            }
+        }
+        draggedRow.style.opacity = '1'; // 拖放結束時恢復透明度
+    });
 
-    //$('.table-body').on('load', function() {
-    //    let tbody = $(this);
-    //    console.log(tbody.html());
-    //    // 檢查 `draggedRow` 是在 `targetRow` 上方還是下方
-    //    let draggedRowIndex = Array.from(tbody.children).indexOf(draggedRow);
-    //    let targetRowIndex = Array.from(tbody.children).indexOf(targetRow);
+    tableBody.addEventListener('dragend', function () {
+        draggedRow = null; // 清空拖曳狀態
+    });
 
-    //    if (draggedRowIndex < targetRowIndex) {
-    //        // 如果是往下拖動，插入到目標行的下方
-    //        tbody.insertBefore(draggedRow, targetRow.nextSibling);
-    //    } else {
-    //        // 往上拖動時，插入到目標行的上方
-    //        tbody.insertBefore(draggedRow, targetRow);
-    //    }
-    //});
-
-    
+    // 標記該 tableBody 已經綁定過
+    tableBody.setAttribute('data-drag-bound', 'true');
 }
 
-// 綁定事件到所有表格行
-//document.querySelectorAll('tr[draggable="true"]').forEach(function (row) {
-//    /*row.addEventListener('dragstart', drag);*/
-//    row.addEventListener('dragover', allowDrop);
-//    row.addEventListener('drop', drop);
-//});
 
 function bindDragEvents() {
-    $('.table-body').on('dragstart', 'tr[draggable="true"]', drag);
-    $('.table-body').on('dragover', 'tr[draggable="true"]', allowDrop);
-    $('.table-body').on('drop', 'tr[draggable="true"]', drop);
+    document.querySelectorAll('.table-body').forEach(function (tableBody) {
+        enableDragAndDrop(tableBody);
+    });
 }
