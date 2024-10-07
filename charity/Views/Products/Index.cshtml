@@ -98,6 +98,28 @@
                             showCancelButton: true,
                             confirmButtonText: '新增',
                             didOpen: function () {
+                                //圖片預覽
+                                document.getElementById('UploadedImages').addEventListener('change', function (event) {
+                                    let previewArea = document.getElementById('previewArea');
+                                    previewArea.innerHTML = ''; // 清空預覽區
+                                    for (let i = 0; i < event.target.files.length; i++) {
+                                        let file = event.target.files[i];
+                                        let reader = new FileReader();
+                                        reader.onload = function (e) {
+                                            let imgElement = document.createElement('img');
+                                            imgElement.src = e.target.result;
+                                            imgElement.style.width = '100px';
+                                            imgElement.style.marginRight = '10px';
+                                            imgElement.style.marginBottom = '10px';
+                                            imgElement.style.border = '1px solid #ddd'; // 可選擇的樣式
+                                            imgElement.style.padding = '5px';           // 可選擇的樣式
+                                            imgElement.style.boxShadow = '0px 0px 5px rgba(0,0,0,0.2)'; // 可選擇的樣式
+
+                                            previewArea.appendChild(imgElement);
+                                        };
+                                        reader.readAsDataURL(file);
+                                    }
+                                });
                                 $('#createForm').on('submit', function (e) {
                                     e.preventDefault();
                                     var formData = new FormData(this);
