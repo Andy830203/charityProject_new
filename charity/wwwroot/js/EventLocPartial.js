@@ -1,4 +1,5 @@
-﻿function enableDragAndDrop(tableBody) {
+﻿//參考GPT
+function enableDragAndDrop(tableBody) {
     // 檢查是否已經綁定過拖放功能，避免重複綁定
     if (tableBody.getAttribute('data-drag-bound')) {
         return; // 已經綁定過則跳過
