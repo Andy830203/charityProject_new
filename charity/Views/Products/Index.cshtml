@@ -6,6 +6,7 @@
 <table class="table table-striped table-hover" style="width:100%">
     <thead class="table-primary">
         <tr>
+            <th>@Html.DisplayNameFor(model => model.product.Id)</th>
             <th>@Html.DisplayNameFor(model => model.product.Name)</th>
             <th>@Html.DisplayNameFor(model => model.product.Category)</th>
             <th>@Html.DisplayNameFor(model => model.product.Seller)</th>
@@ -13,7 +14,7 @@
             <th>@Html.DisplayNameFor(model => model.product.OnShelf)</th>
             <th>@Html.DisplayNameFor(model => model.product.OnShelfTime)</th>
             <th>@Html.DisplayNameFor(model => model.product.Instock)</th>
-            <th>圖片</th> <!-- 確保圖片欄位的表頭顯示 -->
+            <th>預覽圖示</th> <!-- 確保圖片欄位的表頭顯示 -->
         </tr>
     </thead>
 </table>
@@ -31,13 +32,14 @@
                     datatype: 'json',
                     dataSrc: 'data' // 確保從 JSON 中正確提取數據
                 },
-                columns: [ 
-                    { "data": "name", "width": "12.5%" },
-                    { "data": "categoryName", "width": "12.5%" }, // 顯示類別名稱
-                    { "data": "sellerName", "width": "12.5%" }, // 顯示賣家名稱
-                    { "data": "price", "width": "12.5%" },
+                columns: [
+                    { "data": "id", "width": "11%" },
+                    { "data": "name", "width": "11%" },
+                    { "data": "categoryName", "width": "11%" }, // 顯示類別名稱
+                    { "data": "sellerName", "width": "11%" }, // 顯示賣家名稱
+                    { "data": "price", "width": "11%" },
                     {
-                        "data": "onShelf", "width": "12.5%",
+                        "data": "onShelf", "width": "11%",
                         "render": function (data, type, row) {
                             // 如果 onShelf 是 true，則顯示打勾的 checkbox，否則顯示未打勾的 checkbox
                             if (data) {
@@ -49,7 +51,7 @@
                         }
                     },
                     {
-                        "data": "onShelfTime", "width": "12.5%",
+                        "data": "onShelfTime", "width": "11%",
                         "render": function (data, type, row) {
                             if (data) {
                                 var date = new Date(data);
@@ -70,9 +72,9 @@
                             }
                         }
                     },
-                    { "data": "instock", "width": "12.5%" },
+                    { "data": "instock", "width": "11%" },
                     {
-                        "data": "productImages", "width": "12.5%",
+                        "data": "productImages", "width": "11%",
                         "render": function (data, type, row) {
                             // 檢查圖片列表是否存在且有至少一張圖片
                             if (data && data.length > 0) {
