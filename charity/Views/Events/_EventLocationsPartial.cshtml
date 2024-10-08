@@ -1,4 +1,5 @@
-﻿@model IEnumerable<charity.Models.EventLocation>
+﻿@* @model IEnumerable<charity.Models.EventLocation> *@
+@model IEnumerable<EventLocViewModel>
 
 <p>
     <a asp-controller="EventLocations" asp-action="Create" asp-route-fromList="@Url.Action("Index", "Events")">Create New</a>
@@ -7,28 +8,46 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.OrderInEvent)
+                @Html.DisplayNameFor(model => model.Order)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EIdNavigation)
+                @Html.DisplayNameFor(model => model.EventName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LIdNavigation)
+                @Html.DisplayNameFor(model => model.EventCapacity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LocationName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LocationDesc)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LocCapacity)
             </th>
             <th></th>
         </tr>
     </thead>
-    <tbody id="table-body">
+    <tbody class="table-body">
 @foreach (var item in Model) {
-        <tr draggable="true" ondragstart="drag(event)">
+        <tr draggable="true">
             <td>
-                @Html.DisplayFor(modelItem => item.OrderInEvent)
+                @Html.DisplayFor(modelItem => item.Order)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EIdNavigation.Id)
+                @Html.DisplayFor(modelItem => item.EventName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LIdNavigation.Id)
+                @Html.DisplayFor(modelItem => item.EventCapacity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LocationName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LocationDesc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LocCapacity)
             </td>
             <td>
                 <a asp-controller="EventLocations" asp-action="Edit" asp-route-id="@item.Id" asp-route-fromList="@Url.Action("Index", "Events")">Edit</a> |

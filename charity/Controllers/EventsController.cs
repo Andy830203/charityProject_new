@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using charity.Models;
+using charity.ViewModels;
 
 namespace charity.Controllers
 {
@@ -19,10 +20,37 @@ namespace charity.Controllers
         }
 
         // GET: Events
-        public async Task<IActionResult> Index()
+        //public async Task<IActionResult> Index()
+        //{
+        //    var charityContext = _context.Events.Include(e => e.Category).Include(e => e.Organizer);
+        //    return View(await charityContext.ToListAsync());
+        //}
+
+        public IActionResult Index()
         {
-            var charityContext = _context.Events.Include(e => e.Category).Include(e => e.Organizer);
-            return View(await charityContext.ToListAsync());
+            var events = _context.Events.Include(e => e.Category).Include(e => e.Organizer)
+                .ToList();
+
+            var eventsWithPeriods = events.SelectMany(e => e.EventPeriods, (e, period) => new { EventSelf = e, EventPeriod = period, Name = e.Name });
+
+            var appliants = _context.SignUps.ToList();
+
+            //?? 活動地點綁'活動時段', 優先級或活動本身
+            var charityContext = eventsWithPeriods
+                .Select(ewps => new EventsViewModel {
+                    Id = ewps.EventSelf.Id,
+                    Priority = ewps.EventSelf.Priority,
+                    Category = ewps.EventSelf.Category.Name,
+                    Name = ewps.EventSelf.Name,
+                    Count = appliants.Where(appliant => appliant.EpId == ewps.EventPeriod.Id).Count(),
+                    Location = ewps.EventSelf.EventLocations.FirstOrDefault(),
+                    PeriodDesc = ewps.EventPeriod.Description,
+                    Period = $"{ewps.EventPeriod.StartTime.ToString()} ~ {ewps.EventPeriod.EndTime.ToString()}",
+                    Fee = ewps.EventSelf.Fee,
+                    Capacity = ewps.EventSelf.Capacity,
+                    ImageName = ewps.EventSelf.EventImgs.FirstOrDefault().ImgName,
+                });
+            return View(charityContext);
         }
 
         // GET: Events/Details/5

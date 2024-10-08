@@ -17,9 +17,9 @@
     z-index: 4;
 }
 
-:root {
-    scrollbar-gutter: stable;
-}
+/*:root {*/
+    /*scrollbar-gutter: stable;*/
+/*}*/
 
 /*body {
     scrollbar-gutter: stable;

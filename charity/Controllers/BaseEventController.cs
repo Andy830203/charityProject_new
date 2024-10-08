@@ -1,4 +1,5 @@
 ﻿using charity.Models;
+using charity.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,10 +13,6 @@ namespace charity.Controllers
         {
             _context = context;
         }
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
 
         //GET: /Events/EventLocations/5
         public virtual async Task<IActionResult> EventLocations(int id)
@@ -27,7 +24,20 @@ namespace charity.Controllers
                 return NotFound();
             }
 
-            return PartialView("_EventLocationsPartial", e.EventLocations);
+            var locations = _context.Locations;
+
+            var EventLocVMs = e.EventLocations.Select(loc => new EventLocViewModel
+            {
+                Id = loc.Id,
+                EventName = e.Name,
+                EventCapacity = e.Capacity,
+                LocationName = locations.Where(l => l.Id == loc.LId).Select(l => l.Name).Single(),
+                LocationDesc = locations.Where(l => l.Id == loc.LId).Select(l => l.Description).Single(),
+                LocCapacity = locations.Where(l => l.Id == loc.LId).Select(l => l.Capacity).Single(),
+                Order = loc.OrderInEvent
+            });
+
+            return PartialView("_EventLocationsPartial", EventLocVMs);
         }
 
         public virtual async Task<IActionResult> EventImgs(int id)
@@ -39,7 +49,14 @@ namespace charity.Controllers
                 return NotFound();
             }
 
-            return PartialView("_EventImgsPartial", e.EventImgs);
+            var EImgVMs = e.EventImgs.Select(ei => new EventImgViewModel {
+                Id = ei.Id,
+                EId = ei.EId,
+                ImgName = ei.ImgName,
+                EventName = e.Name
+            });
+
+            return PartialView("_EventImgsPartial", EImgVMs);
         }
 
         public virtual async Task<IActionResult> EventPeriods(int id)
