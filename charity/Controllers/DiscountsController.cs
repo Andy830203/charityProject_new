@@ -148,6 +148,14 @@ namespace charity.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> GetDetails(int id) {
+            var discount = await _context.Discounts.FirstOrDefaultAsync(d => d.Id == id);
+            if (discount == null) {
+                return NotFound();
+            }
+
+            return PartialView("DetailsPartial", discount);
+        }
         private bool DiscountExists(int id)
         {
             return _context.Discounts.Any(e => e.Id == id);

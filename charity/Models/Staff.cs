@@ -49,6 +49,9 @@ public partial class Staff
     [Display(Name = "權限")]
     public int? Access { get; set; }
 
+    [Display(Name = "照片")]
+    public string? ImgName { get; set; }
+
     public virtual StaffAccess? AccessNavigation { get; set; }
 
     [Display(Name = "帳號狀態")]

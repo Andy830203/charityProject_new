@@ -1,103 +1,158 @@
 ﻿@model IEnumerable<ProductImgViewModel>
-@inject CharityContext context
-
-@{
-    ViewData["Title"] = "Index";
+@section Styles {
+        <link href="~/lib/datatables/css/jquery.datatables.min.css" rel="stylesheet">
 }
-
-<h1>商品列表</h1>
-
-<p>
-    <a asp-action="Create" class="btn btn-info"><i class="fa-solid fa-plus"></i> 新增商品</a>
-</p>
-<table class="table">
-    <thead>
+<button class="btn btn-info" id="addNew"><i class="fa-solid fa-plus"></i> 新增商品</button>
+<table class="table table-striped table-hover" style="width:100%">
+    <thead class="table-primary">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.product.Name)
-            </th>
-            @* <th>
-                @Html.DisplayNameFor(model => model.product.Category)
-            </th> *@
-            <th>
-                @Html.DisplayNameFor(model => model.product.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.product.OnShelf)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.product.OnShelfTime)
-            </th>
-            @* <th>
-                @Html.DisplayNameFor(model => model.product.Description)
-            </th> *@
-            <th>
-                @Html.DisplayNameFor(model => model.product.Instock)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.product.SellerNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.product.CategoryNavigation)
-            </th>
-            <th>
-                圖片
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.product.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.product.Category)</th>
+            <th>@Html.DisplayNameFor(model => model.product.Seller)</th>
+            <th>@Html.DisplayNameFor(model => model.product.Price)</th>
+            <th>@Html.DisplayNameFor(model => model.product.OnShelf)</th>
+            <th>@Html.DisplayNameFor(model => model.product.OnShelfTime)</th>
+            <th>@Html.DisplayNameFor(model => model.product.Instock)</th>
+            <th>圖片</th> <!-- 確保圖片欄位的表頭顯示 -->
         </tr>
     </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                    @Html.DisplayFor(modelItem => item.product.Name)
-            </td>
-            @* <td>
-                    @Html.DisplayFor(modelItem => item.product.Category)
-            </td> *@
-            <td>
-                    @Html.DisplayFor(modelItem => item.product.Price)
-            </td>
-            <td>
-                    @* @Html.DisplayFor(modelItem => item.product.OnShelf) *@
-                    @if (item.product.OnShelf == true) {
-                        <span>上架中</span>
-                    }
-                    else {
-                        <span>目前不在架上</span>
-                    }
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.product.OnShelfTime)
-            </td>
-            @* <td>
-            @Html.DisplayFor(modelItem => item.product.Description)
-            </td> *@
-            <td>
-                    @Html.DisplayFor(modelItem => item.product.Instock)
-            </td>
-
-            <td>
-                @Html.DisplayFor(modelItem => item.product.SellerNavigation.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.product.CategoryNavigation.Name)
-            </td>
-            <td>
-                @* <img src="@Url.Content(")" alt="Product Image" style="width: 100px; height: auto; margin-right: 10px;" /> *@
-                    @if (item.productImgs.Count > 0) {
-                        <img src="@Url.Content(item.productImgs[0])" alt="Alternate Text" style="width: 100px; height: auto; margin-right: 10px;" />
-                    }
-                    else {
-                        <img src="@Url.Content("/images/non-found.jpg")" alt="Alternate Text" style="width: 100px; height: auto; margin-right: 10px;" />
-                    }
-            </td>
-            <td>
-                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.product.Id"><i class="fa-regular fa-pen-to-square"></i> 修改</a> |
-                    <a class="btn btn-success" asp-action="Details" asp-route-id="@item.product.Id"><i class="fa-solid fa-circle-info"></i> 資訊</a> |
-                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.product.Id"><i class="fa-solid fa-trash-can"></i> 刪除</a>
-            </td>
-        </tr>
-}
-    </tbody>
 </table>
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.datatables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+            // datatables 顯示index畫面
+            $('table').dataTable({
+                ajax: {
+                    type: 'GET',
+                    url: '/Products/IndexJson',
+                    datatype: 'json',
+                    dataSrc: 'data' // 確保從 JSON 中正確提取數據
+                },
+                columns: [ 
+                    { "data": "name", "width": "12.5%" },
+                    { "data": "categoryName", "width": "12.5%" }, // 顯示類別名稱
+                    { "data": "sellerName", "width": "12.5%" }, // 顯示賣家名稱
+                    { "data": "price", "width": "12.5%" },
+                    {
+                        "data": "onShelf", "width": "12.5%",
+                        "render": function (data, type, row) {
+                            // 如果 onShelf 是 true，則顯示打勾的 checkbox，否則顯示未打勾的 checkbox
+                            if (data) {
+                                return '正在架上';
+                            }
+                            else {
+                                return '目前不在架上';
+                            }
+                        }
+                    },
+                    {
+                        "data": "onShelfTime", "width": "12.5%",
+                        "render": function (data, type, row) {
+                            if (data) {
+                                var date = new Date(data);
+                                // 使用 toLocaleString 格式化日期
+                                var formattedDate = date.toLocaleString('zh-TW', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false // 24小時制
+                                });
+                                // 格式化結果為 XXXX年MM月DD日HH:MM 分
+                                return formattedDate;
+                            }
+                            else {
+                                return "無上架時間"; // 處理無日期的情況
+                            }
+                        }
+                    },
+                    { "data": "instock", "width": "12.5%" },
+                    {
+                        "data": "productImages", "width": "12.5%",
+                        "render": function (data, type, row) {
+                            // 檢查圖片列表是否存在且有至少一張圖片
+                            if (data && data.length > 0) {
+                                // 返回 HTML 的 <img> 標籤顯示第一張圖片
+                                return '<img src="' + data[0] + '" alt="Product Image" style="width: 100px; height: auto; margin-right: 10px;" />';
+                            }
+                            return '<img src="/images/non-found.jpg" alt="No Image" style="width: 100px; height: auto; margin-right: 10px;" />';
+                        }
+                    }
+                ],
+                fixedHeader: { header: true },
+                language: { url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/zh-HANT.json' }
+            });
+            // 新增商品sweetalert
+            $('#addNew').click(function () {
+                $.ajax({
+                    url: '/Products/Create',
+                    type: 'GET',
+                    success: function (result) {
+                        Swal.fire({
+                            title: '新增商品',
+                            html: result,  // 將 partial view 的內容插入
+                            showCancelButton: true,
+                            confirmButtonText: '新增',
+                            didOpen: function () {
+                                //圖片預覽
+                                document.getElementById('UploadedImages').addEventListener('change', function (event) {
+                                    let previewArea = document.getElementById('previewArea');
+                                    previewArea.innerHTML = ''; // 清空預覽區
+                                    for (let i = 0; i < event.target.files.length; i++) {
+                                        let file = event.target.files[i];
+                                        let reader = new FileReader();
+                                        reader.onload = function (e) {
+                                            let imgElement = document.createElement('img');
+                                            imgElement.src = e.target.result;
+                                            imgElement.style.width = '100px';
+                                            imgElement.style.marginRight = '10px';
+                                            imgElement.style.marginBottom = '10px';
+                                            imgElement.style.border = '1px solid #ddd'; // 可選擇的樣式
+                                            imgElement.style.padding = '5px';           // 可選擇的樣式
+                                            imgElement.style.boxShadow = '0px 0px 5px rgba(0,0,0,0.2)'; // 可選擇的樣式
+
+                                            previewArea.appendChild(imgElement);
+                                        };
+                                        reader.readAsDataURL(file);
+                                    }
+                                });
+                                $('#createForm').on('submit', function (e) {
+                                    e.preventDefault();
+                                    var formData = new FormData(this);
+                                    $.ajax({
+                                        url: '/Products/Create',
+                                        type: 'POST',
+                                        data: formData,
+                                        processData: false,
+                                        contentType: false,
+                                        success: function (response) {
+                                            if (response.success) {
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: '成功!',
+                                                    text: '商品已成功新增'
+                                                });
+                                                // 使用 AJAX 更新 DataTables
+                                                $('table').DataTable().ajax.reload();
+                                            } else {
+                                                Swal.fire('錯誤', response.errors.join('<br>'), 'error');
+                                            }
+                                        }
+                                    });
+                                });
+                            },
+                            preConfirm: () => {
+                                // 當點擊確認按鈕時，觸發表單的 submit 事件(取代form本身的submit按鈕)
+                                $('#createForm').submit();
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

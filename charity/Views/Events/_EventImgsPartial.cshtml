@@ -1,4 +1,8 @@
-﻿@model IEnumerable<charity.Models.EventImg>
+﻿@* @model IEnumerable<charity.Models.EventImg> *@
+@model IEnumerable<EventImgViewModel>
+
+
+
 
 <p>
     <a asp-controller ="EventImgs" asp-action="Create" asp-route-fromList="@Url.Action("Index", "Events")">Create New</a>
@@ -10,19 +14,26 @@
                 @Html.DisplayNameFor(model => model.ImgName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EIdNavigation)
+                @Html.DisplayNameFor(model => model.EventName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Image)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
+            string imglocation = @GlobalVar.ImgLocServer + @item.EId + "/" + @item.ImgName;
+            <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.ImgName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EIdNavigation.Id)
+                @Html.DisplayFor(modelItem => item.EventName)
+            </td>
+            <td>
+                <img class="event-img" src="@imglocation" alt="@item.ImgName" />
             </td>
             <td>
                 <a asp-controller="EventImgs" asp-action="Edit" asp-route-id="@item.Id" asp-route-fromList="@Url.Action("Index", "Events")">Edit</a> |
