@@ -1,0 +1,75 @@
+/* 背景與頁面置中樣式 */
+.login-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #b0c4de; /* 淡藍灰色背景 */
+    position: relative;
+}
+
+/* 標題置中並放置於最上方 */
+.login-header {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #2c3e50; /* 深色標題字體顏色 */
+}
+
+header h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    color:cadetblue
+}
+
+/* 登入頁面主要樣式 */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f4f8; /* 淺灰色背景讓登入區域突出 */
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.login-section {
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-control {
+    border-radius: 5px;
+}
+
+/* 登入表單按鈕樣式 */
+.login-section .btn {
+    background-color: #007bff;
+    border-color: #007bff;
+    transition: background-color 0.3s ease;
+}
+
+    .login-section .btn:hover {
+        background-color: #0056b3;
+    }
+
+/* 修改 a 標籤顏色 */
+a {
+    color: #1abc9c;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+/* 調整表單內文字顏色 */
+label {
+    color: #2c3e50; /* 深色字體顏色 */
+}
+
+input {
+    color: #333;
+}
+
