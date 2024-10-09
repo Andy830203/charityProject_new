@@ -74,7 +74,9 @@ namespace charity.Controllers
             }
 
             var product = await _context.Products
-                .Include(p => p.SellerNavigation)
+            .Include(p => p.ProductImgs)
+            .Include(p => p.SellerNavigation) // 包含賣家資料
+            .Include(p => p.CategoryNavigation) // 包含類別資料
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
@@ -90,8 +92,33 @@ namespace charity.Controllers
             };
 
 
-            return View(viewModel);
+            return PartialView("_Details", viewModel);
         }
+
+        // GET: Products/Details/5
+        //public async Task<IActionResult> Details(int? id) {
+        //    if (id == null) {
+        //        return NotFound();
+        //    }
+
+        //    var product = await _context.Products
+        //        .Include(p => p.SellerNavigation)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (product == null) {
+        //        return NotFound();
+        //    }
+        //    // 查詢產品的圖片路徑
+        //    var images = _context.ProductImgs.Where(pi => pi.PId == id).Select(pi => pi.ImgName).ToList();
+
+        //    // 創建 ViewModel 並填充資料
+        //    var viewModel = new ProductImgViewModel {
+        //        product = product,
+        //        productImgs = images
+        //    };
+
+
+        //    return View(viewModel);
+        //}
 
         //// GET: Products/Create
         //public IActionResult Create()

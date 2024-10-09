@@ -1,0 +1,82 @@
+﻿@model ProductImgViewModel
+
+<div class="col-md-6">
+    <!-- 顯示商品名稱 -->
+    <div class="form-group">
+        <label class="control-label text-start d-block">@Html.DisplayNameFor(model => model.product.Name)</label>
+        <p class="form-control-static">@Model.product.Name</p>
+    </div>
+
+    <!-- 顯示賣家 -->
+    <div class="form-group">
+        <label class="control-label text-start d-block">@Html.DisplayNameFor(model => model.product.Seller)</label>
+        <p class="form-control-static">@Model.product.Seller</p>
+    </div>
+
+    <!-- 顯示商品類別 -->
+    <div class="form-group">
+        <label class="control-label text-start d-block">@Html.DisplayNameFor(model => model.product.Category)</label>
+        <p class="form-control-static">@Model.product.Category</p>
+    </div>
+
+    <!-- 顯示價格 -->
+    <div class="form-group">
+        <label class="control-label text-start d-block">@Html.DisplayNameFor(model => model.product.Price)</label>
+        <p class="form-control-static">@String.Format("{0:C}", Model.product.Price)</p> <!-- 顯示貨幣格式 -->
+    </div>
+
+    <!-- 顯示上架狀態 -->
+    <div class="form-group">
+        <label class="control-label text-start d-block">@Html.DisplayNameFor(model => model.product.OnShelf)</label>
+        <p class="form-control-static">@(Model.product.OnShelf == true ? "上架中" : "不在架上")</p>
+    </div>
+
+    <!-- 顯示上架時間 -->
+    <div class="form-group">
+        <label class="control-label text-start d-block">@Html.DisplayNameFor(model => model.product.OnShelfTime)</label>
+        <p class="form-control-static">@(Model.product.OnShelfTime?.ToString("yyyy/MM/dd HH:mm") ?? "尚無資料")</p>
+    </div>
+
+    <!-- 顯示商品描述 -->
+    <div class="form-group">
+        <label class="control-label text-start d-block">@Html.DisplayNameFor(model => model.product.Description)</label>
+        <p class="form-control-static">@Model.product.Description</p>
+    </div>
+
+    <!-- 顯示庫存 -->
+    <div class="form-group">
+        <label class="control-label text-start d-block">@Html.DisplayNameFor(model => model.product.Instock)</label>
+        <p class="form-control-static">@Model.product.Instock</p>
+    </div>
+
+    <!-- 圖片預覽 -->
+    <div class="form-group">
+        <label class="control-label text-start d-block">圖片預覽</label>
+
+        <!-- 使用 Bootstrap 的 Carousel 來顯示多張圖片 -->
+        <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                @if (Model.productImgs != null && Model.productImgs.Any()) {
+                    @for (int i = 0; i < Model.productImgs.Count; i++) {
+                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                            <img src="@Model.productImgs[i]" class="d-block w-100" alt="Product Image">
+                        </div>
+                    }
+                }
+                else {
+                    <img src="~/images/non-found.jpg" class="d-block w-100" alt="Product Image">
+                }
+            </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</div>

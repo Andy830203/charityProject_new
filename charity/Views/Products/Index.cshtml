@@ -155,6 +155,28 @@
                     }
                 });
             });
+            $('table').on('click', 'tr', function () {
+                var data = $('table').DataTable().row(this).data();
+                var productId = data.id;
+
+                $.ajax({
+                    url: '/Products/Details/' + productId,
+                    type: 'GET',
+                    success: function (result) {
+                        Swal.fire({
+                            title: '商品詳情',
+                            html: result,
+                            showCancelButton: false,
+                            confirmButtonText: '關閉',
+                            didOpen: function () {
+                                $('.carousel').carousel({
+                                    interval: 3000
+                                });
+                            }
+                        });
+                    }
+                });
+            });
         });
     </script>
 }
