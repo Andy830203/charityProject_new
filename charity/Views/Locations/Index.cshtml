@@ -102,60 +102,69 @@
         var markers = [];
     </script>
     @*變數end*@
-    @*地圖style*@
+    @*自訂地圖樣式*@
     <script>
-        // 自訂地圖樣式，移除所有元素，保留道路
         var mapStyle = [
-          {
-            "featureType": "all",
-            "elementType": "labels",
-            "stylers": [
-              { "visibility": "off" }
-            ]
-          },
-          {
-            "featureType": "administrative",
-            "elementType": "geometry",
-            "stylers": [
-              { "visibility": "off" }
-            ]
-          },
-          {
-            "featureType": "poi",
-            "stylers": [
-              { "visibility": "off" }
-            ]
-          },
-          {
-            "featureType": "road",
-            "elementType": "labels",
-            "stylers": [
-              { "visibility": "off" }
-            ]
-          },
-          {
-            "featureType": "transit",
-            "stylers": [
-              { "visibility": "off" }
-            ]
-          },
-          {
-            "featureType": "landscape",
-            "stylers": [
-              { "visibility": "simplified" },
-              { "color": "#ffffff" }
-            ]
-          },
-          {
-            "featureType": "water",
-            "stylers": [
-              { "visibility": "on" },
-              { "color": "#b0e4ff" }
-            ]
-          }
-        ];
+            {
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative.land_parcel",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative.neighborhood",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "poi",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road",
+                "elementType": "labels.icon",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "transit",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            }
+        ]
     </script>
-
     @*當寬度小於750時，啟用橫向卷軸*@
     <script>
         $(window).resize(function () {
@@ -187,52 +196,103 @@
             }
         });
     </script>
-    @* 連接google map st *@
-    <script>
-        (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
-              key: "AIzaSyAvwZ6fFGycrcyXR8jzu_m5CBx_gbQhygg",
-          v: "weekly",
-        });
-    </script>
+    @* 連接google map st(舊版) *@
+    <!-- <script async
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAvwZ6fFGycrcyXR8jzu_m5CBx_gbQhygg&callback=initMap">
+        //地圖載入
+    </script>     -->
+    <!-- http 砍掉末尾&sensor=false -->
+    @* <script type="text/javascript"
+            src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAvwZ6fFGycrcyXR8jzu_m5CBx_gbQhygg"></script> *@
+    <!-- https -->
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAvwZ6fFGycrcyXR8jzu_m5CBx_gbQhygg&sensor=false"></script>
     @* 連接google map end *@
 
     @* 初始載入st *@
     <script>
-        async function initMap() {
-        const { Map } = await google.maps.importLibrary("maps");
-        map = new Map(document.getElementById("map"), {
-            center: { lat: 22.6273, lng: 120.3014 },
-            zoom: 14,
-            disableDefaultUI: true,/* 清除ui */
-            styles:mapStyle
+        var baseUrl = '@Url.Content("~/")';
+        const fileNames = ['Changhua_County', 'Chiayi_City', 'Chiayi_County', 'Hsinchu_City', 'Hsinchu_County', 'Hualien_County', 'Kaohsiung', 'Keelung_City', 'Miaoli_County', 'nantou_county', 'New_Taipei_City', 'Pingtung_County', 'Taichung_City', 'tainan', 'Taipei_City', 'Taitung_County', 'Taoyuan_County', 'Yilan_County', 'Yunlin_County'];  // 可以依據檔案數量進行修改
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById("map"), {//佈署地圖
+                zoom: 8,//地圖縮放倍率
+                center: { lat: 23.6978, lng: 120.9605 },//台灣正中心
+                //前金區緯經度lat: 22.6273, lng: 120.3014
             });
-            first_loc_mark();
+            loadmapbored(map);//讀取所有縣市geojson
+            loadmapmouseevent(map);//選擇縣市
+            loadmapmouseevent_click(map);//點擊跳轉
         }
         // 等待頁面載入後初始化地圖
         window.onload = initMap();
+
+        function loadmapbored(map) {//讀取所有縣市geojson
+            let filenum = 0;
+            let fileroute;
+            fileNames.forEach(function () {
+                fileroute = window.baseUrl + "Map_JSON/" + fileNames[filenum] + ".json";//取得網站根目錄後拼接完整路徑
+                map.data.loadGeoJson(fileroute);
+                filenum++;
+            })
+            //邊框樣式設定
+            map.data.setStyle({
+                fillColor: "green",
+                strokeWeight: 0.5,
+            });
+        }
+        function loadmapmouseevent(map) {//選擇縣市
+            //參考網址
+            //https://developers.google.cn/maps/documentation/javascript/datalayer?hl=zh-tw
+            //當滑鼠進入時
+            map.data.addListener('mouseover', function (event) {
+                map.data.revertStyle();
+                map.data.overrideStyle(event.feature, { fillColor: "#193300", strokeWeight: 2 });
+            });
+            //當滑鼠離開時
+            map.data.addListener('mouseout', function (event) {
+                map.data.revertStyle();
+            });
+            //當滑鼠點擊時
+            map.data.addListener('click', function (event) {
+                const feature_COUNTY_ID = event.feature.Fg.COUNTY_ID;//取得geojson裡COUNTY_ID
+                const feature_cityname = event.feature.Fg.COUNTY;//取得geojson裡COUNTY_ID
+                fetch(window.baseUrl + "Map_JSON/" + "contrycenter" + ".json")
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(jsondata => {
+                        let lng;
+                        let lat; 
+                        lng = Number(jsondata[feature_cityname][0]["lng"]);
+                        lat = Number(jsondata[feature_cityname][0]["lat"]);
+                        map.setCenter({ lng: lng, lat: lat });
+                        map.setZoom(11);
+                    })
+            });
         
+        }
         //點擊跳轉st
-        // 綁定點擊事件到表格
-        const table = document.getElementById('locationTable');
-        table.addEventListener('click', function (e) {
-            const target = e.target.closest('tr');
-            if (target && target.querySelectorAll('td').length > 0) {
-                const loc_name = target.querySelectorAll('td')[0].innerText;//地名
-                const lat = parseFloat(target.querySelectorAll('td')[2].innerText);//精度
-                const lng = parseFloat(target.querySelectorAll('td')[1].innerText);//緯度
-                // 將地圖中心移動到點擊的座標
-                //clearMarkers();
-                const position = { lat: lat, lng: lng };
-                map.setCenter(position);
-                map.setZoom(16);
-                let marker = new google.maps.Marker({
-                    position: { lat: lat, lng: lng },
-                    map: map,
-                    title: loc_name || 'Unknown Location'
-                });
-                //addMarker(marker);
-            }
-        });
+        function loadmapmouseevent_click(map) { // 綁定點擊事件到表格
+            const table = document.getElementById('locationTable');
+            table.addEventListener('click', function (e) {
+                const target = e.target.closest('tr');
+                if (target && target.querySelectorAll('td').length > 0) {
+                    const loc_name = target.querySelectorAll('td')[0].innerText;//地名
+                    const lat = parseFloat(target.querySelectorAll('td')[1].innerText);//精度
+                    const lng = parseFloat(target.querySelectorAll('td')[2].innerText);//緯度
+                    // 將地圖中心移動到點擊的座標
+                    //clearMarkers();
+                    const position = { lat: lat, lng: lng };
+                    map.setCenter(position);
+                    map.setZoom(16);
+                    let marker = new google.maps.Marker({
+                        position: { lat: lat, lng: lng },
+                        map: map,
+                        title: loc_name || 'Unknown Location'
+                    });
+                    //addMarker(marker);
+                }
+            });
+        }
         //點擊跳轉end
     </script>
     @* 初始載入end *@
@@ -274,48 +334,4 @@
         }
     </script>
     @*Google map工具箱 end*@
-    @*上傳圖片st*@
-    <!-- AJAX 請求上傳圖片 -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript">
-        //ready文檔物件模型 (DOM) 變得可以安全操作後立即運行 JavaScript 程式碼的方法
-        $(document).ready(function () {
-            //監聽submit
-            $('#uploadImageForm').on('submit', function (e) {
-                //preventDefault阻止表單默認提交
-                e.preventDefault();
-                //實例化FormData
-                var formData = new FormData();
-                //取得上傳檔案欄位的第一個檔案
-                var imageFile = $('#image')[0].files[0];
-                //將其加入FormData
-                formData.append('image', imageFile);
-                //使用ajax方法
-                $.ajax({
-                    //以下為將請求發送到控制器，可理解為呼叫
-                    url: '../Locations/UploadImage',
-                    type: 'POST',
-                    data: formData,
-                    //不要設置標頭，瀏覽器會自動設置合適的 multipart/form-data 標頭。
-                    contentType: false,
-                    //不要將 formData 物件轉換為查詢字串。當上傳檔案時，我們希望它保持為 FormData 格式，而不是被轉換為 URL 編碼的格式。
-                    processData: false,
-                    //請求成功時執行，response通常返回json
-                    success: function (response) {
-                        if (response.success) {
-                            $('#uploadMessage').html('<div class="alert alert-success">' + response.message + '</div>');
-                        } else {
-                            $('#uploadMessage').html('<div class="alert alert-danger">' + response.message + '</div>');
-                        }
-                    },
-                    error: function () {
-                        $('#uploadMessage').html('<div class="alert alert-danger">圖片上傳失敗，請再試一次。</div>');
-                        console.log(imageFile);  // 檢查是否選取到檔案
-                        console.log(formData.get('image'));  // 檢查 FormData 是否包含檔案
-                    }
-                });
-            });
-        });
-    </script>
-    @*上傳圖片end*@
 }
