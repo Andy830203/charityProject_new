@@ -213,18 +213,19 @@
         var baseUrl = '@Url.Content("~/")';
         const fileNames = ['Changhua_County', 'Chiayi_City', 'Chiayi_County', 'Hsinchu_City', 'Hsinchu_County', 'Hualien_County', 'Kaohsiung', 'Keelung_City', 'Miaoli_County', 'nantou_county', 'New_Taipei_City', 'Pingtung_County', 'Taichung_City', 'tainan', 'Taipei_City', 'Taitung_County', 'Taoyuan_County', 'Yilan_County', 'Yunlin_County'];  // 可以依據檔案數量進行修改
         function initMap() {
-            const map = new google.maps.Map(document.getElementById("map"), {//佈署地圖
+            let map = new google.maps.Map(document.getElementById("map"), {//佈署地圖
                 zoom: 8,//地圖縮放倍率
                 center: { lat: 23.6978, lng: 120.9605 },//台灣正中心
                 //前金區緯經度lat: 22.6273, lng: 120.3014
             });
             loadmapbored(map);//讀取所有縣市geojson
             loadmapmouseevent(map);//選擇縣市
+            first_loc_mark(map);//將現有地點建立marker至地圖
             loadmapmouseevent_click(map);//點擊跳轉
+            
         }
         // 等待頁面載入後初始化地圖
-        window.onload = initMap();
-
+        window.onload =initMap();
         function loadmapbored(map) {//讀取所有縣市geojson
             let filenum = 0;
             let fileroute;
@@ -268,7 +269,6 @@
                         map.setZoom(11);
                     })
             });
-        
         }
         //點擊跳轉st
         function loadmapmouseevent_click(map) { // 綁定點擊事件到表格
@@ -284,37 +284,41 @@
                     const position = { lat: lat, lng: lng };
                     map.setCenter(position);
                     map.setZoom(16);
-                    let marker = new google.maps.Marker({
-                        position: { lat: lat, lng: lng },
-                        map: map,
-                        title: loc_name || 'Unknown Location'
-                    });
-                    //addMarker(marker);
+                    // let marker = new google.maps.Marker({
+                    //     position: { lat: lat, lng: lng },
+                    //     map: map,
+                    //     title: loc_name || 'Unknown Location'
+                    // });
                 }
             });
         }
         //點擊跳轉end
-    </script>
-    @* 初始載入end *@
-    @*測試讀取表格st*@
-    <script>
-        function first_loc_mark(){
-        const  doc_loc = document.getElementById("locationTable");
-            for(i1=0;i1<doc_loc.rows.length;i1++)
-            {
-                const loc_name_t=doc_loc.rows[i1].cells[0].textContent || 'Unknown Location';//地點名稱
-                const lat_t=parseFloat(doc_loc.rows[i1].cells[2].textContent);//緯度
-                const lng_t=parseFloat(doc_loc.rows[i1].cells[1].textContent);//經度
-                marker_t = new google.maps.Marker({
-                position: { lat: lat_t, lng: lng_t },
-                map: map,
-                title: loc_name_t || 'Unknown Location'
+
+        //讀取表格並創立marker st
+        function first_loc_mark(map) {
+            const doc_loc = document.getElementById("locationTable");
+            for (i1 = 0; i1 < doc_loc.rows.length; i1++) {
+                const loc_name_t = doc_loc.rows[i1].cells[0].innerText || 'Unknown Location';//地點名稱
+                const lng_t = Number(parseFloat(doc_loc.rows[i1].cells[2].innerText));//緯度
+                const lat_t = Number(parseFloat(doc_loc.rows[i1].cells[1].innerText));//經度
+                let marker_t = new google.maps.Marker({
+                    position: { lat: lat_t, lng: lng_t },
+                    map: map,
+                    title: loc_name_t || 'Unknown Location'
                 });
-                addMarker(marker_t);
+                markers.push(marker_t);
             }
         }
+        //讀取表格並創立marker end
+    </script>
+    @* 初始載入end *@
+
+    @*測試讀取表格st*@
+    <script>
+
     </script>
     @*測試讀取表格end*@
+
     @*Google map工具箱 st*@
     <script>
         // 將標記推送到陣列。
