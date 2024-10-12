@@ -30,26 +30,9 @@
         </div>
 
         <div class="form-group">
-            <label for="gender">性別:</label>
-            <select id="gender" name="gender" class="form-control" onchange="this.form.submit()">
-                <option value="">全部</option>
-                @if (Context.Request.Query["gender"] == "true")
-                {
-                    <option value="male" selected>男</option>
-                }
-                else
-                {
-                    <option value="male">男</option>
-                }
-                @if (Context.Request.Query["gender"] == "false")
-                {
-                    <option value="female" selected>女</option>
-                }
-                else
-                {
-                    <option value="female">女</option>
-                }
-            </select>
+            <label>性別:</label><br />
+            <input type="checkbox" name="gender" value="male" @(Context.Request.Query["gender"].Contains("male") ? "checked" : "")> 男
+            <input type="checkbox" name="gender" value="female" @(Context.Request.Query["gender"].Contains("female") ? "checked" : "")> 女
         </div>
 
         <div class="form-group">
@@ -63,12 +46,9 @@
         </div>
 
         <div class="form-group">
-            <label for="status">帳號狀態:</label>
-            <select id="status" name="status" class="form-control">
-                <option value="">全部</option>
-                <option value="1">在職中</option>
-                <option value="2">已離職</option>
-            </select>
+            <label>帳號狀態:</label><br />
+            <input type="checkbox" name="status" value="1" @(Context.Request.Query["status"].Contains("1") ? "checked" : "")> 在職中
+            <input type="checkbox" name="status" value="2" @(Context.Request.Query["status"].Contains("2") ? "checked" : "")> 已離職
         </div>
 
         <br />
@@ -106,7 +86,6 @@
         {
             <tr>
                 <td>@Html.DisplayFor(modelItem => item.Name)</td>
-
                 <td>
                     @if (item.Gender.HasValue)
                     {
@@ -117,7 +96,6 @@
                         <span>未指定</span>
                     }
                 </td>
-
                 <td>@Html.DisplayFor(modelItem => item.Birthday)</td>
                 <td>@Html.DisplayFor(modelItem => item.Email)</td>
                 <td>@Html.DisplayFor(modelItem => item.Address)</td>

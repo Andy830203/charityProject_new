@@ -21,26 +21,17 @@
         </div>
 
         <div class="form-group">
-            <label for="gender">性別:</label>
-            <select id="gender" name="gender" class="form-control" onchange="this.form.submit()">
-                <option value="">全部</option>
-                @if (Context.Request.Query["gender"] == "true")
-                {
-                    <option value="male" selected>男</option>
-                }
-                else
-                {
-                    <option value="male">男</option>
-                }
-                @if (Context.Request.Query["gender"] == "false")
-                {
-                    <option value="female" selected>女</option>
-                }
-                else
-                {
-                    <option value="female">女</option>
-                }
-            </select>
+            <label>性別:</label><br />
+            <div class="checkbox-group" style="display: flex; gap: 10px;">
+                <label>
+                    <input type="checkbox" name="gender" value="male"
+                    @(Context.Request.Query["gender"].ToString() == "male" ? "checked" : "") /> 男
+                </label>
+                <label>
+                    <input type="checkbox" name="gender" value="female"
+                    @(Context.Request.Query["gender"].ToString() == "female" ? "checked" : "") /> 女
+                </label>
+            </div>
         </div>
 
         <div class="form-group">
@@ -54,12 +45,17 @@
         </div>
 
         <div class="form-group">
-            <label for="status">帳號狀態:</label>
-            <select id="status" name="status">
-                <option value="">全部</option>
-                <option value="1">正常</option>
-                <option value="2">停權</option>
-            </select>
+            <label>帳號狀態:</label><br />
+            <div class="checkbox-group" style="display: flex; gap: 10px;">
+                <label>
+                    <input type="checkbox" name="status" value="1"
+                    @(Context.Request.Query["status"].ToString().Contains("1") ? "checked" : "") /> 正常
+                </label>
+                <label>
+                    <input type="checkbox" name="status" value="2"
+                    @(Context.Request.Query["status"].ToString().Contains("2") ? "checked" : "") /> 停權
+                </label>
+            </div>
         </div>
 
         <br />
