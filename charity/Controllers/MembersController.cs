@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using charity.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace charity.Controllers
 {
@@ -20,9 +20,8 @@ namespace charity.Controllers
             _context = context;
         }
 
-
         // 顯示會員列表和進階搜尋
-        public IActionResult Index(string gender, string name, int? status,  DateTime? startDate, DateTime? endDate)
+        public IActionResult Index(string[] gender, string name, int?[] status, DateTime? startDate, DateTime? endDate)
         {
             // 準備基本的會員查詢
             var query = _context.Members.AsQueryable();
@@ -34,15 +33,17 @@ namespace charity.Controllers
             }
 
             // 根據性別篩選
-            if (!string.IsNullOrEmpty(gender))
+            if (gender != null && gender.Length > 0)
             {
-                query = query.Where(m => m.Gender == (gender == "male"));
+                var isMale = gender.Contains("male");
+                var isFemale = gender.Contains("female");
+                query = query.Where(m => (m.Gender == true && isMale) || (m.Gender == false && isFemale));
             }
 
             // 根據帳號狀態篩選 (1 正常, 2 停權)
-            if (status.HasValue)
+            if (status != null && status.Length > 0)
             {
-                query = query.Where(m => m.Status == status.Value);
+                query = query.Where(m => status.Contains(m.Status));
             }
 
             // 根據生日篩選
@@ -60,13 +61,6 @@ namespace charity.Controllers
             var members = query.ToList();
             return View(members);
         }
-
-        // GET: Members
-        //public async Task<IActionResult> Index()
-        //{
-        //    var charityContext = _context.Members.Include(m => m.AccessNavigation).Include(m => m.StatusNavigation);
-        //    return View(await charityContext.ToListAsync());
-        //}
 
         // GET: Members/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -91,44 +85,33 @@ namespace charity.Controllers
         // GET: Members/Create
         public IActionResult Create()
         {
-            //ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id");
-            //ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id");
             return View();
         }
 
         // POST: Members/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Account,Password,NickName,RealName,Gender,Birthday,Email,Address,Phone,Points,Checkin,Exp,ImgName,Status,Access,FaceRec")] Member member)
         {
-            if (ModelState.IsValid)  //因為一開始沒有登入所以驗證false走不進去
+            if (ModelState.IsValid)
             {
-                if (Request.Form.Files["ImgName"] != null)//&& MemberPhoto.Length > 0
+                if (Request.Form.Files["ImgName"] != null)
                 {
                     var file = Request.Form.Files["ImgName"];
-                    // 獲取文件的名稱
                     var fileName = Path.GetFileName(file.FileName);
-
-                    // 定義儲存照片的路徑 (例如 wwwroot/images/members)
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\members", fileName);
 
-                    // 保存文件到指定路徑
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await file.CopyToAsync(stream);
                     }
 
-                    // 將文件名保存到資料庫
                     member.ImgName = @"/images/members/" + fileName;
                 }
                 _context.Add(member);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            //ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id", member.Access);
-            //ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id", member.Status);
             return View(member);
         }
 
@@ -145,14 +128,10 @@ namespace charity.Controllers
             {
                 return NotFound();
             }
-            ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id", member.Access);
-            ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id", member.Status);
             return View(member);
         }
 
         // POST: Members/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Account,Password,NickName,RealName,Gender,Birthday,Email,Address,Phone,Points,Checkin,Exp,ImgName,Status,Access,FaceRec")] Member member)
@@ -161,35 +140,32 @@ namespace charity.Controllers
             {
                 return NotFound();
             }
-            // 從資料庫中讀取現有的會員資料
+
             var existingMember = await _context.Members.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
-            if (existingMember == null) {
+            if (existingMember == null)
+            {
                 return NotFound();
             }
-            if (ModelState.IsValid) //因為一開始沒有登入所以驗證false走不進去
+
+            if (ModelState.IsValid)
             {
                 try
                 {
-                    if (Request.Form.Files["ImgName"] != null) //&& MemberPhoto.Length > 0
+                    if (Request.Form.Files["ImgName"] != null)
                     {
                         var file = Request.Form.Files["ImgName"];
-                        // 獲取文件的名稱
                         var fileName = Path.GetFileName(file.FileName);
-
-                        // 定義儲存照片的路徑 (例如 wwwroot/images/members)
                         var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\members", fileName);
 
-                        // 保存文件到指定路徑
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await file.CopyToAsync(stream);
                         }
 
-                        // 將文件名保存到資料庫
                         member.ImgName = @"/images/members/" + fileName;
                     }
-                    else {
-                        // 如果沒有上傳新圖片，保留原來的圖片名稱
+                    else
+                    {
                         member.ImgName = existingMember.ImgName;
                     }
                     _context.Update(member);
@@ -208,11 +184,8 @@ namespace charity.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Access"] = new SelectList(_context.MemberAccesses, "Id", "Id", member.Access);
-            ViewData["Status"] = new SelectList(_context.MemberStatuses, "Id", "Id", member.Status);
             return View(member);
         }
-
 
         // GET: Members/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -249,17 +222,14 @@ namespace charity.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //GET: /Members/GetPicture/1
+        // GET: /Members/GetPicture/1
         public async Task<FileResult>? GetPicture(int id)
         {
             Member? m = await _context.Members.FindAsync(id);
             string? imagePath = m.ImgName;
             if (System.IO.File.Exists(imagePath))
             {
-                // Get the file extension to determine the content type
-                string fileExtension = Path.GetExtension(imagePath).ToLower(); //讀副檔名
-
-                // Set the MIME type based on the file extension
+                string fileExtension = Path.GetExtension(imagePath).ToLower();
                 string contentType;
                 switch (fileExtension)
                 {
@@ -274,7 +244,7 @@ namespace charity.Controllers
                         contentType = "image/gif";
                         break;
                     default:
-                        contentType = "application/octet-stream"; // generic binary data
+                        contentType = "application/octet-stream";
                         break;
                 }
                 return File(System.IO.File.ReadAllBytes(imagePath), contentType);
@@ -284,10 +254,10 @@ namespace charity.Controllers
                 return null;
             }
         }
+
         private bool MemberExists(int id)
         {
             return _context.Members.Any(e => e.Id == id);
         }
     }
-
 }
