@@ -40,15 +40,15 @@ namespace charity.Controllers
                 .Select(ewps => new EventsViewModel {
                     Id = ewps.EventSelf.Id,
                     Priority = ewps.EventSelf.Priority,
-                    Category = ewps.EventSelf.Category.Name,
+                    Category = ewps.EventSelf.Category?.Name ?? "Unknown Category", // 檢查 Category 是否為 null
                     Name = ewps.EventSelf.Name,
                     Count = appliants.Where(appliant => appliant.EpId == ewps.EventPeriod.Id).Count(),
-                    Location = ewps.EventSelf.EventLocations.FirstOrDefault(),
+                    Location = ewps.EventSelf.EventLocations.FirstOrDefault(), // 檢查 EventLocations 是否為 null
                     PeriodDesc = ewps.EventPeriod.Description,
                     Period = $"{ewps.EventPeriod.StartTime.ToString()} ~ {ewps.EventPeriod.EndTime.ToString()}",
                     Fee = ewps.EventSelf.Fee,
                     Capacity = ewps.EventSelf.Capacity,
-                    ImageName = ewps.EventSelf.EventImgs.FirstOrDefault().ImgName,
+                    ImageName = ewps.EventSelf.EventImgs.FirstOrDefault()?.ImgName ?? "default.jpg", // 檢查 EventImgs 是否為 null
                 });
             return View(charityContext);
         }

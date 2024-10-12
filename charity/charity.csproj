@@ -8,13 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\NewFolder\**" />
-    <Content Remove="wwwroot\NewFolder\**" />
-    <EmbeddedResource Remove="wwwroot\NewFolder\**" />
-    <None Remove="wwwroot\NewFolder\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="ViewModels\Class.cs" />
     <Compile Remove="ViewModels\Class1.cs" />
   </ItemGroup>
@@ -38,6 +31,7 @@
     <Folder Include="wwwroot\images\Events\1\" />
     <Folder Include="wwwroot\images\Events\2\" />
     <Folder Include="wwwroot\images\staff\" />
+    <Folder Include="wwwroot\owlcarousel2\" />
 	<Folder Include="wwwroot\test\" />
   </ItemGroup>
 
