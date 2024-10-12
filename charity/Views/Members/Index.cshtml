@@ -4,28 +4,26 @@
     ViewData["Title"] = "Index";
 }
 
-
 <head>
-    <link href="~/css/page.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <h1>會員列表</h1>
 
-
 <!-- 進階搜尋表單 -->
 <div class="container">
-<form id="searchForm" method="get" asp-action="Index">
-    <div class="form-group">
-        <label for="name">姓名:</label>
-        <input type="text" id="name" name="name" value="@Context.Request.Query["name"]" class="form-control" />
-    </div>
+    <form id="searchForm" method="get" asp-action="Index">
+        <div class="form-group">
+            <label for="name">姓名:</label>
+            <input type="text" id="name" name="name" value="@Context.Request.Query["name"]" class="form-control" />
+        </div>
 
-    <div class="form-group">
-        <label for="gender">性別:</label>
-        <select id="gender" name="gender" class="form-control" onchange="this.form.submit()">
-            <option value="">全部</option>
-            @* <option value="male" @(Context.Request.Query["gender"] == "true" ? "selected=\"selected\"" : "")>男</option>
-            <option value="male" @(Context.Request.Query["gender"] == "false" ? "selected=\"selected\"" : "")>女</option> *@
+        <div class="form-group">
+            <label for="gender">性別:</label>
+            <select id="gender" name="gender" class="form-control" onchange="this.form.submit()">
+                <option value="">全部</option>
                 @if (Context.Request.Query["gender"] == "true")
                 {
                     <option value="male" selected>男</option>
@@ -42,172 +40,111 @@
                 {
                     <option value="female">女</option>
                 }
-        </select>
-    </div>
+            </select>
+        </div>
 
-    <div class="form-group">
-        <label for="startDate">出生日期(起):</label>
-        <input type="date" id="startDate" name="startDate" value="@Context.Request.Query["startDate"]" class="form-control" />
-    </div>
+        <div class="form-group">
+            <label for="startDate">出生日期(起):</label>
+            <input type="date" id="startDate" name="startDate" value="@Context.Request.Query["startDate"]" class="form-control" />
+        </div>
 
-    <div class="form-group">
-        <label for="endDate">出生日期(止):</label>
-        <input type="date" id="endDate" name="endDate" value="@Context.Request.Query["endDate"]" class="form-control" />
-    </div>
+        <div class="form-group">
+            <label for="endDate">出生日期(止):</label>
+            <input type="date" id="endDate" name="endDate" value="@Context.Request.Query["endDate"]" class="form-control" />
+        </div>
 
-    
-            <div class="form-group">
-                <label for="status">帳號狀態:</label>
-                <select id="status" name="status">
-                    <option value="">全部</option>
-                    <option value="1">正常</option>
-                    <option value="2">停權</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <label for="status">帳號狀態:</label>
+            <select id="status" name="status">
+                <option value="">全部</option>
+                <option value="1">正常</option>
+                <option value="2">停權</option>
+            </select>
+        </div>
 
-    <br />
-        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass" style="color:red"></i>搜尋</button>
-</form>
+        <br />
+        <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-magnifying-glass" style="color:red"></i>搜尋
+        </button>
+    </form>
 </div>
 
 <p>
-    <a asp-action="Create" class=" btn button-33" role="button">
+    <a asp-action="Create" class="btn btn-info">
         <i class="fa-solid fa-user-plus"></i> 新增會員
     </a>
 </p>
-<table class="table">
+
+<table class="table display">
     <thead>
         <tr>
-            @* <th>
-                @Html.DisplayNameFor(model => model.Account)
-            </th> *@
-            @* <th>
-                @Html.DisplayNameFor(model => model.Password)
-            </th> *@
-            @* <th>
-                @Html.DisplayNameFor(model => model.NickName)
-            </th> *@
-            <th>
-                @Html.DisplayNameFor(model => model.RealName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Gender)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Birthday)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            @* <th>
-                @Html.DisplayNameFor(model => model.Address)
-            </th> *@
-            <th>
-                @Html.DisplayNameFor(model => model.Phone)
-            </th>
-            @* <th>
-                @Html.DisplayNameFor(model => model.Points)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Checkin)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Exp)
-            </th> *@
-            <th>
-                @Html.DisplayNameFor(model => model.ImgName)
-            </th>
-            @* <th>
-                @Html.DisplayNameFor(model => model.FaceRec)
-            </th> *@
-           @*  <th>
-                @Html.DisplayNameFor(model => model.AccessNavigation)
-            </th> *@
-            <th>
-                @Html.DisplayNameFor(model => model.StatusNavigation)
-            </th> 
+            <th>@Html.DisplayNameFor(model => model.RealName)</th>
+            <th>@Html.DisplayNameFor(model => model.Gender)</th>
+            <th>@Html.DisplayNameFor(model => model.Birthday)</th>
+            <th>@Html.DisplayNameFor(model => model.Email)</th>
+            <th>@Html.DisplayNameFor(model => model.Phone)</th>
+            <th>@Html.DisplayNameFor(model => model.ImgName)</th>
+            <th>@Html.DisplayNameFor(model => model.StatusNavigation)</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            @* <td>
-                @Html.DisplayFor(modelItem => item.Account)
-            </td>
-            @* <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td> *@
-            @* <td>
-                @Html.DisplayFor(modelItem => item.NickName)
-            </td> *@
-            <td>
-                @Html.DisplayFor(modelItem => item.RealName)
-            </td>
-            <td>
-                 @* @Html.DisplayFor(model => model.Gender) *@
-            @* 性別顯示修改 *@
-            @if (item.Gender == true)
-            {
-                <span>男</span>
-            }
-            else
-            {
-                <span>女</span>
-            }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Birthday)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            @* <td>
-                @Html.DisplayFor(modelItem => item.Address)
-            </td> *@
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            @* <td>
-                @Html.DisplayFor(modelItem => item.Points)
-            </td> *@
-            @* <td>
-                @Html.DisplayFor(modelItem => item.Checkin)
-            </td> *@
-           @*  <td>
-                @Html.DisplayFor(modelItem => item.Exp)
-            </td> *@
-            <td>
-@*                 @Html.DisplayFor(modelItem => item.ImgName)
- *@               <img src="@Url.Content(item.ImgName)" alt="會員照片" style="width: 150px; height: 150px;" />
-
-            </td>
-            @* <td>
-                @Html.DisplayFor(modelItem => item.FaceRec)
-            </td> *@
-           @*  <td>
-                @Html.DisplayFor(modelItem => item.AccessNavigation.Id)
-            </td>    *@                                                                            
-            <td>
-@*                 @Html.DisplayFor(modelItem => item.StatusNavigation.Id)
- *@                @if (item.Status == 1)
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.RealName)</td>
+                <td>
+                    @if (item.Gender == true)
+                    {
+                        <span>男</span>
+                    }
+                    else
+                    {
+                        <span>女</span>
+                    }
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Birthday)</td>
+                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                <td>@Html.DisplayFor(modelItem => item.Phone)</td>
+                <td>
+                    <img src="@Url.Content(item.ImgName)" alt="會員照片" style="width: 150px; height: 150px;" />
+                </td>
+                <td>
+                    @if (item.Status == 1)
                     {
                         <span>正常</span>
                     }
                     else
                     {
-                        
                         <span>停權</span>
                     }
-            </td>
-            <td>
-
-  <a href="#"></a>              
-                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-regular fa-pen-to-square"></i> 修改</a> |
-                <a class="btn btn-success" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info"></i> 資訊</a> |
-                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-user-xmark"></i> 刪除</a>
-            </td>
-        </tr>
-}
+                </td>
+                <td>
+                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">
+                        <i class="fa-regular fa-pen-to-square"></i> 修改
+                    </a> |
+                    <a class="btn btn-success" asp-action="Details" asp-route-id="@item.Id">
+                        <i class="fa-solid fa-circle-info"></i> 資訊
+                    </a> |
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">
+                        <i class="fa-solid fa-user-xmark"></i> 刪除
+                    </a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<script>
+    $(document).ready(function () {
+        $('.table').DataTable({
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/Chinese-traditional.json"
+            }
+        });
+    });
+</script>

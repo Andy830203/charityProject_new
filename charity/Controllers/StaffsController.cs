@@ -101,10 +101,28 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Account,Password,Name,RealName,Gender,Birthday,Email,Address,Phone,ArrivalDate,ResignDate,Status,Access")] Staff staff)
+        public async Task<IActionResult> Create([Bind("Id,Account,Password,Name,RealName,Gender,Birthday,Email,Address,Phone,ArrivalDate,ResignDate,ImgName,Status,Access")] Staff staff)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid)  //因為一開始沒有登入所以驗證false走不進去
             {
+                if (Request.Form.Files["ImgName"] != null)//&& MemberPhoto.Length > 0
+                {
+                    var file = Request.Form.Files["ImgName"];
+                    // 獲取文件的名稱
+                    var fileName = Path.GetFileName(file.FileName);
+
+                    // 定義儲存照片的路徑 (例如 wwwroot/images/staff)
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\staff", fileName);
+
+                    // 保存文件到指定路徑
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    // 將文件名保存到資料庫
+                    staff.ImgName = @"/images/staff/" + fileName;
+                }
                 _context.Add(staff);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -137,9 +155,15 @@ namespace charity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Account,Password,Name,RealName,Gender,Birthday,Email,Address,Phone,ArrivalDate,ResignDate,Status,Access")] Staff staff)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Account,Password,Name,RealName,Gender,Birthday,Email,Address,Phone,ArrivalDate,ResignDate,ImgName,Status,Access")] Staff staff)
         {
             if (id != staff.Id)
+            {
+                return NotFound();
+            }
+            //
+            var existingStaff = await _context.Staff.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
+            if (existingStaff == null)
             {
                 return NotFound();
             }
@@ -148,6 +172,29 @@ namespace charity.Controllers
             {
                 try
                 {
+                    if (Request.Form.Files["ImgName"] != null) //&& MemberPhoto.Length > 0
+                    {
+                        var file = Request.Form.Files["ImgName"];
+                        // 獲取文件的名稱
+                        var fileName = Path.GetFileName(file.FileName);
+
+                        // 定義儲存照片的路徑 (例如 wwwroot/images/staff)
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\staff", fileName);
+
+                        // 保存文件到指定路徑
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        // 將文件名保存到資料庫
+                        staff.ImgName = @"/images/staff/" + fileName;
+                    }
+                    else
+                    {
+                        // 如果沒有上傳新圖片，保留原來的圖片名稱
+                        staff.ImgName = existingStaff.ImgName;
+                    }
                     _context.Update(staff);
                     await _context.SaveChangesAsync();
                 }
