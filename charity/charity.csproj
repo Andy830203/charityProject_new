@@ -31,6 +31,7 @@
     <Folder Include="wwwroot\images\Events\1\" />
     <Folder Include="wwwroot\images\Events\2\" />
     <Folder Include="wwwroot\images\staff\" />
+    <Folder Include="wwwroot\owlcarousel2\" />
     <Folder Include="wwwroot\Map_JSON\" />
 	<Folder Include="wwwroot\test\" />
   </ItemGroup>

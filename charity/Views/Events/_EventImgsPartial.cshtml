@@ -2,6 +2,15 @@
 @model IEnumerable<EventImgViewModel>
 
 
+<div class="owl-carousel owl-theme">
+    @foreach (var item in Model)
+    {
+        @* <p>@item.ImgName</p> *@
+        string imglocation = @GlobalVar.ImgLocServer + @item.EId + "/" + @item.ImgName;
+        <img class="item carousel-img click-img" src="@imglocation" alt="@item.ImgName" />
+        
+    }
+</div>
 
 
 <p>
