@@ -306,49 +306,59 @@ namespace charity.Controllers
             return View(vm);
         }
 
+        
         // GET: Products/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Delete(int? id) {
+        //    if (id == null) {
+        //        return NotFound();
+        //    }
 
-            var product = await _context.Products
-                .Include(p => p.SellerNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            // 查詢產品的圖片路徑
-            var images = _context.ProductImgs.Where(pi => pi.PId == id).Select(pi => pi.ImgName).ToList();
+        //    var product = await _context.Products
+        //        .Include(p => p.SellerNavigation)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (product == null) {
+        //        return NotFound();
+        //    }
+        //    // 查詢產品的圖片路徑
+        //    var images = _context.ProductImgs.Where(pi => pi.PId == id).Select(pi => pi.ImgName).ToList();
 
-            // 創建 ViewModel 並填充資料
-            var viewModel = new ProductImgViewModel {
-                product = product,
-                productImgs = images
-            };
+        //    // 創建 ViewModel 並填充資料
+        //    var viewModel = new ProductImgViewModel {
+        //        product = product,
+        //        productImgs = images
+        //    };
 
 
-            return View(viewModel);
-        }
+        //    return View(viewModel);
+        //}
 
         // POST: Products/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    var product = await _context.Products.FindAsync(id);
+        //    if (product != null)
+        //    {
+        //        _context.Products.Remove(product);
+        //    }
+
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int? id) {
+            var product = await _context.Products.FindAsync(id); // 根據 ID 找到商品
+            if (product == null) {
+                return Json(new { success = false, message = "商品不存在" });
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+            _context.Products.Remove(product); // 刪除商品
+            _context.SaveChanges(); // 保存變更
 
+            return Json(new { success = true });
+        }
         private bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.Id == id);

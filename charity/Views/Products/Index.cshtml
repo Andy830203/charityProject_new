@@ -167,10 +167,44 @@
                             title: '商品詳情',
                             html: result,
                             showCancelButton: false,
-                            confirmButtonText: '關閉',
+                            showDenyButton: true,
+                            denyButtonText: '刪除',
+                            confirmButtonText: '確認',
                             didOpen: function () {
                                 $('.carousel').carousel({
                                     interval: 3000
+                                });
+                            }
+                        }).then((result) => {
+                            // 當用戶點擊了 "刪除" 按鈕
+                            if (result.isDenied) {
+                                // 提示用戶是否確認刪除
+                                Swal.fire({
+                                    title: '確定要刪除該商品嗎？',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: '是的，刪除!',
+                                    cancelButtonText: '取消'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        // 發送刪除請求到服務器
+                                        $.ajax({
+                                            url: '/Products/Delete/' + productId,
+                                            type: 'POST',
+                                            success: function (response) {
+                                                if (response.success) {
+                                                    Swal.fire('已刪除!', '該商品已成功刪除。', 'success');
+                                                    // 刷新 DataTables，更新刪除後的內容
+                                                    $('table').DataTable().ajax.reload();
+                                                } else {
+                                                    Swal.fire('錯誤!', '無法刪除該商品。', 'error');
+                                                }
+                                            },
+                                            error: function () {
+                                                Swal.fire('錯誤!', '無法刪除該商品。', 'error');
+                                            }
+                                        });
+                                    }
                                 });
                             }
                         });
