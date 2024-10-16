@@ -20,9 +20,8 @@ namespace charity.Controllers
             _context = context;
         }
 
-
         // 顯示會員列表和進階搜尋
-        public IActionResult Index(string gender, string name, int? status,  DateTime? startDate, DateTime? endDate)
+        public IActionResult Index(string[] gender, string name, List<int> status, DateTime? startDate, DateTime? endDate)
         {
             // 準備基本的會員查詢
             var query = _context.Staff.AsQueryable();
@@ -33,16 +32,17 @@ namespace charity.Controllers
                 query = query.Where(m => m.RealName.Contains(name));
             }
 
-            // 根據性別篩選
-            if (!string.IsNullOrEmpty(gender))
+            // 根據性別篩選 (接受多個性別)
+            if (gender != null && gender.Length > 0)
             {
-                query = query.Where(m => m.Gender == (gender == "male"));
+                var genders = gender.Select(g => g == "male").ToList();
+                query = query.Where(m => genders.Contains(m.Gender.Value));
             }
 
-            // 根據帳號狀態篩選 (1 為在職中, 2 為離職)
-            if (status.HasValue)
+            // 根據帳號狀態篩選 (接受多個狀態)
+            if (status != null && status.Count > 0)
             {
-                query = query.Where(m => m.Status == status.Value);
+                query = query.Where(m => status.Contains(m.Status.GetValueOrDefault()));
             }
 
             // 根據到職日篩選
@@ -60,13 +60,6 @@ namespace charity.Controllers
             var members = query.ToList();
             return View(members);
         }
-
-        //// GET: Staffs
-        //public async Task<IActionResult> Index()
-        //{
-        //    var charityContext = _context.Staff.Include(s => s.AccessNavigation).Include(s => s.StatusNavigation);
-        //    return View(await charityContext.ToListAsync());
-        //}
 
         // GET: Staffs/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -97,14 +90,25 @@ namespace charity.Controllers
         }
 
         // POST: Staffs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Account,Password,Name,RealName,Gender,Birthday,Email,Address,Phone,ArrivalDate,ResignDate,Status,Access")] Staff staff)
+        public async Task<IActionResult> Create([Bind("Id,Account,Password,Name,RealName,Gender,Birthday,Email,Address,Phone,ArrivalDate,ResignDate,ImgName,Status,Access")] Staff staff)
         {
             if (ModelState.IsValid)
             {
+                if (Request.Form.Files["ImgName"] != null)
+                {
+                    var file = Request.Form.Files["ImgName"];
+                    var fileName = Path.GetFileName(file.FileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\staff", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    staff.ImgName = @"/images/staff/" + fileName;
+                }
                 _context.Add(staff);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -133,13 +137,17 @@ namespace charity.Controllers
         }
 
         // POST: Staffs/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Account,Password,Name,RealName,Gender,Birthday,Email,Address,Phone,ArrivalDate,ResignDate,Status,Access")] Staff staff)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Account,Password,Name,RealName,Gender,Birthday,Email,Address,Phone,ArrivalDate,ResignDate,ImgName,Status,Access")] Staff staff)
         {
             if (id != staff.Id)
+            {
+                return NotFound();
+            }
+
+            var existingStaff = await _context.Staff.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
+            if (existingStaff == null)
             {
                 return NotFound();
             }
@@ -148,6 +156,23 @@ namespace charity.Controllers
             {
                 try
                 {
+                    if (Request.Form.Files["ImgName"] != null)
+                    {
+                        var file = Request.Form.Files["ImgName"];
+                        var fileName = Path.GetFileName(file.FileName);
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\staff", fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        staff.ImgName = @"/images/staff/" + fileName;
+                    }
+                    else
+                    {
+                        staff.ImgName = existingStaff.ImgName;
+                    }
                     _context.Update(staff);
                     await _context.SaveChangesAsync();
                 }

@@ -44,9 +44,12 @@ function ajaxInit(action, callback) {
     });
 }
 
+
+
 // 在頁面加載時初始化內容，或使用適當的事件來調用 loadAccordionContent()
+// 綁局部檢視的放這
 $(window).on('load', function () {
     ajaxInit('EventLocations', bindDragEvents);
-    ajaxInit('EventImgs');
+    ajaxInit('EventImgs', bindCarousel);
     ajaxInit('EventPeriods');
 });
