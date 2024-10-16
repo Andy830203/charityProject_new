@@ -15,6 +15,7 @@
             <th>@Html.DisplayNameFor(model => model.product.OnShelfTime)</th>
             <th>@Html.DisplayNameFor(model => model.product.Instock)</th>
             <th>預覽圖示</th> <!-- 確保圖片欄位的表頭顯示 -->
+            <th></th>
         </tr>
     </thead>
 </table>
@@ -33,13 +34,13 @@
                     dataSrc: 'data' // 確保從 JSON 中正確提取數據
                 },
                 columns: [
-                    { "data": "id", "width": "11%" },
-                    { "data": "name", "width": "11%" },
-                    { "data": "categoryName", "width": "11%" }, // 顯示類別名稱
-                    { "data": "sellerName", "width": "11%" }, // 顯示賣家名稱
-                    { "data": "price", "width": "11%" },
+                    { "data": "id", "width": "10%" },
+                    { "data": "name", "width": "10%" },
+                    { "data": "categoryName", "width": "10%" }, // 顯示類別名稱
+                    { "data": "sellerName", "width": "10%" }, // 顯示賣家名稱
+                    { "data": "price", "width": "10%" },
                     {
-                        "data": "onShelf", "width": "11%",
+                        "data": "onShelf", "width": "10%",
                         "render": function (data, type, row) {
                             // 如果 onShelf 是 true，則顯示打勾的 checkbox，否則顯示未打勾的 checkbox
                             if (data) {
@@ -51,7 +52,7 @@
                         }
                     },
                     {
-                        "data": "onShelfTime", "width": "11%",
+                        "data": "onShelfTime", "width": "10%",
                         "render": function (data, type, row) {
                             if (data) {
                                 var date = new Date(data);
@@ -72,9 +73,9 @@
                             }
                         }
                     },
-                    { "data": "instock", "width": "11%" },
+                    { "data": "instock", "width": "10%" },
                     {
-                        "data": "productImages", "width": "11%",
+                        "data": "productImages", "width": "10%",
                         "render": function (data, type, row) {
                             // 檢查圖片列表是否存在且有至少一張圖片
                             if (data && data.length > 0) {
@@ -83,7 +84,16 @@
                             }
                             return '<img src="/images/non-found.jpg" alt="No Image" style="width: 100px; height: auto; margin-right: 10px;" />';
                         }
+                    },
+                    {
+                        "data": null, // 添加一個列來顯示編輯按鈕
+                        "render": function (data, type, row) {
+                            return '<button class="btn btn-warning editBtn" data-id="' + row.id + '"><i class="fa-solid fa-pen"></i>編輯</button>';
+                        },
+                        "className": "text-center",
+                        "width": "10%"
                     }
+
                 ],
                 fixedHeader: { header: true },
                 language: { url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/zh-HANT.json' }
