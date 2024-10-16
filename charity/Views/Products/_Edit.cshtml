@@ -1,0 +1,104 @@
+﻿@model ProductImgViewModel
+
+<div class="col-md-6">
+    <form id="editForm" asp-action="Edit" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken() <!-- 確保有 Anti-Forgery Token 用於安全性保護 -->
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        @* 隱藏字段，用於綁定產品 ID *@
+        <input asp-for="product.Id" type="hidden" />
+
+        <div class="form-group">
+            <label asp-for="product.Name" class="control-label text-start d-block"></label>
+            <input asp-for="product.Name" class="form-control" />
+            <span asp-validation-for="product.Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="product.Seller" class="control-label text-start d-block"></label>
+            <select asp-for="product.Seller" class="form-control" asp-items="ViewBag.Seller">
+                <option value="">請選擇</option>
+            </select>
+            <span asp-validation-for="product.Seller" class="control-label text-start d-block"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="product.Category" class="control-label text-start d-block"></label>
+            <select asp-for="product.Category" class="form-control" asp-items="ViewBag.CategoryList">
+                <option value="">請選擇</option>
+            </select>
+            <span asp-validation-for="product.Category" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="product.Price" class="control-label text-start d-block"></label>
+            <input asp-for="product.Price" class="form-control" />
+            <span asp-validation-for="product.Price" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="product.OnShelf" class="control-label text-start d-block"></label>
+            <select asp-for="product.OnShelf" class="form-select">
+                <option value="true">上架</option>
+                <option value="false">不在架上</option>
+            </select>
+            <span asp-validation-for="product.OnShelf" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="product.OnShelfTime" class="control-label text-start d-block"></label>
+            <input asp-for="product.OnShelfTime" class="form-control" />
+            <span asp-validation-for="product.OnShelfTime" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="product.Description" class="control-label text-start d-block"></label>
+            <textarea asp-for="product.Description" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="product.Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="product.Instock" class="control-label text-start d-block"></label>
+            <input asp-for="product.Instock" class="form-control" />
+            <span asp-validation-for="product.Instock" class="text-danger"></span>
+        </div>
+
+        <!-- 現有圖片顯示 -->
+        @if (Model.ExistingImages != null && Model.ExistingImages.Any())
+        {
+            <div class="form-group">
+                <label class="form-label">現有圖片</label>
+                <div id="existingImagesArea" class="row">
+                    @foreach (var image in Model.ExistingImages)
+                    {
+                        <div class="col-md-3">
+                            <img src="@image.ImgName" class="img-thumbnail" style="width:100%; margin-bottom:10px;" />
+                            <input type="checkbox" name="DeleteImages" value="@image.ImgId" /> 刪除
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- 上傳新圖片 -->
+        <div class="form-group">
+            <label class="control-label text-start d-block">上傳新圖片</label>
+            <input type="file" asp-for="UploadedImages" class="form-control" multiple />
+        </div>
+
+        <!-- 新圖片預覽區域 -->
+        <div class="form-group">
+            <label class="form-label">新圖片預覽</label>
+            <div id="previewArea" class="row">
+                <!-- 新圖片預覽會在這裡生成 -->
+            </div>
+        </div>
+
+        @* <div class="form-group">
+            <br>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> 保存更改
+            </button>
+        </div> *@
+    </form>
+</div>

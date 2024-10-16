@@ -219,16 +219,39 @@ namespace charity.Controllers
         }
 
         // GET: Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
+        //public async Task<IActionResult> Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var currProduct = await _context.Products.Include(p => p.ProductImgs).FirstOrDefaultAsync(p => p.Id == id);
+        //    if (currProduct == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var vm = new ProductImgViewModel {
+        //        product = currProduct,
+        //        ExistingImages = currProduct.ProductImgs.Select(img => new UploadedImage {
+        //            ImgName = img.ImgName,
+        //            ImgId = img.Id
+        //        }).ToList(),
+        //        UploadedImages = new List<IFormFile>()
+        //    };
+        //    ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", currProduct.Seller);
+        //    ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name", currProduct.Category);
+        //    return View(vm);
+        //}
+
+        // GET: Products/Edit/5
+        public async Task<IActionResult> Edit(int? id) {
+            if (id == null) {
                 return NotFound();
             }
 
             var currProduct = await _context.Products.Include(p => p.ProductImgs).FirstOrDefaultAsync(p => p.Id == id);
-            if (currProduct == null)
-            {
+            if (currProduct == null) {
                 return NotFound();
             }
             var vm = new ProductImgViewModel {
@@ -241,26 +264,79 @@ namespace charity.Controllers
             };
             ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", currProduct.Seller);
             ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name", currProduct.Category);
-            return View(vm);
+            return PartialView("_Edit", vm);
         }
-
         // POST: Products/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(int id, int[] DeleteImages, ProductImgViewModel vm)
+        //{
+        //    // [Bind("product.Id,product.Name,product.Seller,product.Category,product.price,product.OnShelf,product.OnShelfTime,product.Description,product.Instock,UploadedImages, ExistingImages")] 移除，因為Post功能會異常
+        //    if (id != vm.product.Id)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(vm.product);
+        //            await _context.SaveChangesAsync();
+
+        //            // 刪除選中的圖片
+        //            if (DeleteImages.Length > 0) {
+        //                var imagesToDelete = _context.ProductImgs.Where(pi => DeleteImages.Contains(pi.Id)).ToList();
+        //                _context.ProductImgs.RemoveRange(imagesToDelete);
+        //                await _context.SaveChangesAsync();
+        //            }
+        //            if (vm.UploadedImages != null && vm.UploadedImages.Count > 0) {
+        //                foreach (var image in vm.UploadedImages) {
+        //                    var fileName = Path.GetFileName(image.FileName);
+        //                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products", fileName);
+
+        //                    using (var stream = new FileStream(filePath, FileMode.Create)) {
+        //                        await image.CopyToAsync(stream);
+        //                    }
+
+        //                    var productImg = new ProductImg {
+        //                        ImgName = "/images/products/" + fileName,
+        //                        PId = vm.product.Id
+        //                    };
+        //                    _context.ProductImgs.Add(productImg);
+        //                }
+        //                await _context.SaveChangesAsync();
+        //            }
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!ProductExists(vm.product.Id))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", vm.product.Seller);
+        //    ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name");
+        //    return View(vm);
+        //}
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, int[] DeleteImages, ProductImgViewModel vm)
-        {
-            // [Bind("product.Id,product.Name,product.Seller,product.Category,product.price,product.OnShelf,product.OnShelfTime,product.Description,product.Instock,UploadedImages, ExistingImages")] 移除，因為Post功能會異常
-            if (id != vm.product.Id)
-            {
-                return NotFound();
+        public async Task<IActionResult> Edit(int id, int[] DeleteImages, ProductImgViewModel vm) {
+            if (id != vm.product.Id) {
+                return Json(new { success = false, message = "Product ID mismatch." });
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
+            if (ModelState.IsValid) {
+                try {
                     _context.Update(vm.product);
                     await _context.SaveChangesAsync();
 
@@ -270,6 +346,8 @@ namespace charity.Controllers
                         _context.ProductImgs.RemoveRange(imagesToDelete);
                         await _context.SaveChangesAsync();
                     }
+
+                    // 上傳新的圖片
                     if (vm.UploadedImages != null && vm.UploadedImages.Count > 0) {
                         foreach (var image in vm.UploadedImages) {
                             var fileName = Path.GetFileName(image.FileName);
@@ -288,25 +366,24 @@ namespace charity.Controllers
                         await _context.SaveChangesAsync();
                     }
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(vm.product.Id))
-                    {
-                        return NotFound();
+                catch (DbUpdateConcurrencyException) {
+                    if (!ProductExists(vm.product.Id)) {
+                        return Json(new { success = false, message = "Product not found." });
                     }
-                    else
-                    {
+                    else {
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                // 返回成功的 JSON
+                return Json(new { success = true, message = "Product updated successfully." });
             }
-            ViewData["Seller"] = new SelectList(_context.Members, "Id", "Id", vm.product.Seller);
-            ViewData["CategoryList"] = new SelectList(_context.ProductCategories, "Id", "Name");
-            return View(vm);
+
+            // 返回失敗的 JSON，包含驗證錯誤信息
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            return Json(new { success = false, message = "Validation failed.", errors = errors });
         }
 
-        
         // GET: Products/Delete/5
         //public async Task<IActionResult> Delete(int? id) {
         //    if (id == null) {

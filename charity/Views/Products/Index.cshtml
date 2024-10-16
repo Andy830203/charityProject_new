@@ -221,6 +221,71 @@
                     }
                 });
             });
+            $(document).on('click', '.editBtn', function () {
+                event.stopPropagation();  // 阻止事件冒泡
+                var productId = $(this).data('id'); // 獲取商品ID
+                $.ajax({
+                    url: '/Products/Edit/' + productId, // 根據商品ID發送請求
+                    type: 'GET',
+                    success: function (result) {
+                        Swal.fire({
+                            title: '編輯商品',
+                            html: result, // 顯示 Edit Partial View
+                            showCancelButton: true,
+                            confirmButtonText: '保存',
+                            didOpen: function () {
+                                // 圖片預覽處理
+                                document.getElementById('UploadedImages').addEventListener('change', function (event) {
+                                    let previewArea = document.getElementById('previewArea');
+                                    previewArea.innerHTML = ''; // 清空預覽區
+                                    for (let i = 0; i < event.target.files.length; i++) {
+                                        let file = event.target.files[i];
+                                        let reader = new FileReader();
+                                        reader.onload = function (e) {
+                                            let imgElement = document.createElement('img');
+                                            imgElement.src = e.target.result;
+                                            imgElement.style.width = '100px';
+                                            imgElement.style.marginRight = '10px';
+                                            imgElement.style.marginBottom = '10px';
+                                            previewArea.appendChild(imgElement);
+                                        };
+                                        reader.readAsDataURL(file);
+                                    }
+                                });
+                                // 表單提交處理
+                                $('#editForm').on('submit', function (e) {
+                                    e.preventDefault();
+                                    var formData = new FormData(this);
+                                    $.ajax({
+                                        url: '/Products/Edit/' + productId,
+                                        type: 'POST',
+                                        data: formData,
+                                        processData: false,
+                                        contentType: false,
+                                        success: function (response) {
+                                            if (response.success) {
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: '修改成功!',
+                                                    text: '商品已成功修改'
+                                                });
+                                                // 使用 AJAX 更新 DataTables
+                                                $('table').DataTable().ajax.reload();
+                                            } else {
+                                                Swal.fire('錯誤', response.errors.join('<br>'), 'error');
+                                            }
+                                        }
+                                    });
+                                });
+                            },
+                            preConfirm: () => {
+                                // 點擊確認按鈕時，觸發表單的 submit 事件
+                                $('#editForm').submit();
+                            }
+                        });
+                    }
+                });
+            });
         });
     </script>
 }
