@@ -1,0 +1,6 @@
+@WebAPI_for_frondEnd_HostAddress = http://localhost:5227
+
+GET {{WebAPI_for_frondEnd_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
