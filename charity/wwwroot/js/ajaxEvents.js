@@ -51,5 +51,6 @@ function ajaxInit(action, callback) {
 $(window).on('load', function () {
     ajaxInit('EventLocations', bindDragEvents);
     ajaxInit('EventImgs', bindCarousel);
-    ajaxInit('EventPeriods');
+    //ajaxInit('EventPeriods');
+
 });

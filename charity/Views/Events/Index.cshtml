@@ -23,7 +23,11 @@
         img.carousel-img {
             width: 200px;
             height: 200px;
+            object-fit: cover; /* 保持圖片比例並覆蓋整個區域 */
         }
+
+        
+
     </style>
 }
 
@@ -130,7 +134,17 @@
     <script src="~/js/eventcarousel.js"></script>
     <script src="~/js/EventLocPartial.js" type="text/javascript"></script>
     <script src="~/js/ajaxevents.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/5.0.0/imagesloaded.min.js"></script>
     <script>
-        
+        // $(window).on('load', function () {
+        //     $('.owl-carousel').owlCarousel({
+        //         autoWidth: true,
+        //         nav: true,
+        //         dots: true,
+        //         items: 2,
+        //         margin: 10,
+        //         loop: true
+        //     });
+        // });
     </script>
 }

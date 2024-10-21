@@ -5,13 +5,15 @@
         dots: true,
         items: 2,
         margin: 10,
-        lazyLoad: true
+        lazyLoad: true,
+        loop: true,
+        animateOut: false, // 禁用動畫效果
+        animateIn: false
     });
 
-    $('.click-img').each(function () {
+    //$('.owl-carousel').trigger('refresh.owl.carousel');
 
-        console.log(typeof this);
-        console.log($(this).html());
-        console.log($(this));
+    $('.accordion-header').on('click', function () {
+
     });
 }
