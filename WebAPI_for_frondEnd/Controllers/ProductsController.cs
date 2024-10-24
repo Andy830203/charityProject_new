@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebAPI_for_frondEnd.DTO;
 using WebAPI_for_frondEnd.Models;
 
 namespace WebAPI_for_frondEnd.Controllers
@@ -22,9 +23,26 @@ namespace WebAPI_for_frondEnd.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
-        {
-            return await _context.Products.ToListAsync();
+        public async Task<IEnumerable<IndexProductDTO>> GetProducts() {
+            return _context.Products
+                .Include(p => p.ProductImgs)  // 包含產品圖片資料
+                .Include(p => p.SellerNavigation)  // 包含賣家資料
+                .Include(p => p.CategoryNavigation)  // 包含類別資料
+                .Select(p => new IndexProductDTO {
+                    Id = p.Id,
+                    Name = p.Name,
+                    SellerId = p.Seller,
+                    SellerName = p.SellerNavigation != null ? p.SellerNavigation.RealName : "無賣家",
+                    Category = p.Category,
+                    CategoryName = p.CategoryNavigation != null ? p.CategoryNavigation.Name : "無類別",
+                    Price = p.Price,
+                    OnShelfTime = p.OnShelfTime,
+                    Description = p.Description,
+                    Instock = p.Instock,
+                    MainImageUrl = p.ProductImgs != null && p.ProductImgs.Any()
+                        ? p.ProductImgs.FirstOrDefault().ImgName  // 使用第一張圖片作為主圖片
+                        : "default.jpg"  // 如果沒有圖片，使用預設圖片
+                });
         }
 
         // GET: api/Products/5
