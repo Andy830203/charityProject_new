@@ -57,6 +57,25 @@ namespace WebAPI_for_frondEnd.Controllers
             .Where(p => query.CategoryId == 0 || p.Category == query.CategoryId) // 類別篩選
             .Where(p => p.OnShelf == true); // 必須為上架中
 
+            // 根據 sortBy 屬性設置排序
+            switch (query.sortBy) {
+                case "priceAsc":
+                    productsQuery = productsQuery.OrderBy(p => p.Price);
+                    break;
+                case "priceDesc":
+                    productsQuery = productsQuery.OrderByDescending(p => p.Price);
+                    break;
+                case "timeAsc":
+                    productsQuery = productsQuery.OrderBy(p => p.OnShelfTime);
+                    break;
+                case "timeDesc":
+                    productsQuery = productsQuery.OrderByDescending(p => p.OnShelfTime);
+                    break;
+                default:
+                    productsQuery = productsQuery.OrderBy(p => p.Name); // 預設按名稱排序
+                    break;
+            }
+
             // 總數量
             var totalItems = await productsQuery.CountAsync();
 
