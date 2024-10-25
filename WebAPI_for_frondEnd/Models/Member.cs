@@ -9,7 +9,7 @@ public partial class Member
 {
     public int Id { get; set; }
 
-    public string Account { get; set; }
+    public string Account { get; set; } //當salt使用
 
     public string Password { get; set; }
 
