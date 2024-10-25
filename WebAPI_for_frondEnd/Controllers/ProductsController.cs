@@ -21,6 +21,7 @@ namespace WebAPI_for_frondEnd.Controllers
             _context = context;
         }
 
+        // testing, can get all data successfully
         // GET: api/Products
         [HttpGet]
         public async Task<IEnumerable<IndexProductDTO>> GetProducts() {
@@ -43,6 +44,49 @@ namespace WebAPI_for_frondEnd.Controllers
                         ? p.ProductImgs.FirstOrDefault().ImgName  // 使用第一張圖片作為主圖片
                         : "default.jpg"  // 如果沒有圖片，使用預設圖片
                 });
+        }
+
+        // get products data based on parameters from frontend
+        [HttpPost("search")]
+        public async Task<IActionResult> SearchProducts([FromBody] ProductQueryDTO query) {
+            var productsQuery = _context.Products
+            .Include(p => p.ProductImgs)  // 包含產品圖片資料
+            .Include(p => p.SellerNavigation)  // 包含賣家資料
+            .Include(p => p.CategoryNavigation)  // 包含類別資料
+            .Where(p => string.IsNullOrEmpty(query.Keyword) || p.Name.Contains(query.Keyword)) // 搜尋關鍵字篩選
+            .Where(p => query.CategoryId == 0 || p.Category == query.CategoryId) // 類別篩選
+            .Where(p => p.OnShelf == true); // 必須為上架中
+
+            // 總數量
+            var totalItems = await productsQuery.CountAsync();
+
+            // 分頁處理
+            var products = productsQuery
+                .Skip((query.Page - 1) * 9) // the page size is fixed to 9
+                .Take(9)
+                .Select(p => new IndexProductDTO {
+                    Id = p.Id,
+                    Name = p.Name,
+                    SellerName = p.SellerNavigation != null ? p.SellerNavigation.RealName : "無賣家",
+                    Category = p.Category,
+                    CategoryName = p.CategoryNavigation != null ? p.CategoryNavigation.Name : "無類別",
+                    Price = p.Price,
+                    OnShelfTime = p.OnShelfTime,
+                    Description = p.Description,
+                    Instock = p.Instock,
+                    MainImageUrl = p.ProductImgs != null && p.ProductImgs.Any()
+                        ? p.ProductImgs.FirstOrDefault().ImgName  // 使用第一張圖片作為主圖片
+                        : "default.jpg" // 如果沒有圖片，使用預設圖片，之後改成not found
+                });
+
+            // 計算總頁數
+            int totalPages = (int)Math.Ceiling(totalItems / (double)9);
+
+            // 返回結果
+            return Ok(new {
+                totalPages = totalPages,
+                productsResult = products
+            });
         }
 
         // GET: api/Products/5

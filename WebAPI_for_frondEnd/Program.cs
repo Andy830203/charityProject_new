@@ -2,6 +2,16 @@ using Microsoft.EntityFrameworkCore;
 using WebAPI_for_frondEnd.Models;
 var builder = WebApplication.CreateBuilder(args);
 
+// 允許來自特定來源的 CORS 請求
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => {
+            builder.WithOrigins("http://localhost:5173")  // 前端的URL
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();  // 允許所有HTTP動詞 (GET, POST, etc.)
+        });
+});
+
 // Add services to the container.
 builder.Services.AddDbContext<charityContext>(
     options => options
@@ -20,6 +30,9 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// 啟用 CORS
+app.UseCors("AllowSpecificOrigin");
 
 app.UseHttpsRedirection();
 
