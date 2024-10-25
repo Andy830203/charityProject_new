@@ -23,7 +23,7 @@ function ajaxGetCall(elementId, url, callback) {
         url: url
     }).done(function (result) {
         $(elementId).html(result);
-        if (callback && typeof callback === 'function') {
+        if (callback && typeof callback === 'function') {    
             callback();
         }
     }).fail(function (e) {
@@ -49,6 +49,16 @@ function ajaxInit(action, callback) {
 // 在頁面加載時初始化內容，或使用適當的事件來調用 loadAccordionContent()
 // 綁局部檢視的放這
 $(window).on('load', function () {
+    // 保證只有一次調用
+    //let carouselInitialized = false;
+
+    //function bindOnceCarousel() {
+    //    if (!carouselInitialized) {
+    //        bindCarousel();
+    //        carouselInitialized = true;
+    //    }
+    //}
+
     ajaxInit('EventLocations', bindDragEvents);
     ajaxInit('EventImgs', bindCarousel);
     //ajaxInit('EventPeriods');
