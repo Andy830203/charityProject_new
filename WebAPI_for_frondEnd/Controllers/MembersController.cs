@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CoreAPI2024;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using WebAPI_for_frondEnd.DTO;
@@ -63,7 +64,7 @@ namespace WebAPI_for_frondEnd.Controllers
             string genderDisplay = memberdto.Gender.HasValue           //將bool轉完字串，顯示性別而非true/false
                             ? (memberdto.Gender.Value ? "男" : "女")
                             : "未指定";
-            MemberDTO mdto = new MemberDTO
+            var mdto = new MemberDTO
             {
 
                 memberid = memberdto.Id,
@@ -199,20 +200,20 @@ namespace WebAPI_for_frondEnd.Controllers
         //}
 
 
-        // POST: api/Members-------註冊會員
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //// POST: api/Members-------註冊會員
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<MemberDTO> PostMember(MemberDTO MemDTO)
         {
             Member Mem = new Member
             {
                 Id = -1,
-                Account = MemDTO.memberaccount,
                 Phone = MemDTO.memberphone,
                 Address = MemDTO.memberaddress,
                 Email = MemDTO.memberemail,
                 Password = MemDTO.memberpassword,
                 Birthday = DateTime.Parse(MemDTO.memberbirth)
+
             };
             if (MemDTO.membergender == "男")
             {
@@ -222,14 +223,21 @@ namespace WebAPI_for_frondEnd.Controllers
             {
                 Mem.Gender = false;
             }
+            //密碼加密加鹽
+            var (hashedPassword, salt) = _userService.HashPassword(MemDTO.memberaccount);
+
+            // 保存加密後的密碼和鹽
+            Mem.Password = hashedPassword;
+            Mem.Account = salt;
 
             _context.Members.Add(Mem);
             await _context.SaveChangesAsync();
 
-            return MemDTO;                                    
+            return MemDTO;
         }
 
-                                            
+
+
 
         // DELETE: api/Members/5
         [HttpDelete("{id}")]
@@ -250,6 +258,28 @@ namespace WebAPI_for_frondEnd.Controllers
         private bool MemberExists(int id)
         {
             return _context.Members.Any(e => e.Id == id);
+        }
+
+        [HttpPost("Login")]
+        public IActionResult Login(LoginDTO login)
+        {
+            var member = _context.Members.Where(m => m.Email.Equals(login.Email)).SingleOrDefault();
+            if (member != null)
+            {
+                var hashedPassword = member.Password;
+                var salt = member.Account; //Account是鹽
+                var isPasswordValid = _userService.VerifyPassword(login.Password, hashedPassword, salt);
+
+                if (isPasswordValid) 
+                {
+                    return Unauthorized(new { Message = "Invalid credentials"});
+                }
+
+
+                return Ok(new { Message = "Login successful"});
+            }
+
+            return Ok(new { Message = "查無此帳號"});
         }
     }
 }

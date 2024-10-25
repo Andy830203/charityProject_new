@@ -25,10 +25,10 @@ namespace CoreAPI2024
             }
         }
 
-        public bool VerifyPassword(string password, string hashedPassword, string salt)
+        public bool VerifyPassword(string password, string hashedPassword, string Account)
         {
             var hashBytes = Convert.FromBase64String(hashedPassword);
-            var saltBytes = Convert.FromBase64String(salt);
+            var saltBytes = Convert.FromBase64String(Account);
 
             if (hashBytes.Length != SaltSize + KeySize)
             {
