@@ -207,7 +207,7 @@ namespace WebAPI_for_frondEnd.Controllers
         {
             Member Mem = new Member
             {
-                Id = -1,
+                // Id = -1,
                 Phone = MemDTO.memberphone,
                 Address = MemDTO.memberaddress,
                 Email = MemDTO.memberemail,
