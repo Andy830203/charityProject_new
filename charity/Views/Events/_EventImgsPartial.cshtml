@@ -7,8 +7,13 @@
     {
         @* <p>@item.ImgName</p> *@
         string imglocation = @GlobalVar.ImgLocServer + @item.EId + "/" + @item.ImgName;
-        <img class="item carousel-img click-img" src="@imglocation" alt="@item.ImgName" />
+        <div class="item">
+            <a asp-controller="EventImgs" asp-action="Details" asp-route-id="@item.Id" asp-route-fromList="@Url.Action("Index", "Events")">
+                <img class="carousel-img" src="@imglocation" alt="@item.ImgName" />
+            </a>
+        </div>
         
+        @* <img class="carousel-img" src="@imglocation" alt="@item.ImgName" /> *@
     }
 </div>
 
