@@ -46,6 +46,23 @@ namespace WebAPI_for_frondEnd.Controllers
                 });
         }
 
+        // GET: api/Products/maxPrice
+        [HttpGet("maxPrice")]
+        public IActionResult GetMaxPrice() {
+            // 檢查產品表是否有商品
+            if (!_context.Products.Any(p => p.OnShelf == true)) {
+                // 若沒有上架中的商品，返回404狀態和相應訊息
+                return NotFound(new { message = "No products available." });
+            }
+
+            // 獲取最大價格
+            var maxPrice = _context.Products
+                .Where(p => p.OnShelf == true) // 僅考慮上架中的產品
+                .Max(p => p.Price); // 獲取最大價格
+
+            return Ok(new { maxPrice });
+        }
+
         // get products data based on parameters from frontend
         [HttpPost("search")]
         public async Task<IActionResult> SearchProducts([FromBody] ProductQueryDTO query) {
@@ -57,8 +74,11 @@ namespace WebAPI_for_frondEnd.Controllers
             .Where(p => query.CategoryId == 0 || p.Category == query.CategoryId) // 類別篩選
             .Where(p => p.OnShelf == true); // 必須為上架中
 
+            if (query.PriceThreshold > 0) {
+                productsQuery = productsQuery.Where(p => p.Price <= query.PriceThreshold);
+            }
             // 根據 sortBy 屬性設置排序
-            switch (query.sortBy) {
+            switch (query.SortBy) {
                 case "priceAsc":
                     productsQuery = productsQuery.OrderBy(p => p.Price);
                     break;
