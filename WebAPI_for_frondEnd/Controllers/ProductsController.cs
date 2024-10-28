@@ -74,8 +74,8 @@ namespace WebAPI_for_frondEnd.Controllers
             .Where(p => query.CategoryId == 0 || p.Category == query.CategoryId) // 類別篩選
             .Where(p => p.OnShelf == true); // 必須為上架中
 
-            if (query.PriceThreshold > 0) {
-                productsQuery = productsQuery.Where(p => p.Price <= query.PriceThreshold);
+            if (query.PriceThreshold != 0) {
+                productsQuery = productsQuery.Where(p => p.Price >= query.PriceThreshold);
             }
             // 根據 sortBy 屬性設置排序
             switch (query.SortBy) {
