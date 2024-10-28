@@ -42,7 +42,7 @@ namespace WebAPI_for_frondEnd.Controllers
                     Instock = p.Instock,
                     MainImageUrl = p.ProductImgs != null && p.ProductImgs.Any()
                         ? p.ProductImgs.FirstOrDefault().ImgName  // 使用第一張圖片作為主圖片
-                        : "default.jpg"  // 如果沒有圖片，使用預設圖片
+                        : "NoPicture"  // 如果沒有圖片
                 });
         }
 
@@ -95,7 +95,7 @@ namespace WebAPI_for_frondEnd.Controllers
                     Instock = p.Instock,
                     MainImageUrl = p.ProductImgs != null && p.ProductImgs.Any()
                         ? p.ProductImgs.FirstOrDefault().ImgName  // 使用第一張圖片作為主圖片
-                        : "default.jpg" // 如果沒有圖片，使用預設圖片，之後改成not found
+                        : "NoPicture"  // 如果沒有圖片
                 });
 
             // 計算總頁數
