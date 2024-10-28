@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowSpecificOrigin",
         builder => {
-            builder.WithOrigins("http://localhost:5173")  // 前端的URL
+            builder.AllowAnyOrigin()
                    .AllowAnyHeader()
                    .AllowAnyMethod();  // 允許所有HTTP動詞 (GET, POST, etc.)
         });
