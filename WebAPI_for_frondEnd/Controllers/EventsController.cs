@@ -122,7 +122,7 @@ namespace WebAPI_for_frondEnd.Controllers
         {
             var newEvent = new Event
             {
-                //Id = newEventDTO.Id, // default -1
+                Id = newEventDTO.Id, // default -1
                 Name = newEventDTO.Name,
                 OrganizerId = newEventDTO.OrganizerId,
                 //Organizer = await _context.Members.Where(it => it.Id == newEventDTO.OrganizerId).FirstOrDefaultAsync(),
@@ -154,6 +154,32 @@ namespace WebAPI_for_frondEnd.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        // GET: api/Events/Categories
+        [HttpGet("Categories")]
+        public async Task<ActionResult<IEnumerable<EventCategoryDTO>>> GetCategories()
+        {
+            var Categories = await _context.EventCategories
+                .Select(it => new EventCategoryDTO
+                {
+                    categoryId = it.Id,
+                    categoryName = it.Name
+                }).ToListAsync();
+            return Categories;
+        }
+
+        // GET: api/Events/
+        [HttpGet("Locations")]
+        public async Task<ActionResult<IEnumerable<EventCategoryDTO>>> GetLocations()
+        {
+            var Categories = await _context.EventCategories
+                .Select(it => new EventCategoryDTO
+                {
+                    categoryId = it.Id,
+                    categoryName = it.Name
+                }).ToListAsync();
+            return Categories;
         }
 
         private bool EventExists(int id)

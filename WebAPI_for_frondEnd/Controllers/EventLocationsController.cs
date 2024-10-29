@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebAPI_for_frondEnd.DTO;
 using WebAPI_for_frondEnd.Models;
 
 namespace WebAPI_for_frondEnd.Controllers
@@ -22,9 +23,21 @@ namespace WebAPI_for_frondEnd.Controllers
 
         // GET: api/EventLocations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EventLocation>>> GetEventLocations()
+        public async Task<ActionResult<IEnumerable<EventLocationDTO>>> GetEventLocations()
         {
-            return await _context.EventLocations.ToListAsync();
+            var ELocDTO = await _context.EventLocations
+                .Include(e => e.LIdNavigation)
+                .Include(e => e.EIdNavigation)
+                .Select(e => new EventLocationDTO
+                {
+                    Id = e.Id,
+                    OrderInEvent = e.OrderInEvent,
+                    LocName = e.LIdNavigation.Name,
+                    belongedEvent = e.EIdNavigation.Name
+                })
+                .ToListAsync();
+
+            return ELocDTO;
         }
 
         // GET: api/EventLocations/5
