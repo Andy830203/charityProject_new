@@ -130,16 +130,40 @@ namespace WebAPI_for_frondEnd.Controllers
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<IActionResult> GetProduct(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products
+            .Include(p => p.ProductImgs)  // 包含產品圖片資料
+            .Include(p => p.SellerNavigation)  // 包含賣家資料
+            .Include(p => p.CategoryNavigation)  // 包含類別資料    
+            .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            return product;
+            // 查找符合此產品 ID 的所有圖片資料
+            var currProductImgs = await _context.ProductImgs
+                .Where(img => img.PId == id)
+                .Select(img => img.ImgName) // 選取 imgPath 欄位
+                .ToListAsync();
+
+            var productDTO = new ProductDetailDTO {
+                Id = product.Id,
+                Name = product.Name,
+                Seller = product.Seller,
+                SellerName = product.SellerNavigation != null ? product.SellerNavigation.RealName : "無賣家",
+                Price = product.Price,
+                Category = product.Category,
+                CategoryName = product.CategoryNavigation != null ? product.CategoryNavigation.Name : "無類別",
+                Description = product.Description,
+                OnShelfTime = product.OnShelfTime,
+                Instock = product.Instock,
+                imgUrls = currProductImgs
+
+            };
+            return Ok(productDTO);
         }
 
         // PUT: api/Products/5
