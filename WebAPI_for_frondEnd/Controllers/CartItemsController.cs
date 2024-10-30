@@ -151,6 +151,33 @@ namespace WebAPI_for_frondEnd.Controllers
             return NoContent();
         }
 
+        [HttpPut("UpdateCartItem")]
+        public async Task<IActionResult> UpdateCartItem([FromBody] CartItemAddDTO inputDto) {
+            if (inputDto == null || inputDto.Quantity <= 0 || !inputDto.BuyerId.HasValue || !inputDto.PId.HasValue) {
+                return BadRequest("Invalid cart item details.");
+            }
+
+            var existingCartItem = await _context.CartItems
+            .Include(ci => ci.PIdNavigation)  // 加載 PIdNavigation
+            .FirstOrDefaultAsync(ci => ci.Buyer == inputDto.BuyerId && ci.PId == inputDto.PId);
+
+            if (existingCartItem != null) {
+                existingCartItem.Quantity = inputDto.Quantity;
+                await _context.SaveChangesAsync();
+                var responseDto = new CartItemDTO {
+                    Id = existingCartItem.Id,
+                    BuyerId = existingCartItem.Buyer,
+                    SellerId = existingCartItem.PIdNavigation.Seller,
+                    PId = existingCartItem.PId,
+                    Quantity = existingCartItem.Quantity
+                };
+
+                return Ok(new { message = "Cart item quantity updated successfully", responseDto });
+            }
+
+            return NotFound("Cart item not found.");
+        }
+
         private bool CartItemExists(int id)
         {
             return _context.CartItems.Any(e => e.Id == id);
