@@ -113,15 +113,46 @@ namespace WebAPI_for_frondEnd.Controllers
             if (cartItemDto == null || cartItemDto.Quantity <= 0 || !cartItemDto.BuyerId.HasValue || !cartItemDto.PId.HasValue) {
                 return BadRequest("Invalid cart item details.");
             }
-            var cartItem = new CartItem {
-                Buyer = cartItemDto.BuyerId,
-                PId = cartItemDto.PId,
-                Quantity = cartItemDto.Quantity
-            };
-            _context.CartItems.Add(cartItem);
-            await _context.SaveChangesAsync();
+            // 檢查是否已存在相同的 BuyerId 和 PId 的項目
+            var existingCartItem = await _context.CartItems
+                .Include(ci => ci.PIdNavigation)  // 確保加載關聯導航屬性
+                .FirstOrDefaultAsync(ci => ci.Buyer == cartItemDto.BuyerId && ci.PId == cartItemDto.PId);
 
-            return Ok(new { message = "Item added to cart successfully", cartItem });
+            if (existingCartItem != null) {
+                // 如果已存在，更新現有項目的 Quantity
+                existingCartItem.Quantity = cartItemDto.Quantity;
+                await _context.SaveChangesAsync();
+                // 創建回應DTO
+                var responseDto = new CartItemDTO {
+                    Id = existingCartItem.Id,
+                    BuyerId = existingCartItem.Buyer,
+                    SellerId = existingCartItem.PIdNavigation.Seller,
+                    PId = existingCartItem.PId,
+                    Quantity = existingCartItem.Quantity
+                };
+
+                return Ok(new { message = "Cart item quantity updated successfully", cartItem = responseDto });
+            }
+            else {
+                // 若不存在，新增新的 CartItem
+                var newCartItem = new CartItem {
+                    Buyer = cartItemDto.BuyerId,
+                    PId = cartItemDto.PId,
+                    Quantity = cartItemDto.Quantity
+                };
+                _context.CartItems.Add(newCartItem);
+                await _context.SaveChangesAsync();
+
+                var responseDto = new CartItemDTO {
+                    Id = newCartItem.Id,
+                    BuyerId = newCartItem.Buyer,
+                    SellerId = newCartItem.PIdNavigation?.Seller, // 若無導航屬性可用
+                    PId = newCartItem.PId,
+                    Quantity = newCartItem.Quantity
+                };
+
+                return Ok(new { message = "Item added to cart successfully", cartItem = responseDto });
+            }
         }
 
         // POST: api/CartItems
