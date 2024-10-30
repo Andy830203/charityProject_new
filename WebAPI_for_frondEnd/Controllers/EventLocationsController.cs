@@ -31,9 +31,11 @@ namespace WebAPI_for_frondEnd.Controllers
                 .Select(e => new EventLocationDTO
                 {
                     Id = e.Id,
-                    OrderInEvent = e.OrderInEvent,
+                    LId = e.LId,
                     LocName = e.LIdNavigation.Name,
-                    belongedEvent = e.EIdNavigation.Name
+                    EId = e.EId,
+                    belongedEvent = e.EIdNavigation.Name,
+                    OrderInEvent = e.OrderInEvent,
                 })
                 .ToListAsync();
 
@@ -54,9 +56,11 @@ namespace WebAPI_for_frondEnd.Controllers
             var ELocDTO = new EventLocationDTO
             {
                 Id = eventLocation.Id,
-                OrderInEvent = eventLocation.OrderInEvent,
+                LId = eventLocation.LId,
                 LocName = eventLocation.LIdNavigation.Name,
-                belongedEvent = eventLocation.EIdNavigation.Name
+                EId = eventLocation.EId,
+                belongedEvent = eventLocation.EIdNavigation.Name,
+                OrderInEvent = eventLocation.OrderInEvent,
             };
 
             return ELocDTO;
@@ -73,9 +77,11 @@ namespace WebAPI_for_frondEnd.Controllers
                 .Select(e => new EventLocationDTO
                 {
                     Id = e.Id,
-                    OrderInEvent = e.OrderInEvent,
+                    LId = e.LId,
                     LocName = e.LIdNavigation.Name,
-                    belongedEvent = e.EIdNavigation.Name
+                    EId = e.EId,
+                    belongedEvent = e.EIdNavigation.Name,
+                    OrderInEvent = e.OrderInEvent,
                 }).ToListAsync();
 
             return ELocs;
@@ -84,12 +90,20 @@ namespace WebAPI_for_frondEnd.Controllers
         // PUT: api/EventLocations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEventLocation(int id, EventLocation eventLocation)
+        public async Task<IActionResult> PutEventLocation(int id, EventLocationDTO eventLocDTO)
         {
-            if (id != eventLocation.Id)
+            if (id != eventLocDTO.Id)
             {
                 return BadRequest();
             }
+
+            var eventLocation = new EventLocation
+            {
+                Id = eventLocDTO.Id,
+                LId = eventLocDTO.LId,
+                EId = eventLocDTO.EId,
+                OrderInEvent = eventLocDTO.OrderInEvent
+            };
 
             _context.Entry(eventLocation).State = EntityState.Modified;
 
@@ -109,14 +123,21 @@ namespace WebAPI_for_frondEnd.Controllers
                 }
             }
 
-            return NoContent();
+            return CreatedAtAction("GetEventLocation", new { id = eventLocation.Id }, eventLocation);
         }
 
         // POST: api/EventLocations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<EventLocation>> PostEventLocation(EventLocation eventLocation)
+        public async Task<ActionResult<EventLocationDTO>> PostEventLocation(EventLocationDTO eventLocDTO)
         {
+            var eventLocation = new EventLocation
+            {
+                Id = eventLocDTO.Id,
+                LId = eventLocDTO.LId,
+                EId = eventLocDTO.EId,
+                OrderInEvent = eventLocDTO.OrderInEvent
+            };
             _context.EventLocations.Add(eventLocation);
             await _context.SaveChangesAsync();
 
