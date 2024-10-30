@@ -25,7 +25,8 @@ namespace WebAPI_for_frondEnd.Controllers
         [HttpGet]
         public async Task<IEnumerable<CartItemDTO>> GetCartItems()
         {
-            return _context.CartItems.Include(p => p.BuyerNavigation)  // 包含賣家資料
+            return _context.CartItems
+                .Include(p => p.BuyerNavigation) 
                 .Include(p => p.PIdNavigation)
                 .Select(p => new CartItemDTO { 
                     Id = p.Id,
@@ -33,7 +34,33 @@ namespace WebAPI_for_frondEnd.Controllers
                     SellerId = p.PIdNavigation.Seller,
                     PId = p.PIdNavigation.Id,
                     Quantity = p.Quantity,
-                });// 包含資料
+                });
+        }
+
+        //GET: api/CartItems/memberID/5
+        [HttpGet("memberID/{id}")]
+        public async Task<ActionResult<IEnumerable<CartItemDTO>>> GetCartItemsByMemberId(int id) {
+            var cartItems = _context.CartItems
+                .Include(p => p.BuyerNavigation)
+                .Include(p => p.PIdNavigation)
+                .ThenInclude(p => p.ProductImgs)
+                .Where(p => p.Buyer == id)
+                .Select(p => new CartItemGetDTO {
+                    Id = p.Id,
+                    Buyer = p.Buyer,
+                    PId = p.PId,
+                    Quantity = p.Quantity,
+                    ProductName = p.PIdNavigation.Name,
+                    ProductPrice = p.PIdNavigation.Price,
+                    MainImageUrl = p.PIdNavigation.ProductImgs.Any()
+                ? p.PIdNavigation.ProductImgs.Select(img => img.ImgName).FirstOrDefault()
+                : "/images/non-found.jpg"
+                });
+            if (!cartItems.Any()) {
+                return NotFound("No items found for this member.");
+            }
+
+            return Ok(cartItems);
         }
 
         // GET: api/CartItems/5
