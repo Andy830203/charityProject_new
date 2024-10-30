@@ -42,7 +42,7 @@ namespace WebAPI_for_frondEnd.Controllers
 
         // GET: api/EventLocations/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<EventLocation>> GetEventLocation(int id)
+        public async Task<ActionResult<EventLocationDTO>> GetEventLocation(int id)
         {
             var eventLocation = await _context.EventLocations.FindAsync(id);
 
@@ -51,7 +51,34 @@ namespace WebAPI_for_frondEnd.Controllers
                 return NotFound();
             }
 
-            return eventLocation;
+            var ELocDTO = new EventLocationDTO
+            {
+                Id = eventLocation.Id,
+                OrderInEvent = eventLocation.OrderInEvent,
+                LocName = eventLocation.LIdNavigation.Name,
+                belongedEvent = eventLocation.EIdNavigation.Name
+            };
+
+            return ELocDTO;
+        }
+
+        // GET: api/EventLocations/Event/5
+        [HttpGet("Event/{eid}")]
+        public async Task<ActionResult<IEnumerable<EventLocationDTO>>> GetEventLocationByEvent(int eid)
+        {
+            var ELocs = await _context.EventLocations
+                .Where(x => x.EId == eid)
+                .Include(e => e.LIdNavigation)
+                .Include(e => e.EIdNavigation)
+                .Select(e => new EventLocationDTO
+                {
+                    Id = e.Id,
+                    OrderInEvent = e.OrderInEvent,
+                    LocName = e.LIdNavigation.Name,
+                    belongedEvent = e.EIdNavigation.Name
+                }).ToListAsync();
+
+            return ELocs;
         }
 
         // PUT: api/EventLocations/5

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -169,17 +170,11 @@ namespace WebAPI_for_frondEnd.Controllers
             return Categories;
         }
 
-        // GET: api/Events/
+        // GET: api/Events/Locations/1
         [HttpGet("Locations")]
-        public async Task<ActionResult<IEnumerable<EventCategoryDTO>>> GetLocations()
+        public ActionResult<IEnumerable<EventLocationDTO>> GetLocations(int eid)
         {
-            var Categories = await _context.EventCategories
-                .Select(it => new EventCategoryDTO
-                {
-                    categoryId = it.Id,
-                    categoryName = it.Name
-                }).ToListAsync();
-            return Categories;
+            return RedirectToAction("GetEventLocationByEvent", "EventLocations", new { eid });
         }
 
         private bool EventExists(int id)
