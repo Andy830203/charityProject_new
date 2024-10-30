@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowSpecificOrigin",
         builder => {
-            builder.AllowAnyOrigin()  
+            builder.AllowAnyOrigin()  // 前端的URL
                    .AllowAnyHeader()
                    .AllowAnyMethod();  // 允許所有HTTP動詞 (GET, POST, etc.)
         });

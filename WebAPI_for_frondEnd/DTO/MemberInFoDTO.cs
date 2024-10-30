@@ -9,6 +9,5 @@
         public int? memberpoint { get; set; }
         public string memberbirth { get; set; }
         public int? memberexp { get; set; }
-        public int memberlevel { get; set; }
     }
 }

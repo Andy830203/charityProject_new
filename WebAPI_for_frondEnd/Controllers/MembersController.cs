@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.IdentityModel.Tokens;
 using WebAPI_for_frondEnd.DTO;
 using WebAPI_for_frondEnd.Models;
 
@@ -91,7 +92,6 @@ namespace WebAPI_for_frondEnd.Controllers
         public async Task<MemberInFoDTO> GetMember1(int id)
         {
             var memberinfo = await _context.Members.FindAsync(id);
-            var expinfo = await _context.LevelExps.FindAsync(id);
 
 
             if (memberinfo == null)
@@ -109,7 +109,6 @@ namespace WebAPI_for_frondEnd.Controllers
                 //memberbirth = memberinfo.Birthday.ToString(), "1994-2-28"
                 memberbirth = string.Format("{0:d}", memberinfo.Birthday), //只顯示日期寫法
                 memberexp = memberinfo.Exp,
-                memberlevel = expinfo.Level,
             };
             return minfo;
         }
@@ -202,29 +201,27 @@ namespace WebAPI_for_frondEnd.Controllers
 
         //// POST: api/Members-------註冊會員
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<MemberDTO> PostMember(MemberDTO MemDTO)
+        [HttpPost("Register")]
+        public async Task<RegisterDTO> PostMember(RegisterDTO MemDTO)
         {
+            
+
             Member Mem = new Member
             {
-                Id = -1,
-                Phone = MemDTO.memberphone,
-                Address = MemDTO.memberaddress,
-                Email = MemDTO.memberemail,
-                Password = MemDTO.memberpassword,
-                Birthday = DateTime.Parse(MemDTO.memberbirth)
-
+                // Id = -1,
+                Phone = string.IsNullOrEmpty(MemDTO.Phone) ? "nophone" : MemDTO.Phone,
+                Address = string.IsNullOrEmpty(MemDTO.Address) ? "noaddress" : MemDTO.Address,
+                //Phone = MemDTO.memberphone,
+                //Address = MemDTO.memberaddress,
+                Email = MemDTO.Email,
+                Password = MemDTO.Password,
+                RealName = MemDTO.Name,
+                Gender = MemDTO.Gender ?? true,
+                //Birthday = DateTime.Parse(MemDTO.memberbirth),
+                Birthday = string.IsNullOrEmpty(MemDTO.Birth) ? DateTime.Now : DateTime.Parse(MemDTO.Birth),
             };
-            if (MemDTO.membergender == "男")
-            {
-                Mem.Gender = true;
-            }
-            else
-            {
-                Mem.Gender = false;
-            }
             //密碼加密加鹽
-            var (hashedPassword, salt) = _userService.HashPassword(MemDTO.memberaccount);
+            var (hashedPassword, salt) = _userService.HashPassword(MemDTO.Password);
 
             // 保存加密後的密碼和鹽
             Mem.Password = hashedPassword;
@@ -264,22 +261,23 @@ namespace WebAPI_for_frondEnd.Controllers
         public IActionResult Login(LoginDTO login)
         {
             var member = _context.Members.Where(m => m.Email.Equals(login.Email)).SingleOrDefault();
-            if (member != null)
+            if (member == null)
             {
-                var hashedPassword = member.Password;
-                var salt = member.Account; //Account是鹽
-                var isPasswordValid = _userService.VerifyPassword(login.Password, hashedPassword, salt);
+                return NotFound(new { Message = "查無此帳號" });
+            }
+            var ID = member.Id;
+            var Name = member.RealName;
+            var hashedPassword = member.Password;
+            var salt = member.Account; //Account是鹽
+            var isPasswordValid = _userService.VerifyPassword(login.Password, hashedPassword, salt);
 
-                if (isPasswordValid) 
-                {
-                    return Unauthorized(new { Message = "Invalid credentials"});
-                }
-
-
-                return Ok(new { Message = "Login successful"});
+            if (!isPasswordValid)
+            {
+                return Unauthorized(new { Message = "密碼不正確" });
             }
 
-            return Ok(new { Message = "查無此帳號"});
+
+            return Ok(new { Message = "登入成功",ID=ID, Name=Name});
         }
     }
 }
