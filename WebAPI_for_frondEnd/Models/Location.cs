@@ -2,6 +2,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace WebAPI_for_frondEnd.Models;
 
@@ -22,8 +23,8 @@ public partial class Location
     public string PlusCode { get; set; }
 
     public int? Capacity { get; set; }
-
+    [JsonIgnore]// 暫時忽略
     public virtual ICollection<EventLocation> EventLocations { get; set; } = new List<EventLocation>();
-
+    [JsonIgnore]// 暫時忽略
     public virtual ICollection<LocationImg> LocationImgs { get; set; } = new List<LocationImg>();
 }
