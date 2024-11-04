@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebAPI_for_frondEnd.DTO;
 using WebAPI_for_frondEnd.Models;
 
 namespace WebAPI_for_frondEnd.Controllers
@@ -22,9 +23,21 @@ namespace WebAPI_for_frondEnd.Controllers
 
         // GET: api/Locations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Location>>> GetLocations()
+        public async Task<ActionResult<IEnumerable<Location_mapinfo_DTO>>> GetLocations()
         {
-            return await _context.Locations.ToListAsync();
+            var locations = await _context.Locations
+                .Select(e => new Location_mapinfo_DTO {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Longitude = e.Longitude,
+                    Latitude = e.Latitude,
+                    Description = e.Description,
+                    Address = e.Address,
+                    PlusCode = e.PlusCode,
+                    Capacity = e.Capacity
+                })
+                .ToListAsync();
+            return locations;
         }
 
         // GET: api/Locations/5
