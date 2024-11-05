@@ -30,26 +30,26 @@ namespace WebAPI_for_frondEnd.Controllers
             _userService = userService;
         }
 
-        // GET: api/Members
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<Member>>> GetMembers()
-        //{
-        //    return await _context.Members.ToListAsync();
-        //}
+       // GET: api/Members
+       //[HttpGet]
+       // public async Task<ActionResult<IEnumerable<Member>>> GetMembers()
+       // {
+       //     return await _context.Members.ToListAsync();
+       // }
 
-        //// GET: api/Members/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Member>> GetMember(int id)
-        //{
-        //    var member = await _context.Members.FindAsync(id);
+       // // GET: api/Members/5
+       // [HttpGet("{id}")]
+       // public async Task<ActionResult<Member>> GetMember(int id)
+       // {
+       //     var member = await _context.Members.FindAsync(id);
 
-        //    if (member == null)
-        //    {
-        //        return NotFound();
-        //    }
+       //     if (member == null)
+       //     {
+       //         return NotFound();
+       //     }
 
-        //    return member;
-        //}
+       //     return member;
+       // }
 
 
         // GET: api/Members/5---所有會員資訊
@@ -84,7 +84,28 @@ namespace WebAPI_for_frondEnd.Controllers
             return mdto;
         }
 
+        //GET: api/Members-------取得目前會員人數
+        [HttpGet("count")]
+        public async Task<IActionResult> GetMemberCount()
+        {
+            int memberCount = await _context.Members.CountAsync();
+            var result = new MemberCountDto { Count = memberCount };
+            return Ok(result);
+        }
 
+        // GET: api/Members/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Member>> GetMember(int id)
+        {
+            var member = await _context.Members.FindAsync(id);
+
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            return member;
+        }
 
 
         // GET: api/Members/InFo/5---會員資訊(memberinfo)
@@ -111,6 +132,38 @@ namespace WebAPI_for_frondEnd.Controllers
                 memberexp = memberinfo.Exp,
             };
             return minfo;
+        }
+
+        // GET: api/Members/GetMemberInFo/5---會員更改取得的資訊(GetMemberInFoDTO)
+        [HttpGet("GetMemberInFo/{id}")]
+        public async Task<GetMemberInFoDTO> GetMember3(int id)
+        {
+            var getinfo = await _context.Members.FindAsync(id);
+
+
+            if (getinfo == null)
+            {
+                return null;
+            }
+            string genderDisplay = getinfo.Gender.HasValue           //將bool轉完字串，顯示性別而非true/false
+                            ? (getinfo.Gender.Value ? "男" : "女")
+                            : "未指定";
+
+            GetMemberInFoDTO ginfo = new GetMemberInFoDTO
+            {
+                Id = getinfo.Id,
+                ImgName = getinfo.ImgName,
+                Nickname = getinfo.NickName,
+                Name = getinfo.RealName,
+                Birth = getinfo.Birthday?.ToString("yyyy/MM/dd"),
+                //Birth = string.Format("{0:d}", getinfo.Birthday), //只顯示日期寫法
+                Phone = getinfo.Phone,
+                Address = getinfo.Address,
+                Gender = getinfo.Gender,
+                Email = getinfo.Email,
+                GenderDisplay = genderDisplay, // 設定此屬性
+            };
+            return ginfo;
         }
 
 
@@ -148,22 +201,24 @@ namespace WebAPI_for_frondEnd.Controllers
         // PUT: api/Members/5----會員修改
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<string> PutMember1(int id, MemberDTO MemDTO)
+        public async Task<IActionResult> PutMember1(int id, UpdateMember MemDTO)
         {
-            if (id != MemDTO.memberid)
+            if (id != MemDTO.Id)
             {
-                return "修改會員資料失敗!";
+                return NotFound(new { message = "修改會員資料失敗!" });
             }
             Member Mem = await _context.Members.FindAsync(id);
             if (Mem == null)
             {
-                return "修改會員資料失敗!";
+                return NotFound(new { message = "修改會員資料失敗!" });
             }
-            Mem.ImgName = MemDTO.memberimg;
-            Mem.NickName = MemDTO.membernickname;
-            Mem.RealName = MemDTO.membername;
-            Mem.Phone = MemDTO.memberphone;
-            Mem.Address = MemDTO.memberaddress;
+            //Mem.ImgName = MemDTO.memberimg;
+            Mem.NickName = MemDTO.Nickname;
+            Mem.RealName = MemDTO.Name;
+            Mem.Phone = MemDTO.Phone;
+            Mem.Address = MemDTO.Address;
+            Mem.Gender = MemDTO.Gender;
+            Mem.Birthday = DateTime.Parse(MemDTO.Birth);
             _context.Entry(Mem).State = EntityState.Modified;
 
             try
@@ -174,7 +229,7 @@ namespace WebAPI_for_frondEnd.Controllers
             {
                 if (!MemberExists(id))
                 {
-                    return "修改會員資料失敗!";
+                    return NotFound(new { message = "修改會員資料失敗!" });
                 }
                 else
                 {
@@ -182,7 +237,7 @@ namespace WebAPI_for_frondEnd.Controllers
                 }
             }
 
-            return "修改會員資料成功!";
+            return Ok(new { message = "修改會員資料成功!" }); ;
         }
 
 
