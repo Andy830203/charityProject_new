@@ -179,7 +179,7 @@ namespace WebAPI_for_frondEnd.Controllers
             _context.CartItems.Remove(cartItem);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = "Item deleted successfully" });
         }
 
         [HttpPut("UpdateCartItem")]
