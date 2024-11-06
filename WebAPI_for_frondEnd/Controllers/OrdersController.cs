@@ -173,7 +173,7 @@ namespace WebAPI_for_frondEnd.Controllers
                 { "ReturnURL", "http://localhost:5173/" },
                 { "ChoosePayment", "ALL" },
                 { "EncryptType", "1" },
-                { "ClientBackURL", "http://localhost:5173/"}
+                { "ClientBackURL", "http://localhost:5173/shop"}
             };
 
             // Step 5: Generate CheckMacValue
