@@ -32,6 +32,8 @@ builder.Services.AddScoped<UserService>(); //µù¥U userservice
 
 builder.Services.AddSingleton<UserService>(); // µù¥U UserService
 
+builder.Services.AddScoped<MailService>();
+
 builder.Services.AddMemoryCache(); // µù¥U MemoryCache ªA°È
 
 var app = builder.Build();

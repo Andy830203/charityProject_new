@@ -14,5 +14,7 @@
         public string? Address { get; set; }
 
         public bool? Gender { get; set; }
+
+        public string ImgName { get; set; }
     }
 }

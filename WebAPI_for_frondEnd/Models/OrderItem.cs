@@ -15,6 +15,8 @@ public partial class OrderItem
 
     public int? Quantity { get; set; }
 
+    public int? score { get; set; }
+
     public DateTime? ShippedTime { get; set; }
 
     public virtual Order OIdNavigation { get; set; }

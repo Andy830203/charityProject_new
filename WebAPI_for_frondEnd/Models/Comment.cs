@@ -15,6 +15,8 @@ public partial class Comment
 
     public string Content { get; set; }
 
+    public int? score { get; set; }
+
     public virtual ICollection<CommentImg> CommentImgs { get; set; } = new List<CommentImg>();
 
     public virtual Event EIdNavigation { get; set; }
