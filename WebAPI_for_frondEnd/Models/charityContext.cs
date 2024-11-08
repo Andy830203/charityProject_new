@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using WebAPI_for_frondEnd.Models;
 
 namespace WebAPI_for_frondEnd.Models;
 
@@ -593,4 +594,6 @@ public partial class charityContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+public DbSet<WebAPI_for_frondEnd.Models.Collection> Collection { get; set; } = default!;
 }
