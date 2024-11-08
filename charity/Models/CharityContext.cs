@@ -15,7 +15,13 @@ public partial class CharityContext : DbContext
     {
     }
 
+    public virtual DbSet<Backup1> Backup1s { get; set; }
+
+    public virtual DbSet<Backup2> Backup2s { get; set; }
+
     public virtual DbSet<CartItem> CartItems { get; set; }
+
+    public virtual DbSet<Collection> Collections { get; set; }
 
     public virtual DbSet<Comment> Comments { get; set; }
 
@@ -71,6 +77,54 @@ public partial class CharityContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Backup1>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("backup1_id_pk");
+
+            entity.ToTable("backup1");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Col1)
+                .HasMaxLength(100)
+                .HasColumnName("col1");
+            entity.Property(e => e.Col2)
+                .HasMaxLength(100)
+                .HasColumnName("col2");
+            entity.Property(e => e.Col3)
+                .HasMaxLength(100)
+                .HasColumnName("col3");
+            entity.Property(e => e.Col4)
+                .HasMaxLength(100)
+                .HasColumnName("col4");
+            entity.Property(e => e.Col5)
+                .HasMaxLength(100)
+                .HasColumnName("col5");
+        });
+
+        modelBuilder.Entity<Backup2>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("backup2_id_pk");
+
+            entity.ToTable("backup2");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Col1)
+                .HasMaxLength(100)
+                .HasColumnName("col1");
+            entity.Property(e => e.Col2)
+                .HasMaxLength(100)
+                .HasColumnName("col2");
+            entity.Property(e => e.Col3)
+                .HasMaxLength(100)
+                .HasColumnName("col3");
+            entity.Property(e => e.Col4)
+                .HasMaxLength(100)
+                .HasColumnName("col4");
+            entity.Property(e => e.Col5)
+                .HasMaxLength(100)
+                .HasColumnName("col5");
+        });
+
         modelBuilder.Entity<CartItem>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("cart_item_id_pk");
@@ -91,6 +145,16 @@ public partial class CharityContext : DbContext
                 .HasConstraintName("cart_item_p_id_fk");
         });
 
+        modelBuilder.Entity<Collection>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("collection_id_pk");
+
+            entity.ToTable("collections");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Attendance).HasColumnName("attendance");
+        });
+
         modelBuilder.Entity<Comment>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("comment_id_pk");
@@ -103,6 +167,7 @@ public partial class CharityContext : DbContext
                 .HasColumnName("content");
             entity.Property(e => e.EId).HasColumnName("e_id");
             entity.Property(e => e.MId).HasColumnName("m_id");
+            entity.Property(e => e.Score).HasColumnName("score");
 
             entity.HasOne(d => d.EIdNavigation).WithMany(p => p.Comments)
                 .HasForeignKey(d => d.EId)
@@ -170,6 +235,7 @@ public partial class CharityContext : DbContext
 
             entity.HasOne(d => d.Organizer).WithMany(p => p.Events)
                 .HasForeignKey(d => d.OrganizerId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("events_organizer_id_fk");
         });
 
@@ -413,10 +479,12 @@ public partial class CharityContext : DbContext
             entity.Property(e => e.OId).HasColumnName("o_id");
             entity.Property(e => e.PId).HasColumnName("p_id");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
+            entity.Property(e => e.Score).HasColumnName("score");
             entity.Property(e => e.ShippedTime).HasColumnName("shipped_time");
 
             entity.HasOne(d => d.OIdNavigation).WithMany(p => p.OrderItems)
                 .HasForeignKey(d => d.OId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("oi_o_id_fk");
 
             entity.HasOne(d => d.PIdNavigation).WithMany(p => p.OrderItems)
@@ -493,6 +561,7 @@ public partial class CharityContext : DbContext
 
             entity.HasOne(d => d.PIdNavigation).WithMany(p => p.ProductImgs)
                 .HasForeignKey(d => d.PId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("pi_p_id_fk");
         });
 
@@ -535,6 +604,9 @@ public partial class CharityContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("email");
             entity.Property(e => e.Gender).HasColumnName("gender");
+            entity.Property(e => e.ImgName)
+                .HasMaxLength(100)
+                .HasColumnName("imgName");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
