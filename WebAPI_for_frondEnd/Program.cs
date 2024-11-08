@@ -1,6 +1,7 @@
 using CoreAPI2024;
 using Microsoft.EntityFrameworkCore;
 using WebAPI_for_frondEnd.Models;
+using WebAPI_for_frondEnd.Service;
 var builder = WebApplication.CreateBuilder(args);
 
 // 允許來自特定來源的 CORS 請求
@@ -24,7 +25,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// 注入 IEmailService
+builder.Services.AddTransient<IEmailService, EmailService>(); // 注入 IEmailService
+
 builder.Services.AddScoped<UserService>(); //註冊 userservice
+
+builder.Services.AddSingleton<UserService>(); // 註冊 UserService
+
+builder.Services.AddScoped<MailService>();
+
+builder.Services.AddMemoryCache(); // 註冊 MemoryCache 服務
 
 var app = builder.Build();
 

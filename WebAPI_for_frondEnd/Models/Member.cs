@@ -39,7 +39,7 @@ public partial class Member
 
     public int? Access { get; set; }
 
-    public bool? FaceRec { get; set; }
+    public bool? FaceRec { get; set; } //用來當識別是否為臨時密碼
 
     public virtual MemberAccess AccessNavigation { get; set; }
 
