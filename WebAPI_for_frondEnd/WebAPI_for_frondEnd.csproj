@@ -6,6 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+	<ItemGroup>
+		<Compile Remove="DTO\Class.cs" />
+		<Compile Remove="DTO\LocationDTO_map.cs" />
+	</ItemGroup>
   <ItemGroup>
     <PackageReference Include="MailKit" Version="4.8.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.10" />
