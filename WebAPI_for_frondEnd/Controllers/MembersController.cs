@@ -191,6 +191,33 @@ namespace WebAPI_for_frondEnd.Controllers
             };
             return ginfo;
         }
+        // 參加過的活動(評論用)
+        [HttpGet("{userId}/activities")]
+        public async Task<IActionResult> GetUserActivities(int userId)
+        {
+            // 確認會員是否存在
+            var userExists = await _context.Members.AnyAsync(u => u.Id == userId);
+            if (!userExists)
+            {
+                return NotFound(new { message = "會員不存在" });
+            }
+
+            // 使用 Join 查詢並映射到 UserActivityDto
+            var activities = await (from s in _context.SignUps
+                                    join d in _context.EventPeriods on s.EpId equals d.Id
+                                    join e in _context.Events on d.EId equals e.Id
+                                    where s.Applicant == userId
+                                    select new GetMemberActivityDTO
+                                    {
+                                        SignUpId = s.Id,
+                                        ActivityId = d.Id,
+                                        EventId = e.Id,
+                                        EventName = e.Name,
+                                        EventDescription = e.Description
+                                    }).ToListAsync();
+
+            return Ok(activities);
+        }
 
 
         // PUT: api/Members/5
@@ -227,24 +254,40 @@ namespace WebAPI_for_frondEnd.Controllers
         // PUT: api/Members/5----會員修改
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMember1(int id, UpdateMember MemDTO)
+        public async Task<IActionResult> PutMember1(int id, [FromForm] UpdateMember MemDTO)
         {
             if (id != MemDTO.Id)
             {
                 return NotFound(new { message = "修改會員資料失敗!" });
             }
+
             Member Mem = await _context.Members.FindAsync(id);
             if (Mem == null)
             {
                 return NotFound(new { message = "修改會員資料失敗!" });
             }
-            Mem.ImgName = MemDTO.ImgName;
+
+            // 更新會員基本資料
             Mem.NickName = MemDTO.Nickname;
             Mem.RealName = MemDTO.Name;
             Mem.Phone = MemDTO.Phone;
             Mem.Address = MemDTO.Address;
             Mem.Gender = MemDTO.Gender;
-            Mem.Birthday = DateTime.Parse(MemDTO.Birth);
+            if (!string.IsNullOrEmpty(MemDTO.Birth) && DateTime.TryParse(MemDTO.Birth, out var parsedDate))
+            {
+                Mem.Birthday = parsedDate;
+            }
+            else
+            {
+                Mem.Birthday = null;
+            }
+
+            // 更新圖片名稱
+            if (!string.IsNullOrEmpty(MemDTO.ImgName))
+            {
+                Mem.ImgName = MemDTO.ImgName;
+            }
+
             _context.Entry(Mem).State = EntityState.Modified;
 
             try
@@ -263,10 +306,34 @@ namespace WebAPI_for_frondEnd.Controllers
                 }
             }
 
-            return Ok(new { message = "修改會員資料成功!" }); ;
+            return Ok(new { message = "修改會員資料成功!" });
         }
 
+        [HttpPost("uploadProfilePicture")]
+        public async Task<IActionResult> UploadProfilePicture([FromForm] IFormFile profilePicture)
+        {
+            if (profilePicture == null || profilePicture.Length == 0)
+            {
+                return BadRequest("未上傳圖片");
+            }
 
+            var fileName = $"{Guid.NewGuid()}_{profilePicture.FileName}";
+            // 設定相對路徑
+            var projectRoot = Directory.GetCurrentDirectory();
+            var directoryPath = Path.Combine(projectRoot, "..", "charity", "wwwroot", "images", "members");
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            var filePath = Path.Combine(directoryPath, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await profilePicture.CopyToAsync(stream);
+            }
+
+            return Ok(new { fileName = $"/images/members/{fileName}" });
+        }
 
         // POST: api/Members
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
