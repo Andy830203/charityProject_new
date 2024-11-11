@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebAPI_for_frondEnd.DTO;
 using WebAPI_for_frondEnd.Models;
 
 namespace WebAPI_for_frondEnd.Controllers
@@ -22,14 +23,26 @@ namespace WebAPI_for_frondEnd.Controllers
 
         // GET: api/SignUps
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SignUp>>> GetSignUps()
+        public async Task<ActionResult<IEnumerable<SignUpDTO>>> GetSignUps()
         {
-            return await _context.SignUps.ToListAsync();
+            var SignUpDTO = await _context.SignUps
+                .Include(i => i.ApplicantNavigation)
+                .Include(i => i.Ep)
+                .Select(item => new SignUpDTO
+            {
+                Id = item.Id,
+                EpId = item.EpId,
+                periodDesc = item.Ep.Description,
+                Applicant = item.Applicant,
+                ApplicantName = item.ApplicantNavigation.NickName
+            }).ToListAsync();
+
+            return SignUpDTO;
         }
 
         // GET: api/SignUps/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<SignUp>> GetSignUp(int id)
+        public async Task<ActionResult<SignUpDTO>> GetSignUp(int id)
         {
             var signUp = await _context.SignUps.FindAsync(id);
 
@@ -38,18 +51,34 @@ namespace WebAPI_for_frondEnd.Controllers
                 return NotFound();
             }
 
-            return signUp;
+            var signUpDTO = new SignUpDTO
+            {
+                Id = signUp.Id,
+                EpId = signUp.EpId,
+                periodDesc = signUp.Ep.Description,
+                Applicant = signUp.Applicant,
+                ApplicantName = signUp.ApplicantNavigation.NickName
+            };
+
+            return signUpDTO;
         }
 
         // PUT: api/SignUps/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSignUp(int id, SignUp signUp)
+        public async Task<IActionResult> PutSignUp(int id, SignUpDTO signUpDTO)
         {
-            if (id != signUp.Id)
+            if (id != signUpDTO.Id)
             {
                 return BadRequest();
             }
+
+            var signUp = new SignUp
+            {
+                Id = signUpDTO.Id,
+                EpId = signUpDTO.EpId,
+                Applicant = signUpDTO.Applicant,
+            };
 
             _context.Entry(signUp).State = EntityState.Modified;
 
@@ -69,14 +98,21 @@ namespace WebAPI_for_frondEnd.Controllers
                 }
             }
 
-            return NoContent();
+            return CreatedAtAction("GetSignUp", new { id = signUp.Id }, signUp);
         }
 
         // POST: api/SignUps
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<SignUp>> PostSignUp(SignUp signUp)
+        public async Task<ActionResult<SignUpDTO>> PostSignUp(SignUpDTO signUpDTO)
         {
+            var signUp = new SignUp
+            {
+                Id = signUpDTO.Id,
+                EpId = signUpDTO.EpId,
+                Applicant = signUpDTO.Applicant,
+            };
+
             _context.SignUps.Add(signUp);
             await _context.SaveChangesAsync();
 
@@ -96,7 +132,7 @@ namespace WebAPI_for_frondEnd.Controllers
             _context.SignUps.Remove(signUp);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Delete success");
         }
 
         private bool SignUpExists(int id)
