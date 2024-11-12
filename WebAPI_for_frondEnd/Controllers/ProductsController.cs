@@ -224,6 +224,35 @@ namespace WebAPI_for_frondEnd.Controllers
             return NoContent();
         }
 
+        // PUT: api/Products/SubtractStock
+        [HttpPut("SubtractStock")]
+        public async Task<IActionResult> SubtractStock([FromBody] SubStockDTO ssDTO) {
+            // Check if the product exists in the database
+            var product = await _context.Products.FindAsync(ssDTO.pId);
+
+            if (product == null) {
+                return NotFound($"Product with ID {ssDTO.pId} not found.");
+            }
+
+            // Check if there's enough stock to subtract
+            if (product.Instock < ssDTO.quantity) {
+                return BadRequest("Insufficient stock.");
+            }
+
+            // Subtract the quantity from the product's stock
+            product.Instock -= ssDTO.quantity;
+
+            // Save changes to the database
+            try {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex) {
+                // Handle database update errors if needed
+                return StatusCode(500, "An error occurred while updating the stock.");
+            }
+
+            return Ok(new { Message = "Stock updated successfully.", productId = product.Id, newStock = product.Instock });
+        }
         private bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.Id == id);
