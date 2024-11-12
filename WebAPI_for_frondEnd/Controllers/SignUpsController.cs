@@ -15,10 +15,12 @@ namespace WebAPI_for_frondEnd.Controllers
     public class SignUpsController : ControllerBase
     {
         private readonly charityContext _context;
+        public List<EventPeriod> periods;
 
         public SignUpsController(charityContext context)
         {
             _context = context;
+            periods = _context.EventPeriods.ToList();
         }
 
         // GET: api/SignUps
@@ -38,6 +40,31 @@ namespace WebAPI_for_frondEnd.Controllers
             }).ToListAsync();
 
             return SignUpDTO;
+        }
+
+        // GET: api/SignUps/event/5
+        [HttpGet("event/{eid}")]
+        public async Task<ActionResult<IEnumerable<SignUpDTO>>> GetSignUps(int eid)
+        {
+            var SignUpDTO = await _context.SignUps
+                .Include(i => i.ApplicantNavigation)
+                .Include(i => i.Ep)
+                .Select(item => new SignUpDTO
+                {
+                    Id = item.Id,
+                    EpId = item.EpId,
+                    periodDesc = item.Ep.Description,
+                    Applicant = item.Applicant,
+                    ApplicantName = item.ApplicantNavigation.NickName
+                }).ToListAsync();
+
+            foreach (var item in SignUpDTO)
+            {
+                item.EId = periods.Where(ep => ep.Id == item.EpId).FirstOrDefault().EId;
+            }
+            var rtList = SignUpDTO.Where(item => item.EId == eid).ToList();
+
+            return rtList;
         }
 
         // GET: api/SignUps/5
