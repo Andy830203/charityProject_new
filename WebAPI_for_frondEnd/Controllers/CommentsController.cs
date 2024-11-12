@@ -97,7 +97,7 @@ namespace WebAPI_for_frondEnd.Controllers
 
             if (hasCommented)
             {
-                return BadRequest(new { message = "您已經對此活動發表過評論。" });
+                return BadRequest("");
             }
 
 

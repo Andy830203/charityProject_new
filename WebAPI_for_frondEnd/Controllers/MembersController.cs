@@ -493,7 +493,7 @@ namespace WebAPI_for_frondEnd.Controllers
             // 發送電子郵件
             string loginLink = "http://localhost:5173/"; // 登入頁面連結
             string emailContent = $"您的臨時密碼為：{temporaryPassword}。\n請點擊此連結以登入並更改您的密碼：{loginLink}";
-            await _mailService.SendEmailAsync(member.Email, " ", emailContent);
+            await _mailService.SendEmailAsync(member.Email,"", emailContent);
 
             return Ok($"臨時密碼已發送到您的信箱，您的臨時密碼為：{temporaryPassword}");
         }
@@ -512,7 +512,7 @@ namespace WebAPI_for_frondEnd.Controllers
         {
             
             string emailContent = $"您的臨時密碼為：。\n請點擊此連結以登入並更改您的密碼：";
-            await _mailService.SendEmailAsync(mail, " ", emailContent);
+            await _mailService.SendEmailAsync(mail,"Charity官方--忘記密碼", emailContent);
 
             return Ok();
         }
