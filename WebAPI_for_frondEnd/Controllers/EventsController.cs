@@ -16,17 +16,25 @@ namespace WebAPI_for_frondEnd.Controllers
     public class EventsController : ControllerBase
     {
         private readonly charityContext _context;
+        public List<EventPeriodDTO> periods;
 
         public EventsController(charityContext context)
         {
             _context = context;
+            periods =  _context.EventPeriods.Select(ep => new EventPeriodDTO
+            {
+                EId = ep.EId,
+                StartTime = ep.StartTime,
+                EndTime = ep.EndTime,
+                Description = ep.Description
+            }).ToList();
         }
 
         // GET: api/Events
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EventDTO>>> GetEvents()
         {
-            var EventsDTO = await _context.Events
+            var EventsDTOs = await _context.Events
                 .Include(item => item.Organizer)
                 .Include(item => item.Category)
                 .Select(item => new EventDTO
@@ -40,10 +48,16 @@ namespace WebAPI_for_frondEnd.Controllers
                 Capacity = item.Capacity,
                 Priority = item.Priority,
                 CategoryId = item.CategoryId,
-                Category = item.Category.Name
+                Category = item.Category.Name,
+                Periods = new List<EventPeriodDTO>()
             }).ToListAsync();
+
+            foreach (var item in EventsDTOs)
+            {
+                item.Periods = periods.Where(ep => ep.EId == item.Id).ToList();
+            }
             //return await _context.Events.ToListAsync();
-            return EventsDTO;
+            return EventsDTOs;
         }
 
         // GET: api/Events/5
@@ -61,13 +75,17 @@ namespace WebAPI_for_frondEnd.Controllers
             {
                 Id = findEvent.Id,
                 Name = findEvent.Name,
+                OrganizerId = findEvent.OrganizerId,
                 Organizer = findEvent.Organizer.NickName,
                 Description = findEvent.Description,
                 Fee = findEvent.Fee,
                 Capacity = findEvent.Capacity,
                 Priority = findEvent.Priority,
+                CategoryId = findEvent.CategoryId,
                 Category = findEvent.Category.Name
             };
+
+            findEventDTO.Periods = periods.Where(ep => ep.EId == findEventDTO.Id).ToList();
 
             return findEventDTO;
         }
@@ -171,7 +189,7 @@ namespace WebAPI_for_frondEnd.Controllers
         }
 
         // GET: api/Events/Locations/1
-        [HttpGet("Locations")]
+        [HttpGet("Locations/{eid}")]
         public ActionResult<IEnumerable<EventLocationDTO>> GetLocations(int eid)
         {
             return RedirectToAction("GetEventLocationByEvent", "EventLocations", new { eid });
