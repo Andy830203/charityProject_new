@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<Compile Remove="DTO\Class.cs" />
+		<Compile Remove="DTO\EventLocationDTO_formap_only.cs" />
 		<Compile Remove="DTO\LocationDTO_map.cs" />
 	</ItemGroup>
   <ItemGroup>

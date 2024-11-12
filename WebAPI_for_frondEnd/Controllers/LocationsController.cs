@@ -39,19 +39,82 @@ namespace WebAPI_for_frondEnd.Controllers
                 .ToListAsync();
             return locations;
         }
+        // GET: api/Locations
+        [HttpGet("Location_maploc")]
+        public async Task<ActionResult<IEnumerable<Location_maploc_DTO>>> GetLocations_lngat()
+        {
+            var locations_gm = await _context.Locations
+                .Select(e => new Location_maploc_DTO
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Longitude = e.Longitude,
+                    Latitude = e.Latitude,
+                    Address = e.Address,
+                })
+                .ToListAsync();
+            return locations_gm;
+        }
+
+        // GET: api/Locations/Location_maploc_Info
+        //[HttpGet("Location_maploc_Info")]
+        //public async Task<ActionResult<IEnumerable<EventLocationDTO_formap_onlyDTO>>> GetLocations_maploc_Info()
+        //{
+        //    var locations_gm = await _context.Locations
+        //        .Include(l => l.EventLocations) // 加入 EventLocation 關聯
+        //            .ThenInclude(el => el.Event) // 加入 Event 關聯
+        //        .Select(e => new EventLocationDTO_formap_onlyDTO
+        //        {
+        //            Id = e.Id,
+        //            LId = e.EventLocations.FirstOrDefault().LId, // 假設一個 Location 對應到多個 EventLocation
+        //            LocName = e.LocName,
+        //            EId = e.EventLocations.FirstOrDefault().EId, // 取得第一個對應的 EventLocation
+        //            Address = e.Address,
+        //            EventName = e.EventLocations.FirstOrDefault().Event?.Name // 取得第一個 Event 名稱
+        //        })
+        //        .ToListAsync();
+
+        //    return locations_gm;
+        //}
+
 
         // GET: api/Locations/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Location>> GetLocation(int id)
+        //{
+        //    var location = await _context.Locations.FindAsync(id);
+
+        //    if (location == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return location;
+        //}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Location>> GetLocation(int id)
+        public async Task<ActionResult<LocationDto>> GetLocation(int id)
         {
-            var location = await _context.Locations.FindAsync(id);
+            var location = await _context.Locations
+                .Include(l => l.EventLocations)
+                .Include(l => l.LocationImgs)
+                .FirstOrDefaultAsync(l => l.Id == id);
 
             if (location == null)
             {
                 return NotFound();
             }
 
-            return location;
+            // 將 Location 轉換成 LocationDto
+            var locationDto = new LocationDto
+            {
+                Id = location.Id,
+                Name = location.Name,
+                Longitude = location.Longitude,
+                Latitude = location.Latitude,
+                Address = location.Address,
+                Capacity = location.Capacity,
+            };
+            return locationDto;
         }
 
         // PUT: api/Locations/5
