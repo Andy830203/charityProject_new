@@ -46,6 +46,33 @@ namespace WebAPI_for_frondEnd.Controllers
                 });
         }
 
+        [HttpGet("seller/{id}")]
+        public async Task<IEnumerable<IndexProductDTO>> GetProductBySeller(int id) {
+            var products = await _context.Products
+                .Where(p => p.Seller == id) // 查詢特定賣家ID的商品
+                .Include(p => p.ProductImgs) // 包含產品圖片資料
+                .Include(p => p.SellerNavigation) // 包含賣家資料
+                .Include(p => p.CategoryNavigation) // 包含類別資料
+                .Select(p => new IndexProductDTO {
+                    Id = p.Id,
+                    Name = p.Name,
+                    SellerId = p.Seller,
+                    SellerName = p.SellerNavigation != null ? p.SellerNavigation.RealName : "無賣家",
+                    Category = p.Category,
+                    CategoryName = p.CategoryNavigation != null ? p.CategoryNavigation.Name : "無類別",
+                    Price = p.Price,
+                    OnShelfTime = p.OnShelfTime,
+                    Description = p.Description,
+                    Instock = p.Instock,
+                    MainImageUrl = p.ProductImgs != null && p.ProductImgs.Any()
+                        ? p.ProductImgs.FirstOrDefault().ImgName  // 使用第一張圖片作為主圖片
+                        : "NoPicture"  // 如果沒有圖片
+                })
+                .ToListAsync();
+
+            return products;
+        }
+
         // GET: api/Products/maxPrice
         [HttpGet("maxPrice")]
         public IActionResult GetMaxPrice() {
@@ -253,6 +280,8 @@ namespace WebAPI_for_frondEnd.Controllers
 
             return Ok(new { Message = "Stock updated successfully.", productId = product.Id, newStock = product.Instock });
         }
+
+
         private bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.Id == id);
