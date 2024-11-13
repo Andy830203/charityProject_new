@@ -315,7 +315,52 @@ namespace WebAPI_for_frondEnd.Controllers
             return Ok(new { Message = "Stock updated successfully.", productId = product.Id, newStock = product.Instock });
         }
 
+        [HttpPost("{sellerId}")]
+        public async Task<IActionResult> CreateProduct(int sellerId, [FromForm] ProductsCreateDTO productDto, [FromForm] List<IFormFile> images) {
+            // Create a new product object
+            var newProduct = new Product {
+                Name = productDto.Name,
+                Price = productDto.Price,
+                Seller = sellerId,
+                Instock = productDto.Instock,
+                Description = productDto.Description,
+                Category = productDto.CategoryId,
+                OnShelf = true,
+                OnShelfTime = DateTime.Now
+            };
 
+
+            // Add the new product to the database
+            _context.Products.Add(newProduct);
+            await _context.SaveChangesAsync(); // Save to get the new product ID
+
+            // Handle image upload
+            if (images != null && images.Count > 0) {
+                var projectRoot = Directory.GetCurrentDirectory();
+                var directoryPath = Path.Combine(projectRoot, "..", "charity", "wwwroot", "images", "products");
+                if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+
+                foreach (var image in images) {
+                    var fileName = $"{Guid.NewGuid()}_{image.FileName}";
+                    var filePath = Path.Combine(directoryPath, fileName);
+
+                    // Save the image file
+                    using (var stream = new FileStream(filePath, FileMode.Create)) {
+                        await image.CopyToAsync(stream);
+                    }
+
+                    // Save the image record associated with the product
+                    _context.ProductImgs.Add(new ProductImg {
+                        ImgName = $"/images/products/{fileName}",
+                        PId = newProduct.Id
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "商品新增成功", productId = newProduct.Id });
+        }
         private bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.Id == id);

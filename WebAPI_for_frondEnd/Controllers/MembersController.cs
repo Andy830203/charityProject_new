@@ -335,6 +335,7 @@ namespace WebAPI_for_frondEnd.Controllers
             return Ok(new { fileName = $"/images/members/{fileName}" });
         }
 
+
         // POST: api/Members
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         //[HttpPost]
