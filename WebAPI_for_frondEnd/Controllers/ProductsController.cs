@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using WebAPI_for_frondEnd.DTO;
 using WebAPI_for_frondEnd.Models;
 
@@ -42,14 +43,14 @@ namespace WebAPI_for_frondEnd.Controllers
                     Instock = p.Instock,
                     MainImageUrl = p.ProductImgs != null && p.ProductImgs.Any()
                         ? p.ProductImgs.FirstOrDefault().ImgName  // 使用第一張圖片作為主圖片
-                        : "NoPicture"  // 如果沒有圖片
+                        : "/images/non-found.jpg"  // 如果沒有圖片
                 });
         }
 
         [HttpGet("seller/{id}")]
         public async Task<IEnumerable<IndexProductDTO>> GetProductBySeller(int id) {
             var products = await _context.Products
-                .Where(p => p.Seller == id) // 查詢特定賣家ID的商品
+                .Where(p => p.Seller == id && p.OnShelf == true) // 查詢特定賣家ID目前已上架的商品
                 .Include(p => p.ProductImgs) // 包含產品圖片資料
                 .Include(p => p.SellerNavigation) // 包含賣家資料
                 .Include(p => p.CategoryNavigation) // 包含類別資料
@@ -66,7 +67,7 @@ namespace WebAPI_for_frondEnd.Controllers
                     Instock = p.Instock,
                     MainImageUrl = p.ProductImgs != null && p.ProductImgs.Any()
                         ? p.ProductImgs.FirstOrDefault().ImgName  // 使用第一張圖片作為主圖片
-                        : "NoPicture"  // 如果沒有圖片
+                        : "/images/non-found.jpg"  // 如果沒有圖片
                 })
                 .ToListAsync();
 
@@ -188,40 +189,73 @@ namespace WebAPI_for_frondEnd.Controllers
                 OnShelfTime = product.OnShelfTime,
                 Instock = product.Instock,
                 imgUrls = currProductImgs
-
             };
             return Ok(productDTO);
         }
-
-        // PUT: api/Products/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
-        {
-            if (id != product.Id)
-            {
-                return BadRequest();
+        // PUT: api/Products/Offshelf/5
+        [HttpPut("Offshelf/{id}")]
+        public async Task<IActionResult> OffshelfProduct(int id) {
+            // Retrieve the product by ID
+            var product = await _context.Products.FindAsync(id);
+            if (product == null) {
+                // Return a 404 if the product does not exist
+                return NotFound(new { message = "Product not found" });
             }
-
-            _context.Entry(product).State = EntityState.Modified;
-
-            try
-            {
+            product.OnShelf = false;
+            try {
+                _context.Products.Update(product);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+            catch (Exception ex) {
+                // Handle any errors
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Error deactivating product", details = ex.Message });
             }
 
-            return NoContent();
+            // Return a success response
+            return Ok(new { message = "Product deactivated successfully" });
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProduct(int id, [FromForm] ProductsEditDTO productDto, [FromForm] List<IFormFile> images, [FromForm] string? existingImageUrls) {
+            // Find the product by ID
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            if (product == null) {
+                return NotFound("商品不存在");
+            }
+
+            // Update product fields
+            product.Name = productDto.Name;
+            product.Price = productDto.Price;
+            product.Instock = productDto.Stock;
+            product.Description = productDto.Description;
+            product.Category = productDto.CategoryId;
+
+            // Parse the existingImageUrls to retain from frontend
+            var retainedImageUrls = string.IsNullOrEmpty(existingImageUrls) ? new List<string>() : JsonConvert.DeserializeObject<List<string>>(existingImageUrls);
+            var imagesToRemove = product.ProductImgs.Where(img => img.PId == id && !retainedImageUrls.Contains(img.ImgName));
+            foreach (var img in imagesToRemove) {
+                _context.ProductImgs.Remove(img);
+            }
+            // Add new images
+            if (images != null && images.Count > 0) {
+                var projectRoot = Directory.GetCurrentDirectory();
+                var directoryPath = Path.Combine(projectRoot, "..", "charity", "wwwroot", "images", "products");
+                if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+
+                foreach (var image in images) {
+                    var fileName = $"{Guid.NewGuid()}_{image.FileName}";
+                    var filePath = Path.Combine(directoryPath, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create)) {
+                        await image.CopyToAsync(stream);
+                    }
+                    _context.ProductImgs.Add(new ProductImg { ImgName = $"/images/products/{fileName}", PId = product.Id });
+                }
+            }
+            // _context.Products.Update(product);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "商品更新成功" });
         }
 
         // POST: api/Products
