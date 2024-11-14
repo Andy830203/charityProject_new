@@ -27,17 +27,20 @@ namespace WebAPI_for_frondEnd.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SignUpDTO>>> GetSignUps()
         {
-            var SignUpDTO = await _context.SignUps
-                .Include(i => i.ApplicantNavigation)
-                .Include(i => i.Ep)
-                .Select(item => new SignUpDTO
-            {
-                Id = item.Id,
-                EpId = item.EpId,
-                periodDesc = item.Ep.Description,
-                Applicant = item.Applicant,
-                ApplicantName = item.ApplicantNavigation.NickName
-            }).ToListAsync();
+            // 使用 join 連接 SignUps 和 Periods 表
+            var SignUpDTO = await (
+                from signUp in _context.SignUps
+                join period in _context.EventPeriods on signUp.EpId equals period.Id
+                select new SignUpDTO
+                {
+                    Id = signUp.Id,
+                    EId = period.EId,
+                    EpId = signUp.EpId,
+                    periodDesc = signUp.Ep.Description,
+                    Applicant = signUp.Applicant,
+                    ApplicantName = signUp.ApplicantNavigation.NickName
+                }
+            ).ToListAsync();
 
             return SignUpDTO;
         }
@@ -78,9 +81,12 @@ namespace WebAPI_for_frondEnd.Controllers
                 return NotFound();
             }
 
+            var eid = periods.Where(it => it.Id == signUp.EpId).FirstOrDefault()?.EId;
+
             var signUpDTO = new SignUpDTO
             {
                 Id = signUp.Id,
+                EId = eid,
                 EpId = signUp.EpId,
                 periodDesc = signUp.Ep.Description,
                 Applicant = signUp.Applicant,
