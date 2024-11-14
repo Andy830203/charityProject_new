@@ -23,6 +23,7 @@ namespace WebAPI_for_frondEnd.Controllers
             _context = context;
             periods =  _context.EventPeriods.Select(ep => new EventPeriodDTO
             {
+                Id = ep.Id,
                 EId = ep.EId,
                 StartTime = ep.StartTime,
                 EndTime = ep.EndTime,
@@ -187,6 +188,24 @@ namespace WebAPI_for_frondEnd.Controllers
                 }).ToListAsync();
             return Categories;
         }
+
+        // GET: api/Events/Categories/5
+        [HttpGet("Categories/{eid}")]
+        public async Task<ActionResult<string>> GetCategoriesWithEid(int eid)
+        {
+            var Categories = await _context.EventCategories
+                .Select(it => new EventCategoryDTO
+                {
+                    categoryId = it.Id,
+                    categoryName = it.Name
+                }).ToListAsync();
+
+            var targetEvent = await _context.Events.Where(e => e.Id == eid).FirstOrDefaultAsync();
+
+            var rtCateName = Categories.Where(c => c.categoryId == targetEvent?.CategoryId).FirstOrDefault()?.categoryName;
+            return rtCateName ?? "NotFound";
+        }
+
 
         // GET: api/Events/Locations/1
         [HttpGet("Locations/{eid}")]
