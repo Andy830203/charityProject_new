@@ -408,7 +408,7 @@ namespace WebAPI_for_frondEnd.Controllers
         [HttpPost("Login")]
         public IActionResult Login(LoginDTO login)
         {
-            var member = _context.Members.Where(m => m.Email.Equals(login.Email)).SingleOrDefault();
+            var member = _context.Members.Where(m => m.Email.Equals(login.Email)).FirstOrDefault();
             if (member == null)
             {
                 return NotFound(new { Message = "查無此帳號" });
