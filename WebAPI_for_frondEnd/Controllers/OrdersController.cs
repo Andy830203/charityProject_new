@@ -46,6 +46,51 @@ namespace WebAPI_for_frondEnd.Controllers
             return order;
         }
 
+        // GET: api/Orders/user/5
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<Order>> UserGetOwnOrder(int userId) {
+            var userOrders = await _context.Orders
+                .Where(order => order.Buyer == userId)
+                .Include(order => order.StatusNavigation)
+                .Select(order => new UserGetOwnOrderDTO {
+                    Id = order.Id,
+                    Buyer = order.Buyer,
+                    TotalPrice = order.TotalPrice,
+                    Status = order.StatusNavigation != null ? order.StatusNavigation.Name : "Unknown",
+                    OrderTime = order.OrderTime
+                }).ToListAsync();
+            // 若沒有找到訂單，返回 404
+            if (userOrders == null || userOrders.Count == 0) {
+                return NotFound(new { Message = "No orders found for this user." });
+            }
+
+            // 返回用戶訂單列表
+            return Ok(userOrders);
+        }
+        // GET: api/Orders/order/5
+        [HttpGet("order/{OrderId}")]
+        public async Task<ActionResult<Order>> GetOrderItemByOrder(int OrderId) {
+            var orderItems = await _context.OrderItems
+                .Where(oI => oI.OId == OrderId)
+                .Include(oI => oI.OIdNavigation)
+                .Include(oI => oI.PIdNavigation)
+                .Select(oI => new OrderItembyUserDTO {
+                    Id = oI.Id,
+                    ProductId = oI.PId,
+                    ProductName = oI.PIdNavigation.Name,
+                    Quantity = oI.Quantity,
+                    UnitPrice = oI.PIdNavigation.Price,
+                    Seller = oI.PIdNavigation.Seller,
+                    SellerName = oI.PIdNavigation.SellerNavigation.RealName,
+                    ShippedTime = oI.ShippedTime
+                }).ToListAsync();
+            if (orderItems == null || orderItems.Count == 0) {
+                return NotFound(new { Message = "No orderitems found for this order." });
+            }
+
+            return Ok(orderItems);
+        }
+
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

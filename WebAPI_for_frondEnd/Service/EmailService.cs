@@ -12,10 +12,10 @@ public class EmailService : IEmailService
 
     public EmailService(IConfiguration configuration)
     {
-        smtpServer = configuration["SmtpSettings:Server"];
-        smtpPort = int.Parse(configuration["SmtpSettings:Port"]);
-        smtpUser = configuration["SmtpSettings:User"];
-        smtpPass = configuration["SmtpSettings:Password"];
+        smtpServer = configuration["EmailSettings:SmtpServer"];
+        smtpPort = int.Parse(configuration["EmailSettings:SmtpPort"]);
+        smtpUser = configuration["EmailSettings:Username"];
+        smtpPass = configuration["EmailSettings:Password"];
     }
 
     public async Task SendResetPasswordEmailAsync(string toEmail, string resetLink)
@@ -37,5 +37,24 @@ public class EmailService : IEmailService
         };
 
         await smtpClient.SendMailAsync(mailMessage);
+    }
+
+    public async Task SendEmailAsync(string toEmail, string subject, string message)
+    {
+        var mailMessage = new MailMessage
+        {
+            From = new MailAddress(smtpUser),
+            Subject = subject,
+            Body = message,
+            IsBodyHtml = false
+        };
+        mailMessage.To.Add(toEmail);
+
+        using (var client = new SmtpClient(smtpServer, smtpPort))
+        {
+            client.Credentials = new NetworkCredential(smtpUser, smtpPass);
+            client.EnableSsl = true;
+            await client.SendMailAsync(mailMessage);
+        }
     }
 }

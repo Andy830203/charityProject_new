@@ -12,5 +12,6 @@
         public int? Priority { get; set; }
         public int? CategoryId { get; set; }
         public string? Category { get; set; }
+        public List<EventPeriodDTO>? Periods { get; set; }
     }
 }

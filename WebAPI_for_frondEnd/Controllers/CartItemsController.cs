@@ -182,6 +182,26 @@ namespace WebAPI_for_frondEnd.Controllers
             return Ok(new { message = "Item deleted successfully" });
         }
 
+        // DELETE: api/CartItems/userID/5
+        [HttpDelete("userID/{userID}")]
+        public async Task<IActionResult> DeleteAllItemByUser(int userID) {
+            try {
+                var cartItems = _context.CartItems.Where(ci => ci.Buyer == userID);
+                if (!cartItems.Any()) {
+                    return NotFound(new { message = "No cart items found for the specified user." });
+                }
+
+                // 刪除這些購物車項目
+                _context.CartItems.RemoveRange(cartItems);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "All cart items deleted successfully for the specified user." });
+            }
+            catch (Exception ex) {
+                return StatusCode(500, new { message = "An error occurred while deleting cart items.", error = ex.Message });
+            }
+        }
+
         [HttpPut("UpdateCartItem")]
         public async Task<IActionResult> UpdateCartItem([FromBody] CartItemAddDTO inputDto) {
             if (inputDto == null || inputDto.Quantity <= 0 || !inputDto.BuyerId.HasValue || !inputDto.PId.HasValue) {

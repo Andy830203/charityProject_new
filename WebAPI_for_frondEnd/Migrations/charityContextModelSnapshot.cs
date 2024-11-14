@@ -25,6 +25,72 @@ namespace WebAPI_for_frondEnd.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("WebAPI_for_frondEnd.Models.BackUp1", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("col1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("col2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("col3")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("col4")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("col5")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("backUp1s", (string)null);
+                });
+
+            modelBuilder.Entity("WebAPI_for_frondEnd.Models.BackUp2", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("col1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("col2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("col3")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("col4")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("col5")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("backUp2s", (string)null);
+                });
+
             modelBuilder.Entity("WebAPI_for_frondEnd.Models.CartItem", b =>
                 {
                     b.Property<int>("Id")
@@ -56,6 +122,28 @@ namespace WebAPI_for_frondEnd.Migrations
                     b.ToTable("cart_item", (string)null);
                 });
 
+            modelBuilder.Entity("WebAPI_for_frondEnd.Models.Collection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("MemberId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("attendance")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("eventId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Collection", (string)null);
+                });
+
             modelBuilder.Entity("WebAPI_for_frondEnd.Models.Comment", b =>
                 {
                     b.Property<int>("Id")
@@ -78,8 +166,8 @@ namespace WebAPI_for_frondEnd.Migrations
                         .HasColumnType("int")
                         .HasColumnName("m_id");
 
-                    b.Property<string>("score")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("score")
+                        .HasColumnType("int");
 
                     b.HasKey("Id")
                         .HasName("comment_id_pk");

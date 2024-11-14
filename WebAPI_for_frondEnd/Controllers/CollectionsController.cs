@@ -21,24 +21,32 @@ namespace WebAPI_for_frondEnd.Controllers
             _context = context;
         }
 
-        // 獲取用戶的收藏活動
+        // 獲取用戶的收藏活動名稱
         [HttpGet("{memberId}")]
         public async Task<IActionResult> GetUserFavorites(int memberId)
         {
-            var favorites = await _context.Collection
-                                          .Where(f => f.MemberId == memberId && f.attendance == null)
-                                          .ToListAsync();
+            var favorites = await (from collection in _context.Collection
+                                   join eventItem in _context.Events
+                                   on collection.eventId equals eventItem.Id
+                                   where collection.MemberId == memberId
+                                   select new
+                                   {
+                                       EventName = eventItem.Name,
+                                       CollectionId = collection.Id
+                                   }).ToListAsync();
+
             return Ok(favorites);
         }
 
-        // GET: api/Collections
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<Collection>>> GetCollection()
-        //{
-        //    return await _context.Collection.ToListAsync();
-        //}
 
-        // GET: api/Collections/5
+        // GET: api/Collections
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Collection>>> GetCollection()
+        {
+            return await _context.Collection.ToListAsync();
+        }
+
+        //GET: api/Collections/5
         //[HttpGet("{id}")]
         //public async Task<ActionResult<Collection>> GetCollection(int id)
         //{
@@ -110,7 +118,7 @@ namespace WebAPI_for_frondEnd.Controllers
             {
                 MemberId = dto.MemberId,
                 eventId = dto.EventId,
-                attendance = null // 新收藏的活動，初始狀態為未參加
+                attendance = false // 新收藏的活動，初始狀態為未參加
             };
 
             _context.Collection.Add(favorite);

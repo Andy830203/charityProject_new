@@ -17,7 +17,7 @@ public partial class Event
 
     public int? Capacity { get; set; }
 
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     public int? Priority { get; set; }
 
