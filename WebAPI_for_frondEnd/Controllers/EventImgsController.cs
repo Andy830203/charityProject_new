@@ -55,25 +55,29 @@ namespace WebAPI_for_frondEnd.Controllers
             return EImg;
         }
 
-        // GET: api/EventImgs/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<EventImgDTO>> GetEventImg(int id)
+        // GET: api/EventImgs/First/5
+        [HttpGet("First/{eid}")]
+        public async Task<ActionResult<string>> GetEventImgFirstUrl(int eid)
         {
-            var eventImg = await _context.EventImgs.FindAsync(id);
+            var eventImg = await _context.EventImgs.Where(em => em.EId == eid).FirstOrDefaultAsync();
 
             if (eventImg == null)
             {
                 return NotFound();
             }
 
-            var EImg = new EventImgDTO
+            string fileName = eventImg.ImgName;
+            // 設定相對路徑
+            var projectRoot = Directory.GetCurrentDirectory();
+            var directoryPath = Path.Combine(projectRoot, "..", "charity", "wwwroot", "images", "Events");
+            if (!Directory.Exists(directoryPath))
             {
-                Id = eventImg.Id,
-                EId = eventImg.EId,
-                ImgName = eventImg.ImgName,
-            };
+                Directory.CreateDirectory(directoryPath);
+            }
 
-            return EImg;
+            var filePath = Path.Combine(directoryPath, fileName);
+
+            return Ok(new { fileName = $"/images/Events/{fileName}" });
         }
 
         // PUT: api/EventImgs/5
