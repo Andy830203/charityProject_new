@@ -141,7 +141,6 @@ namespace WebAPI_for_frondEnd.Controllers
         {
             var signUp = new SignUp
             {
-                Id = signUpDTO.Id,
                 EpId = signUpDTO.EpId,
                 Applicant = signUpDTO.Applicant,
             };
@@ -149,7 +148,7 @@ namespace WebAPI_for_frondEnd.Controllers
             _context.SignUps.Add(signUp);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSignUp", new { id = signUp.Id }, signUp);
+            return CreatedAtAction("GetSignUp", new { id = signUp.Id }, signUpDTO);
         }
 
         // DELETE: api/SignUps/5

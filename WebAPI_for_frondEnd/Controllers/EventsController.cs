@@ -24,6 +24,7 @@ namespace WebAPI_for_frondEnd.Controllers
 
             periods =  _context.EventPeriods.Select(ep => new EventPeriodDTO
             {
+                Id = ep.Id,
                 EId = ep.EId,
                 StartTime = ep.StartTime,
                 EndTime = ep.EndTime,
