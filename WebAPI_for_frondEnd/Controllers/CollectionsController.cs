@@ -32,7 +32,8 @@ namespace WebAPI_for_frondEnd.Controllers
                                    select new
                                    {
                                        EventName = eventItem.Name,
-                                       CollectionId = collection.Id
+                                       CollectionId = collection.Id,
+                                       EventId = collection.eventId
                                    }).ToListAsync();
 
             return Ok(favorites);
@@ -163,7 +164,7 @@ namespace WebAPI_for_frondEnd.Controllers
             _context.Collection.Remove(favorite);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Deleted successfully");
         }
 
         // DELETE: api/Collections/5
