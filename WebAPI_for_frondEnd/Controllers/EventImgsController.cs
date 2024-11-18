@@ -118,6 +118,44 @@ namespace WebAPI_for_frondEnd.Controllers
             return NoContent();
         }
 
+        // PUT: api/EventImgs/changeImg/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("changeImg/{id}")]
+        public async Task<IActionResult> PutEventImgChImg(int id, [FromForm] IFormFile updatePic)
+        {
+            //更改照片
+            string? fileName = null;
+            if (updatePic == null || updatePic.Length == 0)
+            {
+                return BadRequest("未上傳圖片");
+            }
+
+            var eventImg = await _context.EventImgs.FindAsync(id);
+
+            if (eventImg == null)
+            {
+                return NotFound();
+            }
+
+            fileName = eventImg.ImgName;
+
+            // 設定相對路徑
+            var projectRoot = Directory.GetCurrentDirectory();
+            var directoryPath = Path.Combine(projectRoot, "..", "charity", "wwwroot", "images", "Events");
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            var filePath = Path.Combine(directoryPath, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await updatePic.CopyToAsync(stream);
+            }
+
+            return NoContent();
+        }
+
         // POST: api/EventImgs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
