@@ -96,6 +96,32 @@ namespace WebAPI_for_frondEnd.Controllers
             return signUpDTO;
         }
 
+        // GET: api/SignUps/member/5
+        [HttpGet("member/{userId}")]
+        public async Task<ActionResult<SignUpDTO>> GetSignUpByUser(int userId) {
+            // 查詢報名者的報名記錄，並通過 EventPeriod 找到對應的活動
+            var events = await _context.SignUps
+                .Where(signUp => signUp.Applicant == userId) // 過濾 Applicant
+                .Include(signUp => signUp.Ep) // 加載 EventPeriod
+                    .ThenInclude(ep => ep.EIdNavigation) // 加載 Event
+                .Select(signUp => new {
+                    EventId = signUp.Ep.EId, // 活動 ID
+                    EventPeriodId = signUp.Ep.Id, // 活動時段ID
+                    EventName = signUp.Ep.EIdNavigation.Name, // 活動名稱
+                    PeriodDescription = signUp.Ep.Description, // 時段描述
+                    PeriodStart = signUp.Ep.StartTime, // 時段開始時間
+                    PeriodEnd = signUp.Ep.EndTime // 時段結束時間
+                })
+                .ToListAsync();
+
+            if (events == null || events.Count == 0) {
+                return NotFound(new { message = "此報名者尚未報名任何活動。" });
+            }
+
+            return Ok(events);
+        }
+
+
         // PUT: api/SignUps/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -167,6 +193,26 @@ namespace WebAPI_for_frondEnd.Controllers
             return Ok("Delete success");
         }
 
+        [HttpDelete("DeleteByApplicantAndPeriod")]
+        public async Task<IActionResult> DeleteByApplicantAndPeriod([FromQuery] int applicantId, [FromQuery] int periodId) {
+            // 查詢符合條件的 SignUp 記錄
+            var signUpsToDelete = await _context.SignUps
+                .Where(s => s.Applicant == applicantId && s.EpId == periodId)
+                .ToListAsync();
+
+            if (!signUpsToDelete.Any()) {
+                return NotFound(new { message = "找不到符合條件的報名記錄。" });
+            }
+
+            // 刪除記錄
+            _context.SignUps.RemoveRange(signUpsToDelete);
+            await _context.SaveChangesAsync();
+
+            return Ok(new {
+                message = "報名記錄已成功刪除。",
+                deletedCount = signUpsToDelete.Count
+            });
+        }
         private bool SignUpExists(int id)
         {
             return _context.SignUps.Any(e => e.Id == id);

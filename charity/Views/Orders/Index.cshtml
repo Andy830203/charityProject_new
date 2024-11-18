@@ -24,6 +24,7 @@
     <script>
         $(document).ready(function () {
             // Initialize DataTable
+            let orderItems = []; // 本地保存的商品列表
             $('table').DataTable({
                 ajax: {
                     type: 'GET',
@@ -121,6 +122,71 @@
                     }
                 });
             });
+        });
+        $('#addNew').click(function () {
+            $.ajax({
+                url: '/Orders/Create',
+                type: 'GET',
+                success: function (result) {
+                    Swal.fire({
+                        title: '新增訂單',
+                        html: result, // 插入 partial view 的內容
+                        showCancelButton: true,
+                        confirmButtonText: '新增',
+                        didOpen: function () {
+                            // 綁定表單提交事件
+                            $('#createOrderForm').on('submit', function (e) {
+                                e.preventDefault();
+                                var formData = $(this).serialize();
+                                $.ajax({
+                                    url: '/Orders/Create',
+                                    type: 'POST',
+                                    data: formData,
+                                    success: function (response) {
+                                        if (response.success) {
+                                            Swal.fire('成功', '訂單已成功新增！', 'success');
+                                            // 更新表格
+                                            $('table').DataTable().ajax.reload();
+                                        } else {
+                                            Swal.fire('錯誤', response.errors.join('<br>'), 'error');
+                                        }
+                                    }
+                                });
+                            });
+                        },
+                        preConfirm: () => {
+                            $('#createOrderForm').submit();
+                        }
+                    });
+                }
+            });
+        });
+        let orderItems = []; // 本地保存的商品列表
+
+        // 事件委派確保適用於動態載入的 Partial View
+        $(document).on('click', '#addItem', function () {
+            const productId = $('#ProductIdInput').val();
+            const quantity = $('#QuantityInput').val();
+
+            if (!productId || !quantity || quantity <= 0) {
+                alert('請輸入有效的商品 ID 和數量');
+                return;
+            }
+
+            // 新增商品到本地 orderItems
+            orderItems.push({ ProductId: productId, Quantity: quantity });
+
+            // 更新前端顯示
+            const newItemHtml = `
+                            <div class="order-item mb-3">
+                                <p>商品 ID: ${productId}</p>
+                                <p>數量: ${quantity}</p>
+                            </div>`;
+            $('#orderItems').append(newItemHtml);
+
+            // 清空輸入欄位
+            $('#ProductIdInput').val('');
+            $('#QuantityInput').val('');
         });
     </script>
 }
