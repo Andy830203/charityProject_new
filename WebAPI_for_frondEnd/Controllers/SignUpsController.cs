@@ -96,8 +96,8 @@ namespace WebAPI_for_frondEnd.Controllers
             return signUpDTO;
         }
 
-        // GET: api/SignUps/isRepeat/5/memberId
-        [HttpGet("{epid}/{memberId}")]
+        // GET: api/SignUps/isRepeat/5/1
+        [HttpGet("isRepeat/{epid}/{memberId}")]
         public async Task<ActionResult<string>> GetSignUpIsRepeat(int epid, int memberId)
         {
             var SignUpDTOs = await _context.SignUps
@@ -126,6 +126,38 @@ namespace WebAPI_for_frondEnd.Controllers
                 _ => "Repeated",
             };
         }
+
+        // 增加一事件與一時段有多少人報名
+        //// GET: api/SignUps/isRepeat/5/memberId
+        //[HttpGet("{epid}/{memberId}")]
+        //public async Task<ActionResult<string>> GetSignUpIsRepeat(int epid, int memberId)
+        //{
+        //    var SignUpDTOs = await _context.SignUps
+        //        .Include(i => i.ApplicantNavigation)
+        //        .Include(i => i.Ep)
+        //        .Select(item => new SignUpDTO
+        //        {
+        //            Id = item.Id,
+        //            EpId = item.EpId,
+        //            periodDesc = item.Ep.Description,
+        //            Applicant = item.Applicant,
+        //            ApplicantName = item.ApplicantNavigation.NickName
+        //        }).ToListAsync();
+
+        //    var epidMembers = SignUpDTOs
+        //        .Where(item => item.EpId == epid)
+        //        .Where(item => item.Applicant == memberId)
+        //        .ToList();
+
+        //    int counts = epidMembers.Count;
+
+        //    return counts switch
+        //    {
+        //        0 => "NotExist",
+        //        1 => "Exist",
+        //        _ => "Repeated",
+        //    };
+        //}
 
         // PUT: api/SignUps/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
