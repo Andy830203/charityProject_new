@@ -177,9 +177,9 @@ namespace WebAPI_for_frondEnd.Controllers
                 })
                 .ToListAsync();
 
-            if (events == null || events.Count == 0) {
-                return NotFound(new { message = "此報名者尚未報名任何活動。" });
-            }
+            //if (events == null || events.Count == 0) {
+            //    return NotFound(new { message = "此報名者尚未報名任何活動。" });
+            //}
 
             return Ok(events);
         }
