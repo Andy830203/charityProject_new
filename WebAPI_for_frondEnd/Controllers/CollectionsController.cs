@@ -25,18 +25,26 @@ namespace WebAPI_for_frondEnd.Controllers
         [HttpGet("{memberId}")]
         public async Task<IActionResult> GetUserFavorites(int memberId)
         {
-            var favorites = await (from collection in _context.Collection
-                                   join eventItem in _context.Events
-                                   on collection.eventId equals eventItem.Id
-                                   where collection.MemberId == memberId
-                                   select new
-                                   {
-                                       EventName = eventItem.Name,
-                                       CollectionId = collection.Id,
-                                       EventId = collection.eventId
-                                   }).ToListAsync();
+            try
+            {
+                var favorites = await (from collection in _context.Collection
+                                       join eventItem in _context.Events
+                                       on collection.eventId equals eventItem.Id
+                                       where collection.MemberId == memberId
+                                       select new
+                                       {
+                                           EventName = eventItem.Name,
+                                           CollectionId = collection.Id,
+                                           EventId = collection.eventId
+                                       }).ToListAsync();
 
-            return Ok(favorites);
+                return Ok(favorites);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception as needed, or inspect the 'ex' for more details.
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
 
