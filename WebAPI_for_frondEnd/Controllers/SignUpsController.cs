@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Humanizer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI_for_frondEnd.DTO;
 using WebAPI_for_frondEnd.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace WebAPI_for_frondEnd.Controllers
 {
@@ -127,37 +130,49 @@ namespace WebAPI_for_frondEnd.Controllers
             };
         }
 
-        // 增加一事件與一時段有多少人報名
-        //// GET: api/SignUps/isRepeat/5/memberId
-        //[HttpGet("{epid}/{memberId}")]
-        //public async Task<ActionResult<string>> GetSignUpIsRepeat(int epid, int memberId)
-        //{
-        //    var SignUpDTOs = await _context.SignUps
-        //        .Include(i => i.ApplicantNavigation)
-        //        .Include(i => i.Ep)
-        //        .Select(item => new SignUpDTO
-        //        {
-        //            Id = item.Id,
-        //            EpId = item.EpId,
-        //            periodDesc = item.Ep.Description,
-        //            Applicant = item.Applicant,
-        //            ApplicantName = item.ApplicantNavigation.NickName
-        //        }).ToListAsync();
+        // 增加一事件有多少人報名
+        // GET: api/SignUps/HowMany/5 (eid)
+        [HttpGet("HowMany/{eid}")]
+        public async Task<ActionResult<int>> GetSignUpIsRepeat(int eid)
+        {
+            var SignUpDTOs = await _context.SignUps
+                .Include(i => i.ApplicantNavigation)
+                .Include(i => i.Ep)
+                .Select(item => new SignUpDTO
+                {
+                    Id = item.Id,
+                    EpId = item.EpId,
+                    periodDesc = item.Ep.Description,
+                    Applicant = item.Applicant,
+                    ApplicantName = item.ApplicantNavigation.NickName
+                }).ToListAsync();
 
-        //    var epidMembers = SignUpDTOs
-        //        .Where(item => item.EpId == epid)
-        //        .Where(item => item.Applicant == memberId)
-        //        .ToList();
+            var EPDTOs = await _context.EventPeriods.Select(ep => new EventPeriodDTO
+            {
+                Id = ep.Id,
+                EId = ep.EId,
+                StartTime = ep.StartTime,
+                EndTime = ep.EndTime,
+                Description = ep.Description,
+            }).ToListAsync();
+            
+            var SignUpWithEPeriods = SignUpDTOs.Join(EPDTOs,
+                signUps => signUps.EpId,  // Key from SignUpDTOs
+                EPs => EPs.Id,           // Key from EPDTOs
+                (signUps, EPs) => new    // Result selector for the joined data
+                {
+                    EPs.EId,       // Extract EId from EPDTOs
+                    signUps.Id,
+                    signUps.EpId,
+                    signUps.periodDesc,
+                    signUps.Applicant,
+                    signUps.ApplicantName
+                }).ToList();
 
-        //    int counts = epidMembers.Count;
+            var theList = SignUpWithEPeriods.Where(sep => sep.EId == eid).ToList();
 
-        //    return counts switch
-        //    {
-        //        0 => "NotExist",
-        //        1 => "Exist",
-        //        _ => "Repeated",
-        //    };
-        //}
+            return theList.Count;
+        }
 
         // GET: api/SignUps/member/5
         [HttpGet("member/{userId}")]

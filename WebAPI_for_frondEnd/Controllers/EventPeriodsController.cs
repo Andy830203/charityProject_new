@@ -28,7 +28,7 @@ namespace WebAPI_for_frondEnd.Controllers
             var EPDTOs = await _context.EventPeriods.Select(ep => new EventPeriodDTO
             {
                 Id = ep.Id,
-                EId = ep.Id,
+                EId = ep.EId,
                 StartTime = ep.StartTime,
                 EndTime = ep.EndTime,
                 Description = ep.Description,
@@ -50,7 +50,7 @@ namespace WebAPI_for_frondEnd.Controllers
             var eventPeriodDTO = new EventPeriodDTO
             {
                 Id = eventPeriod.Id,
-                EId = eventPeriod.Id,
+                EId = eventPeriod.EId,
                 StartTime = eventPeriod.StartTime,
                 EndTime = eventPeriod.EndTime,
                 Description = eventPeriod.Description,
@@ -72,7 +72,7 @@ namespace WebAPI_for_frondEnd.Controllers
             var eventPeriod = new EventPeriod
             {
                 Id = eventPeriodDTO.Id,
-                EId = eventPeriodDTO.Id,
+                EId = eventPeriodDTO.EId,
                 StartTime = eventPeriodDTO.StartTime,
                 EndTime = eventPeriodDTO.EndTime,
                 Description = eventPeriodDTO.Description,
