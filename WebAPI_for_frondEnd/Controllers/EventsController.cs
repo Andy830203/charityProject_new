@@ -44,7 +44,7 @@ namespace WebAPI_for_frondEnd.Controllers
                 Id = item.Id,
                 Name = item.Name,
                 OrganizerId = item.OrganizerId,
-                Organizer = item.Organizer.NickName,
+                Organizer = item.Organizer.RealName,
                 Description = item.Description,
                 Fee = item.Fee,
                 Capacity = item.Capacity,
