@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using charity.Models;
 using charity.ViewModels;
+using Newtonsoft.Json;
 
 namespace charity.Controllers
 {
@@ -115,7 +116,7 @@ namespace charity.Controllers
             ViewData["BuyerList"] = new SelectList(_context.Members, "Id", "Id");
 
             // 加載商品清單
-            ViewData["ProductList"] = new SelectList(_context.Products, "Id", "Name"); // Id 顯示商品名稱以便辨識
+            ViewData["ProductList"] = new SelectList(_context.Products, "Id", "Id"); // Id 顯示商品名稱以便辨識
 
             // 返回 Partial View
             return PartialView("_CreateOrderPartial", model);
@@ -124,12 +125,16 @@ namespace charity.Controllers
         // POST: Orders/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateOrderViewModel model) {
+        public async Task<IActionResult> Create(CreateOrderViewModel model, string OrderItemsJson) {
+            if (!string.IsNullOrEmpty(OrderItemsJson)) {
+                model.OrderItems = JsonConvert.DeserializeObject<List<CreateOrderItemViewModel>>(OrderItemsJson);
+            }
             if (ModelState.IsValid) {
                 // 創建新訂單實體
                 var order = new Order {
                     Buyer = model.BuyerId,
                     DiscountCode = model.DiscountCode,
+                    Status = 1,
                     OrderTime = DateTime.Now // 設定訂單日期
                 };
 
@@ -137,16 +142,25 @@ namespace charity.Controllers
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync(); // 儲存以獲取訂單 ID
 
+                int totalPrice = 0;
                 // 處理訂單項目
                 foreach (var item in model.OrderItems) {
-                    var orderItem = new OrderItem {
-                        OId = order.Id,
-                        PId = item.ProductId,
-                        Quantity = item.Quantity
-                    };
-                    _context.OrderItems.Add(orderItem);
+                    var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == item.ProductId);
+                    if (product != null) {
+                        if (product.Price != null && item.Quantity != null) {
+                            int? subTotal = product.Price * item.Quantity;
+                            totalPrice += (int)subTotal;
+                            var orderItem = new OrderItem {
+                                OId = order.Id,
+                                PId = item.ProductId,
+                                Quantity = item.Quantity
+                            };
+                            _context.OrderItems.Add(orderItem);
+                        }
+                    }
                 }
-
+                // 更新訂單總金額
+                order.TotalPrice = totalPrice;
                 // 儲存訂單項目
                 await _context.SaveChangesAsync();
 
@@ -160,146 +174,6 @@ namespace charity.Controllers
             return PartialView("_CreateOrderPartial", model);
         }
     
-    // GET: Orders/Details/5
-    //public async Task<IActionResult> Details(int? id)
-    //{
-    //    if (id == null)
-    //    {
-    //        return NotFound();
-    //    }
 
-    //    var order = await _context.Orders
-    //        .Include(o => o.BuyerNavigation)
-    //        .Include(o => o.StatusNavigation)
-    //        .Include(o => o.OrderItems)
-    //        .FirstOrDefaultAsync(m => m.Id == id);
-    //    if (order == null)
-    //    {
-    //        return NotFound();
-    //    }
-
-    //    return View(order);
-    //}
-
-    //// GET: Orders/Create
-    //public IActionResult Create()
-    //{
-    //    ViewData["Buyer"] = new SelectList(_context.Members, "Id", "Id");
-    //    ViewData["Status"] = new SelectList(_context.OrderStatuses, "Id", "Id");
-    //    return View();
-    //}
-
-    //// POST: Orders/Create
-    //// To protect from overposting attacks, enable the specific properties you want to bind to.
-    //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    //[HttpPost]
-    //[ValidateAntiForgeryToken]
-    //public async Task<IActionResult> Create([Bind("Id,Buyer,TotalPrice,Status,OrderTime,DiscountCode")] Order order)
-    //{
-    //    if (ModelState.IsValid)
-    //    {
-    //        _context.Add(order);
-    //        await _context.SaveChangesAsync();
-    //        return RedirectToAction(nameof(Index));
-    //    }
-    //    ViewData["Buyer"] = new SelectList(_context.Members, "Id", "Id", order.Buyer);
-    //    ViewData["Status"] = new SelectList(_context.OrderStatuses, "Id", "Id", order.Status);
-    //    return View(order);
-    //}
-
-    //// GET: Orders/Edit/5
-    //public async Task<IActionResult> Edit(int? id)
-    //{
-    //    if (id == null)
-    //    {
-    //        return NotFound();
-    //    }
-
-    //    var order = await _context.Orders.FindAsync(id);
-    //    if (order == null)
-    //    {
-    //        return NotFound();
-    //    }
-    //    ViewData["Buyer"] = new SelectList(_context.Members, "Id", "Id", order.Buyer);
-    //    ViewData["Status"] = new SelectList(_context.OrderStatuses, "Id", "Id", order.Status);
-    //    return View(order);
-    //}
-
-    //// POST: Orders/Edit/5
-    //// To protect from overposting attacks, enable the specific properties you want to bind to.
-    //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    //[HttpPost]
-    //[ValidateAntiForgeryToken]
-    //public async Task<IActionResult> Edit(int id, [Bind("Id,Buyer,TotalPrice,Status,OrderTime,DiscountCode")] Order order)
-    //{
-    //    if (id != order.Id)
-    //    {
-    //        return NotFound();
-    //    }
-
-    //    if (ModelState.IsValid)
-    //    {
-    //        try
-    //        {
-    //            _context.Update(order);
-    //            await _context.SaveChangesAsync();
-    //        }
-    //        catch (DbUpdateConcurrencyException)
-    //        {
-    //            if (!OrderExists(order.Id))
-    //            {
-    //                return NotFound();
-    //            }
-    //            else
-    //            {
-    //                throw;
-    //            }
-    //        }
-    //        return RedirectToAction(nameof(Index));
-    //    }
-    //    ViewData["Buyer"] = new SelectList(_context.Members, "Id", "Id", order.Buyer);
-    //    ViewData["Status"] = new SelectList(_context.OrderStatuses, "Id", "Id", order.Status);
-    //    return View(order);
-    //}
-
-    //// GET: Orders/Delete/5
-    //public async Task<IActionResult> Delete(int? id)
-    //{
-    //    if (id == null)
-    //    {
-    //        return NotFound();
-    //    }
-
-    //    var order = await _context.Orders
-    //        .Include(o => o.BuyerNavigation)
-    //        .Include(o => o.StatusNavigation)
-    //        .FirstOrDefaultAsync(m => m.Id == id);
-    //    if (order == null)
-    //    {
-    //        return NotFound();
-    //    }
-
-    //    return View(order);
-    //}
-
-    //// POST: Orders/Delete/5
-    //[HttpPost, ActionName("Delete")]
-    //[ValidateAntiForgeryToken]
-    //public async Task<IActionResult> DeleteConfirmed(int id)
-    //{
-    //    var order = await _context.Orders.FindAsync(id);
-    //    if (order != null)
-    //    {
-    //        _context.Orders.Remove(order);
-    //    }
-
-    //    await _context.SaveChangesAsync();
-    //    return RedirectToAction(nameof(Index));
-    //}
-
-    //private bool OrderExists(int id)
-    //{
-    //    return _context.Orders.Any(e => e.Id == id);
-    //}
-}
+    }
 }
